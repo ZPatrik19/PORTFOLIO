@@ -1,0 +1,92 @@
+project:
+  name: dry-bean-classification
+  package: dry_bean
+
+random_seed: 42
+
+data:
+  uci_dataset_id: 602
+  raw_dir: 01_data/raw
+  processed_dir: 01_data/processed
+  raw_file: 01_data/raw/dry_bean.csv
+  train_file: 01_data/processed/train.csv
+  validation_file: 01_data/processed/validation.csv
+  test_file: 01_data/processed/test.csv
+  simulated_drift_file: 01_data/processed/simulated_production_drift.csv
+
+split:
+  train: 0.70
+  validation: 0.15
+  test: 0.15
+
+augmentation:
+  enabled: true
+  method: smote
+  target_multiplier: 1.15
+  k_neighbors: 5
+  augmented_train_file: 01_data/processed/train_augmented.csv
+  ablation_models: [LogisticRegression, RandomForest, HistGradientBoosting]
+
+
+benchmark:
+  cv_folds: 5
+  permutation_repeats: 12
+
+training:
+  epochs: 120
+  patience: 15
+  validation_batch_size: 512
+  tuning:
+    - hidden_dims: [64, 32]
+      dropout: 0.10
+      learning_rate: 0.001
+      batch_size: 64
+    - hidden_dims: [128, 64]
+      dropout: 0.15
+      learning_rate: 0.001
+      batch_size: 64
+    - hidden_dims: [64, 32]
+      dropout: 0.25
+      learning_rate: 0.0005
+      batch_size: 128
+    - hidden_dims: [128, 64, 32]
+      dropout: 0.20
+      learning_rate: 0.0005
+      batch_size: 64
+
+monitoring:
+  drift_features: [Area, Perimeter, Compactness]
+  mean_shift: 0.6
+  scale_multiplier: 1.2
+  psi_watch_threshold: 0.10
+  psi_material_threshold: 0.20
+
+results:
+  figures_dir: 04_results/figures
+  metrics_dir: 04_results/metrics
+  models_dir: 04_results/models
+  predictions_dir: 04_results/predictions
+
+artifacts:
+  scaler: 04_results/models/scaler.joblib
+  label_encoder: 04_results/models/label_encoder.joblib
+  model_bundle: 04_results/models/model_bundle.pt
+  training_history: 04_results/metrics/training_history.json
+  best_config: 04_results/metrics/best_config.json
+  hyperparameter_results: 04_results/metrics/hyperparameter_results.csv
+  baseline_results: 04_results/metrics/baseline_results.csv
+  best_classical_model: 04_results/models/best_classical_model.joblib
+  permutation_importance: 04_results/metrics/permutation_importance.csv
+  test_metrics: 04_results/metrics/test_metrics.json
+  model_comparison: 04_results/metrics/model_comparison.csv
+  drift_report: 04_results/metrics/drift_report.csv
+  test_predictions: 04_results/predictions/test_predictions.csv
+  misclassified_samples: 04_results/predictions/misclassified_samples.csv
+  example_prediction: 04_results/predictions/example_prediction.json
+  augmentation_summary: 04_results/metrics/augmentation_summary.json
+  augmentation_ablation: 04_results/metrics/augmentation_ablation.csv
+  selective_classification: 04_results/metrics/selective_classification.csv
+
+visualization:
+  selected_features: [Area, Perimeter, MajorAxisLength, Compactness, Eccentricity, ShapeFactor1]
+  boxplot_features: [Area, Perimeter, Compactness, Eccentricity]

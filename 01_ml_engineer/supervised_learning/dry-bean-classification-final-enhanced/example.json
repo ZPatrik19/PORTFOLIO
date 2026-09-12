@@ -1,0 +1,18 @@
+{
+  "Area": 42000,
+  "Perimeter": 760,
+  "MajorAxisLength": 270,
+  "MinorAxisLength": 200,
+  "AspectRatio": 1.35,
+  "Eccentricity": 0.67,
+  "ConvexArea": 42500,
+  "EquivDiameter": 231,
+  "Extent": 0.76,
+  "Solidity": 0.988,
+  "Roundness": 0.91,
+  "Compactness": 0.86,
+  "ShapeFactor1": 0.0064,
+  "ShapeFactor2": 0.0018,
+  "ShapeFactor3": 0.74,
+  "ShapeFactor4": 0.997
+}
