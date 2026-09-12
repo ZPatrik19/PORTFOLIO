@@ -1,0 +1,23 @@
+Metadata-Version: 2.4
+Name: smart-battery-energy-management-rl
+Version: 0.1.0
+Summary: Educational-to-advanced reinforcement learning project for battery energy management.
+Requires-Python: >=3.10
+Requires-Dist: numpy>=1.26
+Requires-Dist: pandas>=2.1
+Requires-Dist: matplotlib>=3.8
+Requires-Dist: PyYAML>=6.0
+Requires-Dist: scikit-learn>=1.4
+Requires-Dist: gymnasium<2.0,>=0.29
+Requires-Dist: torch>=2.1
+Provides-Extra: sb3
+Requires-Dist: stable-baselines3<3.0,>=2.3; extra == "sb3"
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: jupyter>=1.0; extra == "dev"
+Requires-Dist: ipykernel>=6.29; extra == "dev"
+Requires-Dist: nbformat>=5.9; extra == "dev"
+Requires-Dist: nbclient>=0.10; extra == "dev"
+Requires-Dist: graphviz>=0.20; extra == "dev"
+Provides-Extra: citylearn
+Requires-Dist: citylearn>=2.3; extra == "citylearn"

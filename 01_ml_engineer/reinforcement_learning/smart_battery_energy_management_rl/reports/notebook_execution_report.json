@@ -1,0 +1,110 @@
+[
+  {
+    "notebook": "step01_problem_and_data.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 22,
+    "code_cells": 10,
+    "markdown_cells": 12,
+    "i18n_cells": 12,
+    "outputs": 12,
+    "inline_png": 4,
+    "errors": 0
+  },
+  {
+    "notebook": "step02_eda.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 26,
+    "code_cells": 12,
+    "markdown_cells": 14,
+    "i18n_cells": 14,
+    "outputs": 13,
+    "inline_png": 9,
+    "errors": 0
+  },
+  {
+    "notebook": "step03_environment_design.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 37,
+    "code_cells": 17,
+    "markdown_cells": 20,
+    "i18n_cells": 20,
+    "outputs": 18,
+    "inline_png": 6,
+    "errors": 0
+  },
+  {
+    "notebook": "step04_baseline_policies.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 23,
+    "code_cells": 11,
+    "markdown_cells": 12,
+    "i18n_cells": 12,
+    "outputs": 11,
+    "inline_png": 8,
+    "errors": 0
+  },
+  {
+    "notebook": "step05_q_learning.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 25,
+    "code_cells": 12,
+    "markdown_cells": 13,
+    "i18n_cells": 13,
+    "outputs": 13,
+    "inline_png": 5,
+    "errors": 0
+  },
+  {
+    "notebook": "step06_dqn.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 25,
+    "code_cells": 12,
+    "markdown_cells": 13,
+    "i18n_cells": 13,
+    "outputs": 12,
+    "inline_png": 5,
+    "errors": 0
+  },
+  {
+    "notebook": "step07_ppo.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 27,
+    "code_cells": 12,
+    "markdown_cells": 15,
+    "i18n_cells": 15,
+    "outputs": 12,
+    "inline_png": 7,
+    "errors": 0
+  },
+  {
+    "notebook": "step08_evaluation_stress_ablation.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 22,
+    "code_cells": 12,
+    "markdown_cells": 10,
+    "i18n_cells": 10,
+    "outputs": 11,
+    "inline_png": 6,
+    "errors": 0
+  },
+  {
+    "notebook": "step09_policy_analysis.ipynb",
+    "language": "hu",
+    "kernel": "battery-energy-rl",
+    "cells": 22,
+    "code_cells": 11,
+    "markdown_cells": 11,
+    "i18n_cells": 11,
+    "outputs": 14,
+    "inline_png": 7,
+    "errors": 0
+  }
+]

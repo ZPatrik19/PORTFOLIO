@@ -1,0 +1,10 @@
+,mean,std
+total_electricity_cost,89.71620107847062,
+peak_grid_demand_kw,63.91967403510095,
+renewable_self_consumption_pct,87.45792749379227,
+battery_throughput_kwh,202.2315789473684,
+battery_cycles,0.8426315789473684,
+constraint_violations,2.2,
+average_soc,0.29184758771929825,
+cumulative_reward,-93.61830732841925,
+episode_return,-93.61830732841925,

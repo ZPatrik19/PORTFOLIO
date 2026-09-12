@@ -1,0 +1,82 @@
+project:
+  name: Smart Battery Energy Management — Reinforcement Learning Decision System
+  seed: 42
+  seeds:
+  - 42
+  - 123
+  - 2026
+data:
+  source: synthetic
+  raw_filename: synthetic_energy_timeseries.csv
+  url: null
+  start: '2024-07-01'
+  days: 365
+  train_fraction: 0.7
+  validation_fraction: 0.15
+  frequency: 1h
+  synthetic_noise: true
+battery:
+  capacity_kwh: 120.0
+  initial_soc: 0.5
+  min_soc: 0.1
+  max_soc: 0.9
+  max_charge_kw: 30.0
+  max_discharge_kw: 30.0
+  charging_efficiency: 0.95
+  discharging_efficiency: 0.95
+  timestep_hours: 1.0
+  feed_in_tariff_eur_per_kwh: 0.045
+environment:
+  episode_hours: 24
+  random_start: true
+  normalize_observation: true
+  include_forecast: false
+  peak_threshold_kw: 70.0
+reward:
+  cost_weight: 1.0
+  peak_penalty_eur_per_kw2: 0.002
+  degradation_eur_per_kwh_throughput: 0.004
+  constraint_penalty_eur_per_kwh: 0.08
+q_learning:
+  episodes: 600
+  alpha: 0.1
+  gamma: 0.99
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  epsilon_decay: 0.995
+  soc_bins: 5
+  price_bins: 5
+  demand_bins: 3
+  renewable_bins: 3
+  hour_bins: 4
+  forecast_bins: 5
+analysis:
+  evaluation_episodes: 40
+  rolling_window: 30
+  quick_q_episodes: 100
+  quick_sb3_timesteps: 4000
+dqn:
+  timesteps: 30000
+  quick_timesteps: 4000
+  learning_rate: 0.0003
+  gamma: 0.97
+  batch_size: 64
+  buffer_size: 50000
+  learning_starts: 500
+  target_update_interval: 250
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  epsilon_decay_steps: 12000
+  train_frequency: 1
+ppo:
+  timesteps: 30000
+  quick_timesteps: 4000
+  learning_rate: 0.0003
+  gamma: 0.97
+  gae_lambda: 0.95
+  clip_coef: 0.2
+  value_coef: 0.5
+  entropy_coef: 0.01
+  update_epochs: 6
+  minibatch_size: 64
+  rollout_steps: 512

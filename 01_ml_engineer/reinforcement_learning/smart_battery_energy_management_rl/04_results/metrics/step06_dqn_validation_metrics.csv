@@ -1,0 +1,2 @@
+total_electricity_cost,peak_grid_demand_kw,renewable_self_consumption_pct,battery_throughput_kwh,battery_cycles,constraint_violations,average_soc,cumulative_reward,episode_return,training_seed
+119.60203435853059,68.05922004375222,97.94248667876953,155.4,0.6475000000000001,2.0,0.20789473684210527,-123.29435361976212,-123.29435361976212,42

@@ -1,0 +1,24 @@
+digraph BatteryRLWorkflow {
+  rankdir=TB;
+  graph [fontname="Arial", nodesep=0.35, ranksep=0.45];
+  node [shape=box, style="rounded", fontname="Arial"];
+  edge [fontname="Arial"];
+
+  s1 [label="01 Problem + Data\nSynthetic hourly energy series"];
+  s2 [label="02 EDA\nPrice / demand / renewable"];
+  s3 [label="03 Environment\nState → action → transition → reward"];
+  s4 [label="04 Baselines\nNo battery / Random / Rule / Oracle"];
+  s5 [label="05 Q-Learning\nOwn tabular implementation"];
+  s6 [label="06 DQN\nStable-Baselines3"];
+  s7 [label="07 PPO\nContinuous action"];
+  s8 [label="08 Evaluation\nKPI + stress + ablation"];
+  s9 [label="09 Policy analysis\nSOC/action distributions + heatmap"];
+
+  s1 -> s2 -> s3 -> s4 -> s5;
+  s5 -> s6;
+  s5 -> s7;
+  s6 -> s8;
+  s7 -> s8;
+  s5 -> s8;
+  s8 -> s9;
+}

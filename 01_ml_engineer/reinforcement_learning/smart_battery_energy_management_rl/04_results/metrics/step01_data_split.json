@@ -1,0 +1,13 @@
+{
+  "rows_total": 8760,
+  "rows_train": 6132,
+  "rows_validation": 1314,
+  "rows_test": 1314,
+  "train_start": "2024-07-01 00:00:00",
+  "train_end": "2025-03-13 11:00:00",
+  "validation_start": "2025-03-13 12:00:00",
+  "validation_end": "2025-05-07 05:00:00",
+  "test_start": "2025-05-07 06:00:00",
+  "test_end": "2025-06-30 23:00:00",
+  "note": "Chronological split: validation/test remain in the future relative to training."
+}

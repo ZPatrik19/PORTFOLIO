@@ -1,0 +1,7 @@
+{
+  "initial_soc": 0.5,
+  "final_soc": 0.1,
+  "requested_executed_mismatch_events": 7,
+  "episode_return": -113.24138824888801,
+  "energy_balance_definition": "grid = demand - renewable + charge - discharge"
+}

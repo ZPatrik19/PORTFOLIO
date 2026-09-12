@@ -1,0 +1,8 @@
+{
+  "price_mean": 0.12774727659463,
+  "price_p95": 0.22323712543081173,
+  "demand_mean_kw": 55.391411772392836,
+  "demand_peak_kw": 85.4503888388164,
+  "renewable_mean_kw": 14.311961926433703,
+  "renewable_share_proxy_pct": 25.83787173586142
+}
