@@ -1,0 +1,78 @@
+{
+  "train_rows": 192000,
+  "validation_rows": 24000,
+  "test_rows": 24000,
+  "labels": [
+    "attractions",
+    "hotel",
+    "location",
+    "restaurant",
+    "transport",
+    "weather"
+  ],
+  "thresholds": {
+    "attractions": 0.2,
+    "hotel": 0.5,
+    "location": 0.35,
+    "restaurant": 0.3,
+    "transport": 0.25,
+    "weather": 0.25
+  },
+  "validation_micro_f1": 0.7603599192018118,
+  "validation_macro_f1": 0.754009339164648,
+  "test_micro_f1": 0.7826326734607121,
+  "test_macro_f1": 0.784596362642087,
+  "test_hamming_loss": 0.13138194444444445,
+  "dataset_sha256": "4356d92e8a81ec7a00449086c64e75b434ca2c59e8f2dafab7850619f4e5a491",
+  "feature_model": "word_tfidf_1_3_unicode + OVR_SGD_logistic",
+  "training_runtime": {
+    "python_major_minor": "3.14",
+    "python_version": "3.14.0",
+    "scikit_learn_version": "1.9.1",
+    "joblib_version": "1.6.0",
+    "numpy_version": "2.5.3",
+    "pandas_version": "3.0.5"
+  },
+  "per_label": {
+    "attractions": {
+      "precision": 0.5288899544473747,
+      "recall": 0.6027322404371585,
+      "f1": 0.563401864385136,
+      "support": 7320
+    },
+    "hotel": {
+      "precision": 1.0,
+      "recall": 0.9898096004290694,
+      "f1": 0.994878706199461,
+      "support": 7458
+    },
+    "location": {
+      "precision": 0.908994226678821,
+      "recall": 0.8078584931136916,
+      "f1": 0.8554475264512439,
+      "support": 7406
+    },
+    "restaurant": {
+      "precision": 0.8730735678976447,
+      "recall": 0.7958913187541418,
+      "f1": 0.8326977743881301,
+      "support": 7545
+    },
+    "transport": {
+      "precision": 0.7692906036092098,
+      "recall": 0.6720576243544442,
+      "f1": 0.7173944581459452,
+      "support": 7358
+    },
+    "weather": {
+      "precision": 0.7625858123569794,
+      "recall": 0.7258371903076504,
+      "f1": 0.7437578462826057,
+      "support": 7346
+    }
+  },
+  "challenge_rows": 36000,
+  "challenge_micro_f1": 0.6773134942280007,
+  "challenge_macro_f1": 0.6347545337176242,
+  "challenge_hamming_loss": 0.16706944444444444
+}

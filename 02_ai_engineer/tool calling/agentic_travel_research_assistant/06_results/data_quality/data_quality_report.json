@@ -1,0 +1,270 @@
+{
+  "query_datasets": {
+    "sample_user_queries.csv": {
+      "rows": 90000,
+      "exact_duplicate_rows": 0,
+      "unique_queries": 90000,
+      "normalized_patterns": 74219,
+      "normalized_pattern_ratio": 0.8246555555555556,
+      "largest_pattern_share": 0.0007444444444444445,
+      "median_pattern_frequency": 1.0,
+      "top_patterns": [
+        {
+          "pattern": "<num> éjszakára kell hotel <city> városában, maximum <num> euróért éjszakánként.",
+          "count": 67
+        },
+        {
+          "pattern": "look for well-rated rooms in <city> for <num> nights, preferably below <num> <cur>.",
+          "count": 66
+        },
+        {
+          "pattern": "nézd meg <city> <num> napos időjárás-előrejelzését.",
+          "count": 65
+        },
+        {
+          "pattern": "where should i eat in <city> for about <num> <cur> per person?",
+          "count": 65
+        },
+        {
+          "pattern": "find somewhere to stay in <city> for <num> nights under <num> <cur> per night.",
+          "count": 63
+        },
+        {
+          "pattern": "check the forecast in <city> for my <num>-day stay.",
+          "count": 62
+        },
+        {
+          "pattern": "szükségem van egy jó szállásra <city> városában <num> éjszakára.",
+          "count": 61
+        },
+        {
+          "pattern": "what transit pass makes sense in <city> for <num> days?",
+          "count": 60
+        },
+        {
+          "pattern": "hol egyek <city> városában körülbelül <num> <cur>/fő keretből?",
+          "count": 60
+        },
+        {
+          "pattern": "where can i sleep in <city> for <num> nights without going over <num> <cur> a night?",
+          "count": 60
+        },
+        {
+          "pattern": "jó éttermeket keresek <city> városában, maximum <num> eurós étkezéssel.",
+          "count": 59
+        },
+        {
+          "pattern": "give me dinner options in <city> with a budget around <num> <cur>.",
+          "count": 59
+        }
+      ]
+    },
+    "intent_router_dataset.csv": {
+      "rows": 240000,
+      "exact_duplicate_rows": 0,
+      "unique_queries": 240000,
+      "normalized_patterns": 183422,
+      "normalized_pattern_ratio": 0.7642583333333334,
+      "largest_pattern_share": 0.000725,
+      "median_pattern_frequency": 1.0,
+      "top_patterns": [
+        {
+          "pattern": "find somewhere to stay in <city> for <num> nights under <num> <cur> per night.",
+          "count": 174
+        },
+        {
+          "pattern": "<num> éjszakára kell hotel <city> városában, maximum <num> euróért éjszakánként.",
+          "count": 173
+        },
+        {
+          "pattern": "where can i sleep in <city> for <num> nights without going over <num> <cur> a night?",
+          "count": 172
+        },
+        {
+          "pattern": "where should i eat in <city> for about <num> <cur> per person?",
+          "count": 169
+        },
+        {
+          "pattern": "i need a <num>-night hotel in <city>; keep it below <num> <cur> and rating <num>+.",
+          "count": 167
+        },
+        {
+          "pattern": "look for well-rated rooms in <city> for <num> nights, preferably below <num> <cur>.",
+          "count": 166
+        },
+        {
+          "pattern": "mutass szobákat <city> városában <num> éjre legfeljebb <num> euróért.",
+          "count": 166
+        },
+        {
+          "pattern": "help me shortlist hotels in <city>: <num> nights, max <num> <cur>/night.",
+          "count": 165
+        },
+        {
+          "pattern": "show accommodation in <city> for <num> nights with a nightly cap of <num> <cur>.",
+          "count": 162
+        },
+        {
+          "pattern": "keress szállást <city> városában <num> éjszakára, <num> <cur>/éj alatt.",
+          "count": 156
+        },
+        {
+          "pattern": "ajánlj <num>+ értékelésű szállást <city> városában <num> <cur> alatt.",
+          "count": 153
+        },
+        {
+          "pattern": "hol egyek <city> városában körülbelül <num> <cur>/fő keretből?",
+          "count": 150
+        }
+      ]
+    },
+    "intent_router_challenge.csv": {
+      "rows": 36000,
+      "exact_duplicate_rows": 0,
+      "unique_queries": 36000,
+      "normalized_patterns": 20102,
+      "normalized_pattern_ratio": 0.5583888888888889,
+      "largest_pattern_share": 0.0019166666666666666,
+      "median_pattern_frequency": 1.0,
+      "top_patterns": [
+        {
+          "pattern": "i won't have a car in <city>; how do i move around?",
+          "count": 69
+        },
+        {
+          "pattern": "kellene egy jó hely enni <city> városában.",
+          "count": 65
+        },
+        {
+          "pattern": "mi az, amit kár lenne kihagyni <city> városában?",
+          "count": 64
+        },
+        {
+          "pattern": "i need somewhere good to eat in <city>.",
+          "count": 64
+        },
+        {
+          "pattern": "brief me before i arrive in <city>.",
+          "count": 64
+        },
+        {
+          "pattern": "would outdoor plans be risky in <city>?",
+          "count": 64
+        },
+        {
+          "pattern": "what's the smartest way to get around <city>?",
+          "count": 64
+        },
+        {
+          "pattern": "nem lesz autóm <city> városában; hogyan járjak?",
+          "count": 64
+        },
+        {
+          "pattern": "gyors helyi eligazítást kérek <city> városáról.",
+          "count": 63
+        },
+        {
+          "pattern": "taxik nélkül hogyan közlekedjek <city> városában?",
+          "count": 63
+        },
+        {
+          "pattern": "hová ülnél be enni <city> városában?",
+          "count": 63
+        },
+        {
+          "pattern": "miket néznél meg elsőként <city> városában?",
+          "count": 63
+        }
+      ]
+    }
+  },
+  "entity_datasets": {
+    "hotels.csv": {
+      "rows": 180000,
+      "exact_duplicate_rows": 0,
+      "duplicate_names": 12161,
+      "unique_names": 167839,
+      "name_unique_ratio": 0.9324388888888889,
+      "name_skeleton_patterns": 56944,
+      "name_skeleton_ratio": 0.31635555555555556,
+      "largest_name_skeleton_share": 0.00045555555555555556
+    },
+    "attractions.csv": {
+      "rows": 90000,
+      "exact_duplicate_rows": 0,
+      "duplicate_names": 7140,
+      "unique_names": 82860,
+      "name_unique_ratio": 0.9206666666666666,
+      "name_skeleton_patterns": 79564,
+      "name_skeleton_ratio": 0.8840444444444444,
+      "largest_name_skeleton_share": 0.00012222222222222221
+    },
+    "restaurants.csv": {
+      "rows": 90000,
+      "exact_duplicate_rows": 0,
+      "duplicate_names": 0,
+      "unique_names": 90000,
+      "name_unique_ratio": 1.0,
+      "name_skeleton_patterns": 34291,
+      "name_skeleton_ratio": 0.38101111111111113,
+      "largest_name_skeleton_share": 0.00023333333333333333
+    }
+  },
+  "split_leakage": {
+    "test__train": {
+      "shared_patterns": 0,
+      "overlap_over_smaller_split": 0.0
+    },
+    "test__validation": {
+      "shared_patterns": 0,
+      "overlap_over_smaller_split": 0.0
+    },
+    "train__validation": {
+      "shared_patterns": 0,
+      "overlap_over_smaller_split": 0.0
+    }
+  },
+  "files": {
+    "sample_user_queries.csv": {
+      "sha256": "f0b34ac60008ba7fd93cc40ed26af398133f7fcefe884ae471e85f4f7672db57",
+      "bytes": 19073491
+    },
+    "intent_router_dataset.csv": {
+      "sha256": "4356d92e8a81ec7a00449086c64e75b434ca2c59e8f2dafab7850619f4e5a491",
+      "bytes": 63935019
+    },
+    "intent_router_challenge.csv": {
+      "sha256": "7fe7f5fb1f0d88534a9eeec3eaf29ea7d738368427ca6fd201a70bae2da8b9cc",
+      "bytes": 5824981
+    },
+    "hotels.csv": {
+      "sha256": "e8423402a4dbe3a80316a1d630ac8f163bd5db34d620e2b6ba67ffecf407d026",
+      "bytes": 20231910
+    },
+    "attractions.csv": {
+      "sha256": "094c323f4a9efedbb0d7c1b194f798b9b5717d707d0a5a79d800e2d34a5aa942",
+      "bytes": 9408503
+    },
+    "restaurants.csv": {
+      "sha256": "ea16ff7f2fbdabb0e1610272113643782becc1148b48d3ccf9f7ddcfc92ac541",
+      "bytes": 8708885
+    }
+  },
+  "router_label_counts": {
+    "attractions": 73569,
+    "hotel": 75661,
+    "location": 74067,
+    "restaurant": 75618,
+    "transport": 74841,
+    "weather": 74896
+  },
+  "quality_gates": {
+    "router_normalized_patterns_ge_1500": true,
+    "sample_normalized_patterns_ge_750": true,
+    "split_pattern_overlap_le_0_02": true,
+    "hotel_name_skeleton_ratio_ge_0_10": true,
+    "restaurant_name_skeleton_ratio_ge_0_10": true,
+    "attraction_name_skeleton_ratio_ge_0_10": true
+  },
+  "quality_gate_pass_rate": 1.0
+}

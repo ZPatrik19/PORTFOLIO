@@ -1,0 +1,10 @@
+digraph G {
+rankdir=LR; node[shape=box,style="rounded",fontname="Arial"];
+bench[label="22,500 held-out-surface requests"];
+agent[label="Agent run"];
+trace[label="Tool trace"];
+score[label="Tool + argument scoring"];
+agg[label="Aggregate metrics"];
+result[label="CSV / JSON / charts"];
+bench->agent->trace->score->agg->result;
+}

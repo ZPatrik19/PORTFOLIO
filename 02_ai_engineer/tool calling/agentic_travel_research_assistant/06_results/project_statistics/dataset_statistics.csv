@@ -1,0 +1,11 @@
+dataset,rows,columns,exact_duplicate_rows,missing_cells,missing_pct,memory_mb,unique_cities
+attractions.csv,90000,12,0,0,0.0,37.463,60.0
+cities.csv,60,11,0,0,0.0,0.022,60.0
+fx_rates_fallback.csv,30,5,0,0,0.0,0.007,
+hotels.csv,180000,19,0,0,0.0,82.467,60.0
+intent_router_challenge.csv,36000,5,0,0,0.0,18.21,60.0
+intent_router_dataset.csv,240000,13,0,659491,0.211375,191.458,60.0
+restaurants.csv,90000,13,0,0,0.0,40.544,60.0
+sample_user_queries.csv,90000,5,0,0,0.0,51.996,
+transport.csv,60,12,0,0,0.0,0.008,60.0
+weather_fallback.csv,72000,9,0,0,0.0,15.027,60.0

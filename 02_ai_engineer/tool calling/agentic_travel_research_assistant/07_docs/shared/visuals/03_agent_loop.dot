@@ -1,0 +1,4 @@
+digraph G { rankdir=TB; graph [bgcolor="white",pad=0.3]; node [shape=box,style="rounded,filled",fillcolor="#f4f6f8",fontname="Arial"];
+model[label="Responses API model"]; call[label="function_call\nname + JSON args"]; validate[label="Pydantic validation"]; execute[label="Python tool execution"]; output[label="function_call_output"]; decide[label="More tools needed?"]; final[label="Final answer"];
+model->call->validate->execute->output->model; model->decide [style=dashed]; decide->final [label="no"]; decide->call [label="yes"];
+}

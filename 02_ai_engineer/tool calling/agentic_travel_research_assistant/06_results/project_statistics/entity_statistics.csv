@@ -1,0 +1,4 @@
+dataset,rows,unique_names,unique_name_ratio,duplicate_names,cities,rows_per_city_min,rows_per_city_median,rows_per_city_max,rating_mean,rating_p10,rating_p50,rating_p90,price_p10,price_p50,price_p90
+hotels.csv,180000,167839,0.932439,12161,60,3000,3000.0,3000,4.094,3.5,4.1,4.6,134.0,191.0,248.0
+restaurants.csv,90000,90000,1.0,0,60,1500,1500.0,1500,4.05,3.3,4.0,4.8,26.0,41.5,57.0
+attractions.csv,90000,82860,0.920667,7140,60,1500,1500.0,1500,4.2,3.5,4.2,4.9,0.0,12.0,35.0

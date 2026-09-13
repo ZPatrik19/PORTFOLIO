@@ -1,0 +1,15 @@
+digraph G {
+rankdir=TB; node[shape=box,style="rounded",fontname="Arial"];
+ui[label="Streamlit UI"];
+chat[label="Chat"];
+tools[label="Tool Explorer"];
+quality[label="Data Quality"];
+train[label="Train & Evaluate"];
+data[label="Dataset Explorer"];
+agent[label="Agent layer"];
+registry[label="ToolRegistry"];
+audit[label="Quality audit"];
+trainer[label="Router trainer"];
+csv[label="01_data CSV/JSON"];
+ui->{chat tools quality train data}; chat->agent->registry; tools->registry; quality->audit; train->trainer; train->agent; data->csv; registry->csv; audit->csv; trainer->csv;
+}

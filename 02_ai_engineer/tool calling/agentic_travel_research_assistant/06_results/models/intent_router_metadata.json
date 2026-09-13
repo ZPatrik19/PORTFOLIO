@@ -1,0 +1,10 @@
+{
+  "artifact_format": 2,
+  "dataset_sha256": "4356d92e8a81ec7a00449086c64e75b434ca2c59e8f2dafab7850619f4e5a491",
+  "python_major_minor": "3.14",
+  "python_version": "3.14.0",
+  "scikit_learn_version": "1.9.1",
+  "joblib_version": "1.6.0",
+  "numpy_version": "2.5.3",
+  "pandas_version": "3.0.5"
+}

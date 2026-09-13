@@ -1,0 +1,270 @@
+# Agentic Travel Research Assistant
+
+
+> **v1.8 UI:** Project Statistics, Data Quality and Live Statistics share one high-contrast Plotly theme system with user-selectable Light/Dark modes, black-on-white or white-on-dark text, consistent chart heights, interactive filters, and saved static plot galleries.
+
+A local-first tool-calling AI system with a browser UI, eight validated travel tools, a trainable bilingual intent router, explicit data-quality gates, offline/live providers, traces and measurable evaluation.
+
+The project is designed to be used from the browser. Terminal commands remain available for reproducibility and automated testing, but they are no longer the primary interface.
+
+
+## Project documentation
+
+Documentation is split cleanly by language:
+
+- [English documentation](07_docs/en/00_DOCUMENTATION_INDEX.md)
+- [Magyar dokumentáció](07_docs/hu/00_DOKUMENTACIOS_TERKEP.md)
+- [Documentation language selector](07_docs/README.md)
+
+Both language trees cover project overview, architecture, data quality, tool-calling design, routing/orchestration, model training, evaluation/statistics, UI usage, code reference/repository audit, limitations, preset scenarios and the shared visualization system. Shared diagrams live under `07_docs/shared/visuals/`.
+
+## Start the UI
+
+On Windows, after extracting the repository, double-click:
+
+```text
+SETUP_AND_START_UI.bat
+```
+
+The launcher creates `.venv` only when needed, checks installed package versions first, and **does not upgrade or reinstall dependencies that already satisfy the requirements**. The ML router is retrained only when the saved model is missing or its training-dataset hash is stale. After validation it opens the Streamlit application in the browser. On later runs, double-click:
+
+```text
+RUN_UI.bat
+```
+
+Manual equivalent:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+python -m streamlit run 08_ui/app.py
+```
+
+## Browser application
+
+The UI contains seven working areas:
+
+- **Chat** — ask your own natural-language question or choose from 30 bilingual preset scenarios. Inline instructions explain how to specify city, duration, budget and preferences; every completed run is stored locally for analytics.
+- **Tool Explorer** — call individual tools using forms instead of JSON typed in PowerShell.
+- **Data Quality** — inspect duplicate rates, linguistic pattern diversity, train/test leakage and entity-name diversity.
+- **Train & Evaluate** — retrain the ML router and run a benchmark without leaving the browser.
+- **Live Statistics** — persistent real usage analytics calculated from the questions you actually run: question count, tool calls, success rates, latency, methodology/tool usage, time series and recent Q&A history.
+- **Project Statistics** — interactive Plotly dashboard for dataset scale, diversity, routing complexity, model diagnostics and methodology benchmarks, with saved static plot gallery.
+- **Dataset Explorer** — inspect and filter the underlying CSV datasets.
+
+
+## Smart setup: no unnecessary upgrades or retraining
+
+`SETUP_AND_START_UI.bat` now uses two explicit checks before doing expensive work:
+
+```text
+00_setup/06_check_dependencies.py
+    ↓
+all installed versions compatible?
+    ├─ yes → skip dependency installation/upgrades
+    └─ no  → install the project requirements
+
+00_setup/07_prepare_if_needed.py
+    ↓
+saved ML router exists and matches the current dataset hash?
+    ├─ yes → skip training/evaluation preparation
+    └─ no  → quality audit → training → 100-case smoke evaluation
+```
+
+The launcher no longer runs `pip --upgrade` on every start. Normal daily use should use `RUN_UI.bat`, which only starts Streamlit.
+
+## Persistent live statistics
+
+Each Chat run is stored locally in:
+
+```text
+06_results/usage/usage_history.sqlite3
+```
+
+The SQLite database stores the question, answer, methodology, language, data mode, total latency, tool calls, tool success/failure and trace metadata. It is used by the **Live Statistics** tab and is never uploaded by the project. The database is Git-ignored and can be cleared from the UI.
+
+## Tools
+
+| Tool | Data source | Purpose |
+|---|---|---|
+| `get_location_info` | `cities.csv` | country/currency/language/timezone and local cost profile |
+| `get_weather` | Open-Meteo or local fallback | multi-day weather |
+| `convert_currency` | Frankfurter or local fallback | FX conversion |
+| `search_hotels` | 180,000-row synthetic inventory | filtering and ranking |
+| `search_attractions` | 90,000-row synthetic inventory | POI filtering and ranking |
+| `search_restaurants` | 90,000-row synthetic inventory | restaurant filtering and ranking |
+| `get_transport_options` | `transport.csv` | transport passes and estimated trip cost |
+| `calculate` | safe AST evaluator | dependent arithmetic |
+
+All calls go through the same `ToolRegistry`, Pydantic validation, timing and structured trace.
+
+## Data quality was redesigned
+
+The earlier large-data version had many rows but too few underlying language templates. That is now explicitly audited and prevented by quality gates.
+
+Current language datasets:
+
+- **240,000** labelled bilingual router examples
+  - 192,000 train
+  - 24,000 validation
+  - 24,000 held-out test
+- **36,000** indirect/noisy challenge queries
+- **90,000** user-query examples
+- **22,500** end-to-end agent benchmark cases
+
+The current generated router corpus has:
+
+- 0 exact duplicate queries
+- 65,000+ normalized linguistic patterns
+- 0 normalized pattern overlap between train and held-out test
+- explicit hard negatives such as “hotel is already booked, do not search accommodation”
+- Hungarian and English wording
+- multi-intent queries
+- indirect wording, noisy punctuation, missing accents and distractors
+
+Entity naming was also regenerated to remove obvious patterns such as `Vienna Museum 001` or `Vienna Kitchen 002`. The data remains synthetic and reproducible; it is not presented as live booking inventory.
+
+Run/re-run the quality audit:
+
+```powershell
+python -c "import sys; sys.path.insert(0,'03_src'); from travel_agent.quality import audit_all; audit_all(True)"
+```
+
+Outputs:
+
+```text
+06_results/data_quality/
+├── data_quality_report.json
+├── data_quality_summary.csv
+├── query_pattern_diversity.png
+└── entity_name_diversity.png
+```
+
+## Trainable router
+
+The ML router uses a scalable text representation:
+
+```text
+word TF-IDF (1–3 grams)
++ Unicode accent normalization
+        ↓
+One-vs-Rest SGD logistic classifiers
+        ↓
+per-label probability thresholds
+```
+
+Unicode accent normalization and deterministic Hungarian parsing guardrails improve robustness to missing accents and common suffix patterns. Validation thresholds are selected with a precision-oriented F0.5 objective because unnecessary tool calls are a real failure mode in agent systems.
+
+Train from the UI or run:
+
+```powershell
+python 04_scripts/06_train_intent_router.py
+```
+
+The model artifact stores the SHA-256 hash of the training dataset. The UI marks the model as **stale** if the dataset changes after training.
+
+## One-command preparation
+
+To run the complete quality/training/evaluation sequence:
+
+```powershell
+python 04_scripts/07_prepare_train_evaluate.py --limit 500
+```
+
+To regenerate all deterministic data first:
+
+```powershell
+python 04_scripts/07_prepare_train_evaluate.py --regenerate-data --limit 500
+```
+
+That sequence is:
+
+```text
+base data generation
+        ↓
+data-quality upgrade
+        ↓
+quality audit / gates
+        ↓
+intent-router training
+        ↓
+quick agent benchmark
+```
+
+## Repository structure
+
+```text
+agentic_travel_research_assistant/
+├── 00_setup/
+│   ├── 01_environment.md
+│   ├── 02_setup_check.py
+│   ├── 03_switch_language.py
+│   ├── 04_generate_data.py
+│   └── 05_upgrade_data_quality.py
+├── 01_data/
+│   ├── raw/
+│   ├── benchmark/
+│   └── processed/
+├── 02_notebooks/
+├── 03_src/travel_agent/
+│   ├── agent/
+│   ├── evaluation/
+│   ├── quality/
+│   ├── training/
+│   └── tools/
+├── 04_scripts/
+│   ├── 01_run_demo.py
+│   ├── 02_run_evaluation.py
+│   ├── 03_compare_methodologies.py
+│   ├── 04_run_live_openai_agent.py
+│   ├── 05_call_tool.py
+│   ├── 06_train_intent_router.py
+│   └── 07_prepare_train_evaluate.py
+├── 05_tests/
+├── 06_results/
+├── 07_docs/
+│   ├── README.md
+│   ├── hu/                  # complete Hungarian documentation (00–11)
+│   ├── en/                  # complete English documentation (00–11)
+│   └── shared/visuals/      # shared diagrams
+├── 08_ui/
+│   └── app.py
+├── RUN_UI.bat
+├── SETUP_AND_START_UI.bat
+├── README.md
+├── START_HERE_HU.md
+├── pyproject.toml
+└── requirements.txt
+```
+
+## Routing strategies
+
+The application supports:
+
+- `plan_execute` — inspectable deterministic planning and execution.
+- `ml_router` — trained multi-label router + deterministic argument extraction.
+- `openai_direct` — OpenAI function calling using the same tool registry.
+
+`plan_execute` and `ml_router` work with local data and no API key. `openai_direct` requires `OPENAI_API_KEY`.
+
+## Tests
+
+```powershell
+pytest -q
+```
+
+Tests cover tool validation, local retrieval, safe calculations, Hungarian morphology, agent orchestration, function-call loops, evaluation metrics, data-quality gates and model/dataset freshness.
+
+## Preset validation
+
+All 30 bilingual scenarios can be regression-checked with both offline routing methodologies:
+
+```powershell
+python 04_scripts/08_validate_presets.py
+```
+
+The current saved validation contains 120 runs (30 scenarios × 2 languages × 2 methodologies). Both `plan_execute` and `ml_router` reproduce the expected route in 60/60 language-specific cases and all tool executions succeed. Results are stored under `06_results/preset_validation/`.
+
+## Model compatibility
+
+The ML router is persisted with joblib/scikit-learn. Persisted scikit-learn estimators are not guaranteed to load across different scikit-learn versions, so the project stores a small `intent_router_metadata.json` sidecar with the Python/scikit-learn version and dataset hash. `SETUP_AND_START_UI.bat` checks this metadata **before** unpickling the model. If the saved model was built with a different runtime, dependencies are left untouched and the router is retrained once in the current environment. Later startups skip retraining while the runtime and data remain unchanged.

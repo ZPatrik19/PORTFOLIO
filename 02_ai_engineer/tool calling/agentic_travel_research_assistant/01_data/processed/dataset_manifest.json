@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-09-12",
+  "files": {
+    "cities.csv": 60,
+    "hotels.csv": 180000,
+    "attractions.csv": 90000,
+    "restaurants.csv": 90000,
+    "transport.csv": 60,
+    "weather_fallback.csv": 72000,
+    "fx_rates_fallback.csv": 30,
+    "sample_user_queries.csv": 90000,
+    "intent_router_dataset.csv": 240000,
+    "intent_router_challenge.csv": 36000,
+    "benchmark/agent_tasks.json": 22500
+  },
+  "splits": {
+    "intent_router_train": 192000,
+    "intent_router_validation": 24000,
+    "intent_router_test": 24000,
+    "challenge": 36000
+  },
+  "notes": {
+    "entity_inventory": "Synthetic deterministic inventory with diversified names and attributes; not live/bookable.",
+    "router_corpus": "Synthetic bilingual compositional corpus with split-specific surface forms, hard negatives, noise and indirect challenge queries.",
+    "evaluation": "Validation/test phrase families are held out from training to reduce surface-template leakage."
+  },
+  "generator_seed": 20260912,
+  "quality_upgrade": "v2-compositional-heldout-surfaces",
+  "counts": {
+    "cities.csv": 60,
+    "hotels.csv": 180000,
+    "attractions.csv": 90000,
+    "restaurants.csv": 90000,
+    "transport.csv": 60,
+    "weather_fallback.csv": 72000,
+    "fx_rates_fallback.csv": 30,
+    "sample_user_queries.csv": 90000,
+    "intent_router_dataset.csv": 240000,
+    "intent_router_challenge.csv": 36000,
+    "benchmark/agent_tasks.json": 22500
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "repository": {
+    "registered_tools": 8,
+    "tool_names": [
+      "get_location_info",
+      "get_weather",
+      "convert_currency",
+      "search_hotels",
+      "search_attractions",
+      "search_restaurants",
+      "get_transport_options",
+      "calculate"
+    ],
+    "preset_scenarios": 30,
+    "bilingual_preset_surface_forms": 60,
+    "benchmark_cases": 22500,
+    "python_source_files": 36,
+    "python_source_lines": 2841,
+    "test_files": 17,
+    "test_functions": 56,
+    "documentation_markdown_files": 27,
+    "notebooks": 4,
+    "runnable_scripts": 9
+  },
+  "data": {
+    "raw_dataset_files": 10,
+    "total_raw_rows": 798150,
+    "total_raw_memory_mb": 437.202,
+    "total_exact_duplicate_rows": 0,
+    "structured_inventory_rows": 432000
+  },
+  "query_corpus": [
+    {
+      "dataset": "sample_user_queries.csv",
+      "rows": 90000,
+      "unique_queries": 90000,
+      "exact_duplicate_queries": 0,
+      "normalized_patterns": 74219,
+      "normalized_pattern_ratio": 0.824656,
+      "largest_pattern_share": 0.000744,
+      "avg_query_chars": 165.73,
+      "median_query_chars": 156.0,
+      "p95_query_chars": 297.0,
+      "avg_intents_per_query": 1.867,
+      "multi_intent_rate": 0.581644,
+      "hu_share": 0.494656
+    },
+    {
+      "dataset": "intent_router_dataset.csv",
+      "rows": 240000,
+      "unique_queries": 240000,
+      "exact_duplicate_queries": 0,
+      "normalized_patterns": 183422,
+      "normalized_pattern_ratio": 0.764258,
+      "largest_pattern_share": 0.000725,
+      "avg_query_chars": 165.78,
+      "median_query_chars": 156.0,
+      "p95_query_chars": 298.0,
+      "avg_intents_per_query": 1.869,
+      "multi_intent_rate": 0.583183,
+      "hu_share": 0.498529
+    },
+    {
+      "dataset": "intent_router_challenge.csv",
+      "rows": 36000,
+      "unique_queries": 36000,
+      "exact_duplicate_queries": 0,
+      "normalized_patterns": 20102,
+      "normalized_pattern_ratio": 0.558389,
+      "largest_pattern_share": 0.001917,
+      "avg_query_chars": 105.58,
+      "median_query_chars": 104.0,
+      "p95_query_chars": 172.0,
+      "avg_intents_per_query": 1.848,
+      "multi_intent_rate": 0.667667,
+      "hu_share": NaN
+    }
+  ],
+  "entity_inventory": [
+    {
+      "dataset": "hotels.csv",
+      "rows": 180000,
+      "unique_names": 167839,
+      "unique_name_ratio": 0.932439,
+      "duplicate_names": 12161,
+      "cities": 60,
+      "rows_per_city_min": 3000,
+      "rows_per_city_median": 3000.0,
+      "rows_per_city_max": 3000,
+      "rating_mean": 4.094,
+      "rating_p10": 3.5,
+      "rating_p50": 4.1,
+      "rating_p90": 4.6,
+      "price_p10": 134.0,
+      "price_p50": 191.0,
+      "price_p90": 248.0
+    },
+    {
+      "dataset": "restaurants.csv",
+      "rows": 90000,
+      "unique_names": 90000,
+      "unique_name_ratio": 1.0,
+      "duplicate_names": 0,
+      "cities": 60,
+      "rows_per_city_min": 1500,
+      "rows_per_city_median": 1500.0,
+      "rows_per_city_max": 1500,
+      "rating_mean": 4.05,
+      "rating_p10": 3.3,
+      "rating_p50": 4.0,
+      "rating_p90": 4.8,
+      "price_p10": 26.0,
+      "price_p50": 41.5,
+      "price_p90": 57.0
+    },
+    {
+      "dataset": "attractions.csv",
+      "rows": 90000,
+      "unique_names": 82860,
+      "unique_name_ratio": 0.920667,
+      "duplicate_names": 7140,
+      "cities": 60,
+      "rows_per_city_min": 1500,
+      "rows_per_city_median": 1500.0,
+      "rows_per_city_max": 1500,
+      "rating_mean": 4.2,
+      "rating_p10": 3.5,
+      "rating_p50": 4.2,
+      "rating_p90": 4.9,
+      "price_p10": 0.0,
+      "price_p50": 12.0,
+      "price_p90": 35.0
+    }
+  ],
+  "benchmark": {
+    "cases": 22500,
+    "avg_expected_tool_calls": 2.0,
+    "multi_tool_rate": 0.6,
+    "max_expected_tool_calls": 4,
+    "avg_query_chars": 120.49,
+    "median_query_chars": 113.0,
+    "language_counts": {
+      "hu": 11250,
+      "en": 11250
+    }
+  },
+  "intent_router": {
+    "train_rows": 192000,
+    "validation_rows": 24000,
+    "test_rows": 24000,
+    "validation_micro_f1": 0.760223321416328,
+    "validation_macro_f1": 0.7538566754181909,
+    "test_micro_f1": 0.7826436596741952,
+    "test_macro_f1": 0.7846103650635676,
+    "test_hamming_loss": 0.1313888888888889,
+    "feature_model": "word_tfidf_1_3_unicode + OVR_SGD_logistic",
+    "thresholds": {
+      "attractions": 0.2,
+      "hotel": 0.5,
+      "location": 0.35,
+      "restaurant": 0.3,
+      "transport": 0.25,
+      "weather": 0.25
+    },
+    "training_runtime": {
+      "python_major_minor": "3.13",
+      "python_version": "3.13.5",
+      "scikit_learn_version": "1.8.0",
+      "joblib_version": "1.5.3",
+      "numpy_version": "2.3.5",
+      "pandas_version": "2.2.3"
+    }
+  },
+  "data_quality": {
+    "quality_gate_pass_rate": 1.0,
+    "quality_gates": {
+      "router_normalized_patterns_ge_1500": true,
+      "sample_normalized_patterns_ge_750": true,
+      "split_pattern_overlap_le_0_02": true,
+      "hotel_name_skeleton_ratio_ge_0_10": true,
+      "restaurant_name_skeleton_ratio_ge_0_10": true,
+      "attraction_name_skeleton_ratio_ge_0_10": true
+    },
+    "split_leakage": {
+      "test__train": {
+        "shared_patterns": 0,
+        "overlap_over_smaller_split": 0.0
+      },
+      "test__validation": {
+        "shared_patterns": 0,
+        "overlap_over_smaller_split": 0.0
+      },
+      "train__validation": {
+        "shared_patterns": 0,
+        "overlap_over_smaller_split": 0.0
+      }
+    }
+  },
+  "preset_validation": {
+    "plan_execute": {
+      "runs": 60,
+      "exact_routes": 60,
+      "exact_route_rate": 1.0,
+      "successful_runs": 60,
+      "successful_run_rate": 1.0,
+      "mean_latency_ms": 3.373816666666667
+    },
+    "ml_router": {
+      "runs": 60,
+      "exact_routes": 60,
+      "exact_route_rate": 1.0,
+      "successful_runs": 60,
+      "successful_run_rate": 1.0,
+      "mean_latency_ms": 2.1627333333333336
+    },
+    "catalogue": {
+      "scenarios": 30,
+      "languages": 2,
+      "total_methodology_runs": 120
+    }
+  },
+  "evaluation": [
+    {
+      "methodology": "rule_based",
+      "tool_selection_accuracy": 0.196,
+      "tool_precision": 0.6173333333333333,
+      "tool_recall": 0.4033333333333333,
+      "tool_f1": 0.46672857142857144,
+      "argument_accuracy": 0.3658366006542477,
+      "task_success": 0.166,
+      "unnecessary_tool_call_rate": 0.020666666666666667,
+      "num_calls": 0.864,
+      "latency_ms": 4.512342403999355,
+      "p95_latency_ms": 17.655278999882285,
+      "cases": 500.0
+    },
+    {
+      "methodology": "plan_execute",
+      "tool_selection_accuracy": 0.606,
+      "tool_precision": 0.8675666666666667,
+      "tool_recall": 0.7756666666666666,
+      "tool_f1": 0.8035095238095238,
+      "argument_accuracy": 0.7401111009905128,
+      "task_success": 0.476,
+      "unnecessary_tool_call_rate": 0.016433333333333335,
+      "num_calls": 1.646,
+      "latency_ms": 9.41471013998671,
+      "p95_latency_ms": 27.466440000353032,
+      "cases": 500.0
+    },
+    {
+      "methodology": "ml_router",
+      "tool_selection_accuracy": 0.882,
+      "tool_precision": 0.9668666666666667,
+      "tool_recall": 0.9871666666666666,
+      "tool_f1": 0.9719380952380953,
+      "argument_accuracy": 0.9504875658655071,
+      "task_success": 0.68,
+      "unnecessary_tool_call_rate": 0.033133333333333334,
+      "num_calls": 2.09,
+      "latency_ms": 12.95994592999341,
+      "p95_latency_ms": 32.2505940002884,
+      "cases": 500.0
+    }
+  ]
+}

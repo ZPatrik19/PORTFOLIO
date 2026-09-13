@@ -1,0 +1,3 @@
+[console_scripts]
+travel-agent = travel_agent.cli:main
+travel-agent-eval = travel_agent.evaluation.runner:main

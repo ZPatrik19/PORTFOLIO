@@ -1,0 +1,12 @@
+digraph G {
+rankdir=LR; node[shape=box,style="rounded",fontname="Arial"];
+base[label="00_setup/04_generate_data.py\nbase deterministic data"];
+upgrade[label="00_setup/05_upgrade_data_quality.py\ndiversity + held-out surfaces"];
+raw[label="01_data/raw\n18k hotels · 9k POIs · 9k restaurants\n80k router rows · 12k challenge"];
+audit[label="Data-quality audit\nduplicates · pattern diversity · leakage"];
+train[label="Router training\nword + char TF-IDF"];
+bench[label="01_data/benchmark\n22,500 labelled tasks"];
+agent[label="Agent + ToolRegistry"];
+results[label="06_results\nmodels · audit · benchmark"];
+base->upgrade->raw; raw->audit->train; raw->agent; train->agent; bench->agent; agent->results; audit->results;
+}

@@ -1,0 +1,13 @@
+{
+  "tool_selection_accuracy": 0.196,
+  "tool_precision": 0.6173333333333333,
+  "tool_recall": 0.4033333333333333,
+  "tool_f1": 0.46672857142857144,
+  "argument_accuracy": 0.3658366006542477,
+  "task_success": 0.166,
+  "unnecessary_tool_call_rate": 0.020666666666666667,
+  "num_calls": 0.864,
+  "latency_ms": 4.512342403999355,
+  "p95_latency_ms": 17.655278999882285,
+  "cases": 500.0
+}

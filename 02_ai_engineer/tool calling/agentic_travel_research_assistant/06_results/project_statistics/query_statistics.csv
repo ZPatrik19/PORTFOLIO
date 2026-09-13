@@ -1,0 +1,4 @@
+dataset,rows,unique_queries,exact_duplicate_queries,normalized_patterns,normalized_pattern_ratio,largest_pattern_share,avg_query_chars,median_query_chars,p95_query_chars,avg_intents_per_query,multi_intent_rate,hu_share
+sample_user_queries.csv,90000,90000,0,74219,0.824656,0.000744,165.73,156.0,297.0,1.867,0.581644,0.494656
+intent_router_dataset.csv,240000,240000,0,183422,0.764258,0.000725,165.78,156.0,298.0,1.869,0.583183,0.498529
+intent_router_challenge.csv,36000,36000,0,20102,0.558389,0.001917,105.58,104.0,172.0,1.848,0.667667,

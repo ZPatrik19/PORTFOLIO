@@ -1,0 +1,23 @@
+{
+  "plan_execute": {
+    "runs": 60,
+    "exact_routes": 60,
+    "exact_route_rate": 1.0,
+    "successful_runs": 60,
+    "successful_run_rate": 1.0,
+    "mean_latency_ms": 3.373816666666667
+  },
+  "ml_router": {
+    "runs": 60,
+    "exact_routes": 60,
+    "exact_route_rate": 1.0,
+    "successful_runs": 60,
+    "successful_run_rate": 1.0,
+    "mean_latency_ms": 2.1627333333333336
+  },
+  "catalogue": {
+    "scenarios": 30,
+    "languages": 2,
+    "total_methodology_runs": 120
+  }
+}

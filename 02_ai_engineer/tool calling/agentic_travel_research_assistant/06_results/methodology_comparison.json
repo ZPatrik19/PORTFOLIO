@@ -1,0 +1,44 @@
+{
+  "benchmark_limit": 500,
+  "summaries": {
+    "rule_based": {
+      "tool_selection_accuracy": 0.196,
+      "tool_precision": 0.6173333333333333,
+      "tool_recall": 0.4033333333333333,
+      "tool_f1": 0.46672857142857144,
+      "argument_accuracy": 0.3658366006542477,
+      "task_success": 0.166,
+      "unnecessary_tool_call_rate": 0.020666666666666667,
+      "num_calls": 0.864,
+      "latency_ms": 0.7928078379900398,
+      "p95_latency_ms": 2.8304950001256657,
+      "cases": 500.0
+    },
+    "plan_execute": {
+      "tool_selection_accuracy": 0.606,
+      "tool_precision": 0.8675666666666667,
+      "tool_recall": 0.7756666666666666,
+      "tool_f1": 0.8035095238095238,
+      "argument_accuracy": 0.7427894123850006,
+      "task_success": 0.486,
+      "unnecessary_tool_call_rate": 0.016433333333333335,
+      "num_calls": 1.646,
+      "latency_ms": 0.887401784026224,
+      "p95_latency_ms": 1.8659019997357973,
+      "cases": 500.0
+    },
+    "ml_router": {
+      "tool_selection_accuracy": 0.964,
+      "tool_precision": 0.9873666666666666,
+      "tool_recall": 1.0,
+      "tool_f1": 0.9921650793650794,
+      "argument_accuracy": 0.9712922045274986,
+      "task_success": 0.788,
+      "unnecessary_tool_call_rate": 0.012633333333333333,
+      "num_calls": 2.036,
+      "latency_ms": 2.0766843520032126,
+      "p95_latency_ms": 3.4148960003221873,
+      "cases": 500.0
+    }
+  }
+}

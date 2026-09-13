@@ -1,0 +1,7 @@
+tool,expected_calls
+search_attractions,7582
+get_location_info,7552
+search_restaurants,7497
+get_weather,7471
+search_hotels,7453
+get_transport_options,7445

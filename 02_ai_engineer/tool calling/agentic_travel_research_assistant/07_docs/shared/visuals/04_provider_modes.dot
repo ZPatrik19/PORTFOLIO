@@ -1,0 +1,4 @@
+digraph G { rankdir=LR; graph [bgcolor="white",pad=0.3]; node [shape=box,style="rounded,filled",fillcolor="#f4f6f8",fontname="Arial"];
+tool[label="Weather / FX tool"]; mode[label="TRAVEL_DATA_MODE"]; local[label="local\nCSV only"]; auto[label="auto\ntry live → fallback"]; live[label="live\nprovider required"]; provider[label="HTTP provider"]; fallback[label="Repository fallback"];
+tool->mode; mode->local; mode->auto; mode->live; local->fallback; auto->provider; auto->fallback [style=dashed]; live->provider;
+}

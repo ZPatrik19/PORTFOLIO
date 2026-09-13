@@ -1,0 +1,4 @@
+digraph G { rankdir=LR; graph [bgcolor="white",pad=0.3]; node [shape=box,style="rounded,filled",fillcolor="#f4f6f8",fontname="Arial"];
+q[label="User query"]; a[label="Agent / LLM"]; r[label="ToolRegistry\nvalidate + time"]; t[label="Tool"]; d[label="Local data\n180,000 hotels\n90,000 POIs\n90,000 restaurants"]; api[label="Live APIs\nOpen-Meteo / Frankfurter"]; out[label="Structured output\n+ trace"]; final[label="Final synthesis"];
+q->a->r->t; t->d; t->api; d->out; api->out; out->a [label="function_call_output"]; a->final;
+}
