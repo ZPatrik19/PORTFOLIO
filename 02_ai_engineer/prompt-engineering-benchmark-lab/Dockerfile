@@ -9,10 +9,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN groupadd --system app && useradd --system --gid app --create-home app
+RUN groupadd --system app \
+    && useradd --system --gid app --create-home app
 
 COPY requirements.txt pyproject.toml README.md LICENSE ./
 COPY 03_src ./03_src
+
 RUN python -m pip install --upgrade pip \
     && python -m pip install -r requirements.txt \
     && python -m pip install . --no-deps
@@ -26,10 +28,19 @@ COPY 06_deployment/docker-entrypoint.sh ./06_deployment/docker-entrypoint.sh
 COPY docs ./docs
 COPY 07_outputs/reports ./07_outputs/reports
 
-RUN mkdir -p /app/07_outputs/results /app/07_outputs/logs /app/configs/prompts/custom /app/configs/prompts/playground \
+# Normalize Windows CRLF line endings and make the entrypoint executable.
+RUN sed -i 's/\r$//' /app/06_deployment/docker-entrypoint.sh \
+    && chmod 755 /app/06_deployment/docker-entrypoint.sh
+
+RUN mkdir -p \
+      /app/07_outputs/results \
+      /app/07_outputs/logs \
+      /app/configs/prompts/custom \
+      /app/configs/prompts/playground \
     && chown -R app:app /app
 
 USER app
+
 EXPOSE 8501
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
