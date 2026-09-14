@@ -1,0 +1,47 @@
+# Human-readable provider configuration.
+# Environment variables and CLI overrides take precedence.
+providers:
+  mock:
+    requires_api_key: false
+    free: true
+    default_model: "mock-prompt-sensitive-simulator-v2"
+    supports: [temperature, top_p, top_k, structured_output]
+    purpose: "Deterministic prompt-sensitivity simulation for offline demos; NOT real LLM evidence"
+
+  ollama:
+    requires_api_key: false
+    free: true
+    default_model: "llama3.2:3b"
+    host: "http://localhost:11434"
+    supports: [temperature, top_p, top_k, structured_output]
+    purpose: "Real local LLM benchmark without cloud API billing"
+
+  groq:
+    requires_api_key: true
+    api_key_env: "GROQ_API_KEY"
+    default_model: "openai/gpt-oss-20b"
+    supports: [temperature, top_p, structured_output, reasoning_effort]
+    purpose: "Fast cloud benchmark; free quota availability is account/model dependent"
+
+  gemini:
+    requires_api_key: true
+    api_key_env: "GEMINI_API_KEY"
+    default_model: "gemini-3.5-flash-lite"
+    supports: [temperature, top_p, top_k, structured_output, thinking]
+    note: "Gemini 3.x currently recommends default sampling settings; temperature/top_p/top_k overrides are retained only for explicit parameter experiments."
+    purpose: "Cloud benchmark; free-tier availability can change"
+
+  openrouter:
+    requires_api_key: true
+    api_key_env: "OPENROUTER_API_KEY"
+    free: true
+    default_model: "openrouter/free"
+    supports: [temperature, top_p, structured_output]
+    purpose: "Cloud API with a free-model router; exact backing model may vary between requests"
+
+  openai:
+    requires_api_key: true
+    api_key_env: "OPENAI_API_KEY"
+    default_model: "<set OPENAI_MODEL>"
+    supports: [temperature, top_p, structured_output, reasoning_effort]
+    purpose: "Optional provider comparison"

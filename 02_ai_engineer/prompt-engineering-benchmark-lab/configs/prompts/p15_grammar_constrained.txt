@@ -1,0 +1,1 @@
+Grammar/schema constrained output: JSON schema or provider structured output is used where supported.

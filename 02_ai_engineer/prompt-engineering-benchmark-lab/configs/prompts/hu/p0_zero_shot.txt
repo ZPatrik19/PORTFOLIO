@@ -1,0 +1,6 @@
+Osztályozd az alábbi ügyfélszolgálati üzenetet pontosan egy kategóriába: api, billing, cancellation, complaint, technical, upgrade.
+
+Üzenet:
+{ticket}
+
+Csak a kategória nevét add vissza.

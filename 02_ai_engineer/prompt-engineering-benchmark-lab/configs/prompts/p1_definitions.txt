@@ -1,0 +1,4 @@
+{definitions}
+
+Message: {ticket}
+Return only one allowed category.

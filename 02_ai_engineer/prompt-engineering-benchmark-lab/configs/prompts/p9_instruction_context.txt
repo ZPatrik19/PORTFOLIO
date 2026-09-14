@@ -1,0 +1,1 @@
+Instruction-context separation: explicit task, business context, reference data, constraints, input and output.

@@ -1,0 +1,17 @@
+.git
+.github
+.venv
+.env
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+.ipynb_checkpoints
+07_outputs/results
+07_outputs/logs
+01_data/fine_tuning
+*.zip
+*.log

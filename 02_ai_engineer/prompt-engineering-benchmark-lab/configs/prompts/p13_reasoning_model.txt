@@ -1,0 +1,1 @@
+Reasoning-model mode: provider-supported reasoning effort may be enabled; only the final label is evaluated.

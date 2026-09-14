@@ -1,0 +1,9 @@
+Osztályozd a ticket elsődleges szándékát.
+Használd a modell támogatott reasoning módját, de ne add vissza a rejtett gondolatmenetet.
+
+Döntési prioritás: cancellation > billing > api > technical > upgrade > complaint, ha a releváns elsődleges intent egyértelmű.
+
+Ticket:
+{ticket}
+
+Csak a végső címkét add vissza.

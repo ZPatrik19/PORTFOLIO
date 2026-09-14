@@ -1,0 +1,8 @@
+Osztályozd a ticket elsődleges szándékát.
+Engedélyezett címkék: api, billing, cancellation, complaint, technical, upgrade.
+
+Ticket:
+{ticket}
+
+Csak érvényes JSON-t adj vissza ebben a formában:
+{{"label": "billing"}}

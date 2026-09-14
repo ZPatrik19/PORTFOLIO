@@ -1,0 +1,16 @@
+packaging>=24.0
+pandas>=2.1
+numpy>=1.26
+scikit-learn>=1.4
+matplotlib>=3.8
+PyYAML>=6.0
+python-dotenv>=1.0
+tqdm>=4.66
+pydantic>=2.6
+datasets>=2.18
+openai>=2.0
+groq>=0.30
+google-genai>=2.3.0
+ollama>=0.4
+streamlit>=1.39
+plotly>=5.24

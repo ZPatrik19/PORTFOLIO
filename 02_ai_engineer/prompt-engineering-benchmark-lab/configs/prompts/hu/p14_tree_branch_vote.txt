@@ -1,0 +1,9 @@
+Tree-of-Thought inspirált külső ágak:
+1. Lexikális szakértő: explicit akciók és kulcsszavak.
+2. Policy szakértő: kategóriadefiníciók és prioritási szabályok.
+3. Ambiguitás szakértő: multi-intent és határesetek.
+
+Minden ág csak egy végső címkét ad. A rendszer többségi szavazással választ.
+
+Ticket:
+{ticket}

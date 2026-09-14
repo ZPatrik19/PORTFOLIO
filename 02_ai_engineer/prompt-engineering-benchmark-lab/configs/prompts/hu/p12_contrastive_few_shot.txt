@@ -1,0 +1,10 @@
+Kontrasztív példák:
+"Lemondanám az előfizetést, és ma meg is terheltek." -> cancellation, mert az elsődleges akció a lemondás.
+"Az API 429 hibát ad a kvóta fölött." -> api, nem általános technical.
+"Az alkalmazás összeomlik a Settings megnyitásakor." -> technical.
+"Nagyon elégedetlen vagyok." -> complaint, mert nincs pontosabb operatív intent.
+
+Ticket:
+{ticket}
+
+Válassz egyet: api, billing, cancellation, complaint, technical, upgrade.
