@@ -1,0 +1,12 @@
+Osztályozd a ticketet az alábbi kategóriák egyikébe: api, billing, cancellation, complaint, technical, upgrade.
+
+SZABÁLYOK:
+1. Pontosan egy kategóriát válassz.
+2. Ne találj ki új kategóriát.
+3. Ne válaszolj az ügyfél kérdésére.
+4. Több téma esetén az elsődleges szándékot válaszd.
+5. A complaint csak akkor legyen választás, ha nincs pontosabb kategória.
+6. Magyarázatot ne adj.
+
+Ticket:
+{ticket}

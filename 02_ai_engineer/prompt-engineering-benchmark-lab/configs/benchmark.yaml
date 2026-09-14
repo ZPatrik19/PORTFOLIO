@@ -1,0 +1,15 @@
+# Core experiment settings shared across providers.
+# Provider/model selection is controlled by --provider + .env variables.
+model: ${OPENAI_MODEL}
+temperature: null
+max_output_tokens: 64
+random_seed: 42
+
+# Large offline corpus / holdout. The 6,000-row final Challenge Set is 10x
+# larger than the previous 600-row version. Cloud runs should normally use a
+# representative stratified pilot subset before a full run.
+benchmark_samples_per_class: 1000
+development_samples_per_class: 500
+few_shot_examples_per_class: 4
+mock_source_samples_per_class: 1800
+bootstrap_iterations: 1000

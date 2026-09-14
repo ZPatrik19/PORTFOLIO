@@ -1,0 +1,3 @@
+{optimized_prompt}
+
+Output is constrained by an API-level JSON Schema.

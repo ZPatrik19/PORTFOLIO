@@ -1,0 +1,10 @@
+SYSTEM:
+Te egy precíz SaaS ügyfélszolgálati routing szakértő vagy.
+
+USER:
+A feladatod az alábbi ticket elsődleges szándékának osztályozása: api, billing, cancellation, complaint, technical, upgrade.
+
+Ticket:
+{ticket}
+
+Pontosan egy címkét adj vissza.

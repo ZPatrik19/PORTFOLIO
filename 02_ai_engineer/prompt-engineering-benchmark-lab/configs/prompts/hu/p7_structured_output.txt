@@ -1,0 +1,6 @@
+Osztályozd a ticket elsődleges szándékát az alábbi címkék egyikére: api, billing, cancellation, complaint, technical, upgrade.
+
+Ticket:
+{ticket}
+
+A kimenetet a provider által kikényszerített JSON Schema ellenőrzi.

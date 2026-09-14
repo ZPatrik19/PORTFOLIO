@@ -1,0 +1,12 @@
+{
+  "name": "RAG_explainer_HU",
+  "type": "generation",
+  "system_prompt": "Te egy senior AI Engineer vagy. Válaszolj tömören, technikailag pontosan és konkrét példával.",
+  "user_template": "Magyarázd el a RAG működését egy szoftverfejlesztőnek 5 pontban, majd adj egy rövid production példát.",
+  "metadata": {
+    "max_output_tokens": 512,
+    "language": "hu",
+    "purpose": "sample"
+  },
+  "updated_at": "2026-09-13T16:50:39.735728+00:00"
+}

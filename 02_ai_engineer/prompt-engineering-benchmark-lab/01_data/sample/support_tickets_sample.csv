@@ -1,0 +1,31 @@
+text,label
+How do I authenticate requests to your API?,api
+Where can I find the SDK documentation?,api
+My API endpoint returns a 401 error.,api
+Can I use the same API key in staging and production?,api
+What is the rate limit for API calls?,api
+I was charged twice for this month.,billing
+Where can I download my invoice?,billing
+I need a refund for the duplicate payment.,billing
+Why did the price on my invoice increase?,billing
+My credit card payment was declined.,billing
+Please cancel my subscription today.,cancellation
+I do not want to renew my account.,cancellation
+How can I terminate my subscription?,cancellation
+Close my paid plan at the end of this month.,cancellation
+I want to stop the service and cancel billing.,cancellation
+I am very disappointed with your customer service.,complaint
+This experience has been frustrating and unacceptable.,complaint
+Your service quality has become terrible lately.,complaint
+I want to complain about how my case was handled.,complaint
+I am unhappy and want this escalated to a manager.,complaint
+The application crashes whenever I upload a PDF.,technical
+I cannot log in because the page keeps freezing.,technical
+The dashboard shows a blank screen after the update.,technical
+The desktop app throws an unexpected error.,technical
+Notifications stopped working after the latest release.,technical
+I want to move from Basic to Pro.,upgrade
+How do I upgrade to the Enterprise plan?,upgrade
+Can you switch my subscription to the annual premium tier?,upgrade
+I need more seats and want a higher plan.,upgrade
+What is required to change from Starter to Business?,upgrade

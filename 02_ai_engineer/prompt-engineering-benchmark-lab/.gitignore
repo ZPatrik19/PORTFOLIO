@@ -1,0 +1,37 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
+
+# Runtime logs
+07_outputs/logs/*
+!07_outputs/logs/.gitkeep
+
+# Large/reproducible intermediate data
+01_data/processed/*.csv
+01_data/fine_tuning/*.jsonl
+configs/prompts/examples/few_shot_examples.json
+
+# Generated benchmark artifacts. Commit selected real-run reports intentionally.
+07_outputs/results/raw/**/*.csv
+07_outputs/results/ui_runs/**
+07_outputs/results/playground_history.jsonl
+
+# Local secrets / provider state
+*.pem
+*.key
+
+# Packaging artifacts
+*.egg-info/
+build/
+dist/

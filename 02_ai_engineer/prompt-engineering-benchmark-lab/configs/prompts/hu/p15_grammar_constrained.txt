@@ -1,0 +1,7 @@
+Osztályozd a ticketet.
+Engedélyezett címkék: api, billing, cancellation, complaint, technical, upgrade.
+
+Ticket:
+{ticket}
+
+A kimenet kizárólag egy JSON objektum legyen egyetlen "label" mezővel. A provider schema/grammar constraintet alkalmaz.

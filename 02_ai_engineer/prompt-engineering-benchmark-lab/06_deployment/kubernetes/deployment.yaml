@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prompt-benchmark
+  namespace: prompt-benchmark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prompt-benchmark
+  template:
+    metadata:
+      labels:
+        app: prompt-benchmark
+    spec:
+      containers:
+        - name: app
+          image: prompt-engineering-benchmark-lab:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8501
+              name: http
+          envFrom:
+            - configMapRef:
+                name: prompt-benchmark-config
+            - secretRef:
+                name: prompt-benchmark-secrets
+                optional: true
+          readinessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /_stcore/health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          volumeMounts:
+            - name: outputs
+              mountPath: /app/07_outputs/results
+      volumes:
+        - name: outputs
+          emptyDir: {}

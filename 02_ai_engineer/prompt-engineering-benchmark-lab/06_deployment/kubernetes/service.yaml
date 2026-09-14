@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prompt-benchmark
+  namespace: prompt-benchmark
+spec:
+  selector:
+    app: prompt-benchmark
+  ports:
+    - name: http
+      port: 8501
+      targetPort: http
+  type: ClusterIP

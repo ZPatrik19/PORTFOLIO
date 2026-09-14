@@ -1,0 +1,9 @@
+Célközönség: gépi downstream routing szolgáltatás.
+Hangnem: tömör, determinisztikus, nem társalgási.
+Formátum: pontosan egy kisbetűs címke, írásjel nélkül.
+
+Feladat: osztályozd a ticket elsődleges szándékát.
+Ticket:
+{ticket}
+
+Engedélyezett címkék: api, billing, cancellation, complaint, technical, upgrade.

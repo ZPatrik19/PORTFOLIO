@@ -1,0 +1,3 @@
+Classify this customer support message into one of: api, billing, cancellation, complaint, technical, upgrade.
+Message: {ticket}
+Return only the category.

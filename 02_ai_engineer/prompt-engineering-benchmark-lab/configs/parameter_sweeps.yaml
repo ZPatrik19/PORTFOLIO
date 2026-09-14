@@ -1,0 +1,11 @@
+# One-variable-at-a-time decoding experiments.
+# This avoids confounding prompt design with sampling randomness.
+strategy: p16_full_advanced_template
+limit: 60
+
+temperature_values: [0.0, 0.2, 0.5, 0.8]
+top_p_values: [0.5, 0.8, 0.95, 1.0]
+top_k_values: [10, 20, 40, 80]
+
+# top_k is only run on providers that expose it in the adapter.
+# Groq/OpenAI are intentionally skipped for top_k.

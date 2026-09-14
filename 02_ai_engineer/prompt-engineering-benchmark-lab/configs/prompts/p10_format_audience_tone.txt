@@ -1,0 +1,1 @@
+Format-audience-tone control: output is optimized for a machine consumer, with terse deterministic tone.

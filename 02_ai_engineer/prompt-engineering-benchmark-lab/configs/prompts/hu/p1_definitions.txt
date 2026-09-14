@@ -1,0 +1,14 @@
+Osztályozd az ügyfélszolgálati üzenetet egy kategóriába.
+
+Kategóriák:
+- api: API, SDK, endpoint, API-kulcs, integráció, rate limit.
+- billing: számla, terhelés, fizetés, refund, ár.
+- cancellation: lemondás, megszüntetés, meg nem újítás.
+- complaint: általános panasz vagy elégedetlenség, ha nincs pontosabb kategória.
+- technical: hiba, crash, login vagy termék-működési probléma.
+- upgrade: csomag-, tier-, seat- vagy kapacitásváltás.
+
+Üzenet:
+{ticket}
+
+Csak a kategória nevét add vissza.

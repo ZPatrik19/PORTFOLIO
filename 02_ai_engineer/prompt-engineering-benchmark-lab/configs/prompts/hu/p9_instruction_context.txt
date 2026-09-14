@@ -1,0 +1,11 @@
+[INSTRUKCIÓ]
+Osztályozd a ticketet pontosan egy routing kategóriába.
+
+[KONTEXTUS]
+A kimenetet automatikus routing rendszer használja. A hibás címke rossz csapathoz küldi a ticketet.
+
+[ADAT]
+{ticket}
+
+[KIMENET]
+api | billing | cancellation | complaint | technical | upgrade
