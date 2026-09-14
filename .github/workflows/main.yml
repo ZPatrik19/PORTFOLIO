@@ -1,29 +1,41 @@
-name: AI / ML Project CI
+name: Prompt Engineering Benchmark Lab CI
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches: ["main", "develop", "add-prompt-engineering-benchmark-lab"]
+    paths:
+      - "02_ai_engineer/prompt-engineering-benchmark-lab/**"
+      - ".github/workflows/main.yml"
   pull_request:
     branches: ["main", "develop"]
+    paths:
+      - "02_ai_engineer/prompt-engineering-benchmark-lab/**"
+      - ".github/workflows/main.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: prompt-benchmark-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   PYTHON_VERSION: "3.12"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   PYTHONDONTWRITEBYTECODE: "1"
+  PROJECT_DIR: "02_ai_engineer/prompt-engineering-benchmark-lab"
 
 jobs:
   quality-and-tests:
     name: Quality, dependencies & tests
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: 02_ai_engineer/prompt-engineering-benchmark-lab
 
     steps:
       - name: Checkout repository
@@ -33,150 +45,102 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+          cache-dependency-path: |
+            02_ai_engineer/prompt-engineering-benchmark-lab/requirements.txt
+            02_ai_engineer/prompt-engineering-benchmark-lab/requirements-dev.txt
+            02_ai_engineer/prompt-engineering-benchmark-lab/pyproject.toml
 
-      - name: Show environment
+      - name: Install project and CI dependencies
         run: |
-          python --version
-          pip --version
-          echo "Runner: $RUNNER_OS"
-          echo "Commit: $GITHUB_SHA"
-
-      - name: Install CI tools
-        run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
-          python -m pip install pytest pytest-cov ruff pip-audit
-
-      - name: Install project dependencies
-        shell: bash
-        run: |
-          set -e
-
-          if [ -f requirements.txt ]; then
-            echo "Installing requirements.txt"
-            python -m pip install -r requirements.txt
-
-          elif [ -f pyproject.toml ]; then
-            echo "pyproject.toml detected"
-
-            if python - <<'PY'
-          import tomllib
-          from pathlib import Path
-
-          data = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
-          raise SystemExit(0 if "project" in data else 1)
-          PY
-            then
-              echo "Installable Python project detected"
-              python -m pip install -e .
-            else
-              echo "::warning::pyproject.toml exists, but no [project] table was found. Skipping editable install."
-            fi
-
-          elif [ -f setup.py ] || [ -f setup.cfg ]; then
-            echo "Classic Python package detected"
-            python -m pip install -e .
-
+          python -m pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then
+            python -m pip install -r requirements-dev.txt
           else
-            echo "::warning::No requirements.txt, installable pyproject.toml, setup.py or setup.cfg found."
+            python -m pip install pytest pytest-cov ruff pip-audit
           fi
+          python -m pip install -e . --no-deps
 
       - name: Dependency consistency
         run: python -m pip check
 
-      - name: Project structure report
-        shell: bash
+      - name: Project structure gate
         run: |
-          {
-            echo "## Project structure"
-            echo ""
-            echo "| Item | Status |"
-            echo "|---|---|"
+          set -euo pipefail
+          required=(
+            "README.md"
+            "README_HU.md"
+            "pyproject.toml"
+            "requirements.txt"
+            "03_src/prompt_benchmark"
+            "04_tests"
+            "05_scripts/11_ui_app.py"
+            "Dockerfile"
+            ".gitignore"
+          )
 
-            for item in README.md pyproject.toml requirements.txt tests src Dockerfile Containerfile .gitignore; do
-              if [ -e "$item" ]; then
-                echo "| \`$item\` | ✅ found |"
-              else
-                echo "| \`$item\` | ⚠️ not found |"
-              fi
-            done
-          } >> "$GITHUB_STEP_SUMMARY"
-
-          [ -f README.md ] || echo "::warning::README.md is missing"
-          [ -d tests ] || echo "::warning::tests/ directory is missing"
-          [ -d src ] || echo "::warning::src/ directory is missing"
-
-      - name: Python syntax / bytecode check
-        shell: bash
-        run: |
-          set -e
-
-          targets=()
-          for path in src tests scripts app; do
-            if [ -d "$path" ]; then
-              targets+=("$path")
+          failed=0
+          for item in "${required[@]}"; do
+            if [ ! -e "$item" ]; then
+              echo "::error::Required project item is missing: $item"
+              failed=1
             fi
           done
+          exit "$failed"
 
-          if [ "${#targets[@]}" -gt 0 ]; then
-            python -m compileall -q "${targets[@]}"
-          else
-            mapfile -d '' files < <(
-              find . -maxdepth 3 -type f -name "*.py" \
-                -not -path "./.git/*" \
-                -not -path "./.venv/*" \
-                -not -path "./venv/*" \
-                -print0
-            )
+      - name: Python syntax / bytecode check
+        run: python -m compileall -q 03_src 04_tests 05_scripts
 
-            if [ "${#files[@]}" -gt 0 ]; then
-              python -m py_compile "${files[@]}"
-            else
-              echo "::warning::No Python files found."
-            fi
-          fi
-
-      - name: Critical static-analysis checks
+      - name: Critical Ruff checks
         run: |
-          ruff check . \
-            --select E9,F63,F7,F82 \
-            --output-format=github
+          set -euo pipefail
+
+          mapfile -t normal_files < <(
+            find 03_src 04_tests 05_scripts               -type f -name "*.py"               ! -name "11_ui_view_en.py"               ! -name "11_ui_view_hu.py"               -print
+          )
+
+          ruff check "${normal_files[@]}"             --select E9,F63,F7,F82             --output-format=github
+
+          # These two files receive globals via runpy.run_path(..., init_globals=...).
+          # F821 is therefore a known static-analysis false positive for them.
+          ruff check             05_scripts/11_ui_view_en.py             05_scripts/11_ui_view_hu.py             --select E9,F63,F7,F82             --ignore F821             --output-format=github
 
       - name: Full Ruff lint report
         continue-on-error: true
         run: |
-          ruff check . --output-format=github
+          mapfile -t normal_files < <(
+            find 03_src 04_tests 05_scripts               -type f -name "*.py"               ! -name "11_ui_view_en.py"               ! -name "11_ui_view_hu.py"               -print
+          )
+
+          ruff check "${normal_files[@]}" --output-format=github || true
+          ruff check             05_scripts/11_ui_view_en.py             05_scripts/11_ui_view_hu.py             --ignore F821             --output-format=github || true
 
       - name: Ruff formatting report
         continue-on-error: true
-        run: |
-          ruff format --check --diff .
+        run: ruff format --check --diff 03_src 04_tests 05_scripts
 
       - name: Validate Jupyter notebooks
-        shell: bash
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
 
           notebooks = [
-              p for p in Path(".").rglob("*.ipynb")
+              p for p in Path("02_notebooks").rglob("*.ipynb")
               if ".ipynb_checkpoints" not in p.parts
-              and ".venv" not in p.parts
-              and "venv" not in p.parts
           ]
 
           if not notebooks:
-              print("No notebooks found.")
-              raise SystemExit(0)
+              raise SystemExit("No notebooks found.")
 
           broken = []
-
           for path in notebooks:
               try:
                   data = json.loads(path.read_text(encoding="utf-8"))
                   if "cells" not in data or "nbformat" not in data:
                       raise ValueError("missing notebook fields")
-                  print(f"OK: {path}")
               except Exception as exc:
                   broken.append((path, exc))
 
@@ -188,103 +152,83 @@ jobs:
           print(f"Validated {len(notebooks)} notebook(s).")
           PY
 
-      - name: Run pytest
-        shell: bash
+      - name: Run unit tests
+        env:
+          PROMPT_BENCHMARK_ROOT: ${{ github.workspace }}/02_ai_engineer/prompt-engineering-benchmark-lab
+        run: pytest 04_tests -m unit -ra -q --maxfail=1
+
+      - name: Run integration tests
+        env:
+          PROMPT_BENCHMARK_ROOT: ${{ github.workspace }}/02_ai_engineer/prompt-engineering-benchmark-lab
+        run: pytest 04_tests -m integration -ra -q --maxfail=1
+
+      - name: Run smoke tests
+        env:
+          PROMPT_BENCHMARK_ROOT: ${{ github.workspace }}/02_ai_engineer/prompt-engineering-benchmark-lab
+        run: pytest 04_tests -m smoke -ra -q --maxfail=1
+
+      - name: Full pytest suite with coverage
+        env:
+          PROMPT_BENCHMARK_ROOT: ${{ github.workspace }}/02_ai_engineer/prompt-engineering-benchmark-lab
         run: |
           set -o pipefail
-
-          if find tests -type f \( -name "test_*.py" -o -name "*_test.py" \) -print -quit 2>/dev/null | grep -q .; then
-            if [ -d src ]; then
-              pytest tests \
-                -ra \
-                -q \
-                --maxfail=1 \
-                --cov=src \
-                --cov-report=term-missing \
-                --cov-report=xml \
-                | tee pytest.log
-            else
-              pytest tests \
-                -ra \
-                -q \
-                --maxfail=1 \
-                | tee pytest.log
-            fi
-          else
-            echo "::warning::No pytest tests detected. CI continues, but adding tests/ is recommended."
-            echo "No pytest tests detected." | tee pytest.log
-          fi
+          pytest 04_tests             -ra             -q             --maxfail=1             --cov=prompt_benchmark             --cov-report=term-missing             --cov-report=xml             | tee pytest.log
 
       - name: Dependency vulnerability audit
         continue-on-error: true
-        shell: bash
-        run: |
-          if [ -f requirements.txt ]; then
-            pip-audit -r requirements.txt
-          else
-            pip-audit
-          fi
+        run: pip-audit -r requirements.txt
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: ci-test-reports-${{ github.run_number }}
+          name: prompt-benchmark-ci-reports-${{ github.run_number }}
           path: |
-            pytest.log
-            coverage.xml
+            02_ai_engineer/prompt-engineering-benchmark-lab/pytest.log
+            02_ai_engineer/prompt-engineering-benchmark-lab/coverage.xml
           if-no-files-found: ignore
           retention-days: 14
 
   container-build:
-    name: Container build
+    name: Container build & smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: 02_ai_engineer/prompt-engineering-benchmark-lab
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Detect container definition
-        id: container
-        shell: bash
-        run: |
-          file=""
+      - name: Build container image
+        run: docker build --file Dockerfile --tag prompt-engineering-benchmark-lab:ci .
 
-          for candidate in Dockerfile Containerfile docker/Dockerfile docker/Containerfile; do
-            if [ -f "$candidate" ]; then
-              file="$candidate"
-              break
+      - name: Start container
+        run: |
+          docker run -d             --name prompt-benchmark-ci             -p 8501:8501             prompt-engineering-benchmark-lab:ci
+
+      - name: Wait for Streamlit health endpoint
+        run: |
+          set -euo pipefail
+
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8501/_stcore/health >/dev/null; then
+              echo "Container health check passed."
+              exit 0
             fi
+            sleep 2
           done
 
-          if [ -n "$file" ]; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-            echo "file=$file" >> "$GITHUB_OUTPUT"
-            echo "Container definition: $file"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::No Dockerfile/Containerfile found. Container build skipped."
-          fi
+          docker logs prompt-benchmark-ci || true
+          exit 1
 
-      - name: Build container image
-        if: steps.container.outputs.found == 'true'
-        run: |
-          docker build \
-            --file "${{ steps.container.outputs.file }}" \
-            --tag portfolio-project:ci \
-            .
-
-      - name: Container summary
+      - name: Container logs
         if: always()
-        shell: bash
-        run: |
-          {
-            echo "## Container check"
-            echo ""
-            if [ "${{ steps.container.outputs.found }}" = "true" ]; then
-              echo "✅ Container definition detected and build step executed."
-            else
-              echo "⚠️ No container definition detected; build was skipped."
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+        run: docker logs prompt-benchmark-ci || true
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f prompt-benchmark-ci || true
