@@ -1,0 +1,290 @@
+name: AI / ML Project CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  quality-and-tests:
+    name: Quality, dependencies & tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Show environment
+        run: |
+          python --version
+          pip --version
+          echo "Runner: $RUNNER_OS"
+          echo "Commit: $GITHUB_SHA"
+
+      - name: Install CI tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pytest pytest-cov ruff pip-audit
+
+      - name: Install project dependencies
+        shell: bash
+        run: |
+          set -e
+
+          if [ -f requirements.txt ]; then
+            echo "Installing requirements.txt"
+            python -m pip install -r requirements.txt
+
+          elif [ -f pyproject.toml ]; then
+            echo "pyproject.toml detected"
+
+            if python - <<'PY'
+          import tomllib
+          from pathlib import Path
+
+          data = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+          raise SystemExit(0 if "project" in data else 1)
+          PY
+            then
+              echo "Installable Python project detected"
+              python -m pip install -e .
+            else
+              echo "::warning::pyproject.toml exists, but no [project] table was found. Skipping editable install."
+            fi
+
+          elif [ -f setup.py ] || [ -f setup.cfg ]; then
+            echo "Classic Python package detected"
+            python -m pip install -e .
+
+          else
+            echo "::warning::No requirements.txt, installable pyproject.toml, setup.py or setup.cfg found."
+          fi
+
+      - name: Dependency consistency
+        run: python -m pip check
+
+      - name: Project structure report
+        shell: bash
+        run: |
+          {
+            echo "## Project structure"
+            echo ""
+            echo "| Item | Status |"
+            echo "|---|---|"
+
+            for item in README.md pyproject.toml requirements.txt tests src Dockerfile Containerfile .gitignore; do
+              if [ -e "$item" ]; then
+                echo "| \`$item\` | ✅ found |"
+              else
+                echo "| \`$item\` | ⚠️ not found |"
+              fi
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          [ -f README.md ] || echo "::warning::README.md is missing"
+          [ -d tests ] || echo "::warning::tests/ directory is missing"
+          [ -d src ] || echo "::warning::src/ directory is missing"
+
+      - name: Python syntax / bytecode check
+        shell: bash
+        run: |
+          set -e
+
+          targets=()
+          for path in src tests scripts app; do
+            if [ -d "$path" ]; then
+              targets+=("$path")
+            fi
+          done
+
+          if [ "${#targets[@]}" -gt 0 ]; then
+            python -m compileall -q "${targets[@]}"
+          else
+            mapfile -d '' files < <(
+              find . -maxdepth 3 -type f -name "*.py" \
+                -not -path "./.git/*" \
+                -not -path "./.venv/*" \
+                -not -path "./venv/*" \
+                -print0
+            )
+
+            if [ "${#files[@]}" -gt 0 ]; then
+              python -m py_compile "${files[@]}"
+            else
+              echo "::warning::No Python files found."
+            fi
+          fi
+
+      - name: Critical static-analysis checks
+        run: |
+          ruff check . \
+            --select E9,F63,F7,F82 \
+            --output-format=github
+
+      - name: Full Ruff lint report
+        continue-on-error: true
+        run: |
+          ruff check . --output-format=github
+
+      - name: Ruff formatting report
+        continue-on-error: true
+        run: |
+          ruff format --check --diff .
+
+      - name: Validate Jupyter notebooks
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          notebooks = [
+              p for p in Path(".").rglob("*.ipynb")
+              if ".ipynb_checkpoints" not in p.parts
+              and ".venv" not in p.parts
+              and "venv" not in p.parts
+          ]
+
+          if not notebooks:
+              print("No notebooks found.")
+              raise SystemExit(0)
+
+          broken = []
+
+          for path in notebooks:
+              try:
+                  data = json.loads(path.read_text(encoding="utf-8"))
+                  if "cells" not in data or "nbformat" not in data:
+                      raise ValueError("missing notebook fields")
+                  print(f"OK: {path}")
+              except Exception as exc:
+                  broken.append((path, exc))
+
+          if broken:
+              for path, exc in broken:
+                  print(f"ERROR: {path}: {exc}")
+              raise SystemExit(1)
+
+          print(f"Validated {len(notebooks)} notebook(s).")
+          PY
+
+      - name: Run pytest
+        shell: bash
+        run: |
+          set -o pipefail
+
+          if find tests -type f \( -name "test_*.py" -o -name "*_test.py" \) -print -quit 2>/dev/null | grep -q .; then
+            if [ -d src ]; then
+              pytest tests \
+                -ra \
+                -q \
+                --maxfail=1 \
+                --cov=src \
+                --cov-report=term-missing \
+                --cov-report=xml \
+                | tee pytest.log
+            else
+              pytest tests \
+                -ra \
+                -q \
+                --maxfail=1 \
+                | tee pytest.log
+            fi
+          else
+            echo "::warning::No pytest tests detected. CI continues, but adding tests/ is recommended."
+            echo "No pytest tests detected." | tee pytest.log
+          fi
+
+      - name: Dependency vulnerability audit
+        continue-on-error: true
+        shell: bash
+        run: |
+          if [ -f requirements.txt ]; then
+            pip-audit -r requirements.txt
+          else
+            pip-audit
+          fi
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-test-reports-${{ github.run_number }}
+          path: |
+            pytest.log
+            coverage.xml
+          if-no-files-found: ignore
+          retention-days: 14
+
+  container-build:
+    name: Container build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Detect container definition
+        id: container
+        shell: bash
+        run: |
+          file=""
+
+          for candidate in Dockerfile Containerfile docker/Dockerfile docker/Containerfile; do
+            if [ -f "$candidate" ]; then
+              file="$candidate"
+              break
+            fi
+          done
+
+          if [ -n "$file" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "file=$file" >> "$GITHUB_OUTPUT"
+            echo "Container definition: $file"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::No Dockerfile/Containerfile found. Container build skipped."
+          fi
+
+      - name: Build container image
+        if: steps.container.outputs.found == 'true'
+        run: |
+          docker build \
+            --file "${{ steps.container.outputs.file }}" \
+            --tag portfolio-project:ci \
+            .
+
+      - name: Container summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Container check"
+            echo ""
+            if [ "${{ steps.container.outputs.found }}" = "true" ]; then
+              echo "✅ Container definition detected and build step executed."
+            else
+              echo "⚠️ No container definition detected; build was skipped."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
