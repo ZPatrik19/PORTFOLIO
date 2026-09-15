@@ -1,0 +1,12 @@
+{
+  "documents_total": 37,
+  "documents_failed": 0,
+  "parsing_failure_rate": 0.0,
+  "chunks_total": 1091,
+  "too_short_chunks": 149,
+  "too_long_chunks": 0,
+  "duplicate_chunks": 49,
+  "avg_chunk_chars": 457.18240146654443,
+  "min_chunk_chars": 1,
+  "max_chunk_chars": 1700
+}

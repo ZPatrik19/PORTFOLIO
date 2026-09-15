@@ -1,0 +1,5 @@
+deployment:
+  namespace: tki
+  api_replicas: 1
+  ui_replicas: 1
+  pvc_size: 5Gi

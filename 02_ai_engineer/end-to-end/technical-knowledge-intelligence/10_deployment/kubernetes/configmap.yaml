@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tki-config
+  namespace: tki
+data:
+  TKIP_ENV: "production"

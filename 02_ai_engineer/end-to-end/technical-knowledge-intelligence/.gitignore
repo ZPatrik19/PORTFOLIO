@@ -1,0 +1,51 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+01_data/user_library/*
+!01_data/user_library/.gitkeep
+01_data/indexes/qdrant/
+01_data/indexes/*.npy
+01_data/indexes/*.npz
+01_data/processed/*.sqlite3
+08_logs/*.jsonl
+.streamlit/secrets.toml
+
+# Downloaded/local corpus snapshots: keep only the committed synthetic demo set
+01_data/reference_docs/*
+!01_data/reference_docs/README.md
+!01_data/reference_docs/demo_*.md
+
+# Rebuildable local caches and indexes
+01_data/interim/parse_cache/
+01_data/indexes/embedding_cache/
+01_data/indexes/numpy/
+01_data/indexes/indexed_state.json
+01_data/indexes/qdrant_fallback.txt
+
+# Local test/runtime caches
+.pytest_cache/
+**/__pycache__/
+
+# Experimental chunking-specific embedding indexes (large, rebuildable)
+01_data/indexes/variants/
+
+# Query-time cited-page/figure previews (private/rebuildable)
+01_data/interim/source_previews/
+
+# Local experiment traces may contain prompts, responses and private document metadata
+07_results/experiments/
+
+# Build / packaging / static-analysis artifacts
+build/
+dist/
+*.egg-info/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Notebook execution checkpoints
+.ipynb_checkpoints/

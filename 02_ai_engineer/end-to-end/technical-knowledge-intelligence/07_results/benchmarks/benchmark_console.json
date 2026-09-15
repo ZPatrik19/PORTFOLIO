@@ -1,0 +1,42 @@
+[
+  {
+    "Method":"BM25",
+    "Recall@5":0.8592592593,
+    "MRR":0.7155379189,
+    "Hit Rate":1.0,
+    "P50 latency":0.0580069999,
+    "P95 latency":0.084928
+  },
+  {
+    "Method":"Hybrid + Reranking",
+    "Recall@5":0.8407407407,
+    "MRR":0.7274514991,
+    "Hit Rate":0.9444444444,
+    "P50 latency":0.175513,
+    "P95 latency":0.232589
+  },
+  {
+    "Method":"Hybrid + Reranking + Query Rewrite",
+    "Recall@5":0.8407407407,
+    "MRR":0.7274514991,
+    "Hit Rate":0.9444444444,
+    "P50 latency":0.172589,
+    "P95 latency":0.2261689999
+  },
+  {
+    "Method":"Hybrid",
+    "Recall@5":0.8407407407,
+    "MRR":0.6258465608,
+    "Hit Rate":1.0,
+    "P50 latency":0.0957440001,
+    "P95 latency":0.139199
+  },
+  {
+    "Method":"Dense",
+    "Recall@5":0.7407407407,
+    "MRR":0.535542328,
+    "Hit Rate":1.0,
+    "P50 latency":0.0221429999,
+    "P95 latency":0.044326
+  }
+]

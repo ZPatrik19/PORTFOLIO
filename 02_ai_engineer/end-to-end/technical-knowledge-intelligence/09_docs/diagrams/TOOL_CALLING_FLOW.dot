@@ -1,0 +1,1 @@
+digraph G { rankdir=LR; Gemini->ToolRegistry->ToolValidator->ToolExecutor->ToolResult->Gemini; }

@@ -1,0 +1,83 @@
+digraph TKI {
+rankdir=TB;
+graph [bgcolor="transparent", pad="0.18", nodesep="0.30", ranksep="0.58", splines="spline", compound=true, newrank=true];
+node [shape=box, style="rounded,filled", fontname="Arial", fontsize=9.5, margin="0.13,0.07", width=1.65, height=.56];
+edge [color="#7C8793", penwidth=1.25, arrowsize=.65];
+sources [label="01  Data sources", fillcolor="#FFF7D6", color="#C99B00", penwidth=1.25];
+discovery [label="02  File discovery & versioning", fillcolor="#FFF7D6", color="#C99B00", penwidth=1.25];
+parse [label="03  Document parsing", fillcolor="#FFF7D6", color="#C99B00", penwidth=1.25];
+quality [label="04  Data quality validation", fillcolor="#FFF7D6", color="#C99B00", penwidth=1.25];
+chunk [label="05  Chunking strategy", fillcolor="#FFF7D6", color="#C99B00", penwidth=1.25];
+embed [label="06  Embedding generation", fillcolor="#FFF7D6", color="#C99B00", penwidth=1.25];
+multi_index [label="07  Chunk-specific indexes", fillcolor="#FFF7D6", color="#C99B00", penwidth=1.25];
+ui [label="08  Streamlit research workspace", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+fastapi [label="09  FastAPI service boundary", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+trace [label="10  Request + trace middleware", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+guard [label="11  Input guardrails", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+promptclean [label="12  Language / clarity check", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+promptopt [label="13  Advanced prompt optimizer", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+understand [label="14  Query understanding", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+strategy [label="15  Chunk-index selection", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+fusion [label="17  Hybrid fusion", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+rerank [label="18  Reranking", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+context [label="19  Context engineering", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+tools [label="20  Tool calling", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+gemini [label="21  Gemini grounded synthesis", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+citation [label="22  Citation & output validation", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+response [label="23  Answer + inspectors", fillcolor="#EAF4FF", color="#3B82C4", penwidth=1.25];
+telemetry [label="24  Tracing & AI monitoring", fillcolor="#EAF8F0", color="#35A46F", penwidth=1.25];
+feedback [label="25  Feedback & failure analysis", fillcolor="#EAF8F0", color="#35A46F", penwidth=1.25];
+eval [label="26  Offline evaluation", fillcolor="#EAF8F0", color="#35A46F", penwidth=1.25];
+improve [label="27  Improve & re-evaluate", fillcolor="#EAF8F0", color="#35A46F", penwidth=1.25];
+sources -> discovery;
+discovery -> parse;
+parse -> quality;
+quality -> chunk;
+chunk_compact [label="5A  Compact / Recursive\n~700 chars · fast", fillcolor="#FFF2B7", color="#C99B00", shape=box, style="rounded,filled,dashed"];
+chunk_balanced [label="5B  Balanced / Structure-aware\n~1000 chars · recommended", fillcolor="#FFF2B7", color="#C99B00", shape=box, style="rounded,filled,dashed"];
+chunk_semantic [label="5C  Semantic / Deep\n~1500 chars · conceptual", fillcolor="#FFF2B7", color="#C99B00", shape=box, style="rounded,filled,dashed"];
+chunk -> chunk_compact; chunk -> chunk_balanced; chunk -> chunk_semantic;
+chunk_compact -> embed;
+chunk_balanced -> embed;
+chunk_semantic -> embed;
+embed -> multi_index;
+ui -> fastapi;
+fastapi -> trace;
+trace -> guard;
+guard -> promptclean;
+promptclean -> promptopt;
+promptopt -> understand;
+understand -> strategy;
+bm25 [label="16A  BM25\nlexical", fillcolor="#DDF0FF", color="#3B82C4", shape=box, style="rounded,filled"];
+dense [label="16B  Dense\nsemantic", fillcolor="#DDF0FF", color="#3B82C4", shape=box, style="rounded,filled"];
+strategy -> bm25; strategy -> dense;
+bm25 -> fusion;
+dense -> fusion;
+fusion -> rerank;
+rerank -> context;
+context -> tools;
+tool_library [label="20A Search library", fillcolor="#F2ECFF", color="#8066D9", fontsize=8.5];
+tool_code [label="20B Code examples", fillcolor="#F2ECFF", color="#8066D9", fontsize=8.5];
+tool_meta [label="20C Metadata / page", fillcolor="#F2ECFF", color="#8066D9", fontsize=8.5];
+tool_compare [label="20D Compare / learning", fillcolor="#F2ECFF", color="#8066D9", fontsize=8.5];
+tools -> tool_library [style=dashed]; tools -> tool_code [style=dashed]; tools -> tool_meta [style=dashed]; tools -> tool_compare [style=dashed];
+tool_library -> gemini [style=dashed];
+tool_code -> gemini [style=dashed];
+tool_meta -> gemini [style=dashed];
+tool_compare -> gemini [style=dashed];
+tools -> gemini;
+gemini -> citation;
+citation -> response;
+multi_index -> ui [color="#A3A3A3", label="ready corpus", fontsize=8];
+response -> telemetry;
+telemetry -> feedback;
+feedback -> eval;
+eval -> improve;
+improve -> chunk [style=dashed, color="#35A46F", label="new version", fontsize=8];
+{ rank=same; sources; discovery; parse; quality; chunk; }
+{ rank=same; chunk_compact; chunk_balanced; chunk_semantic; embed; multi_index; }
+{ rank=same; ui; fastapi; trace; guard; promptclean; promptopt; understand; strategy; }
+{ rank=same; bm25; dense; fusion; rerank; context; tools; gemini; }
+{ rank=same; tool_library; tool_code; tool_meta; tool_compare; }
+{ rank=same; citation; response; telemetry; feedback; eval; improve; }
+}

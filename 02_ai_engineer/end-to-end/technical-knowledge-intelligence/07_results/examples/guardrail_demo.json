@@ -1,0 +1,14 @@
+{
+  "answer": "Request attempts to reproduce excessive source content. Ask for a summary, explanation, or a short cited excerpt instead.",
+  "confidence": 1.0,
+  "sources": [],
+  "used_documents": [],
+  "used_tools": [],
+  "answer_type": "guardrail",
+  "insufficient_evidence": true,
+  "follow_up_questions": [],
+  "request_id": "deaab46658794680a0d24e9ddc2da537",
+  "trace_id": "e7bd4c7c728f42089e1676189765da7a",
+  "latency_ms": null,
+  "diagnostics": {}
+}

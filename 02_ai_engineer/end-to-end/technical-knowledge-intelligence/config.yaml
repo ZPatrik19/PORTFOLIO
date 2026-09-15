@@ -1,0 +1,96 @@
+project:
+  name: Technical Knowledge Intelligence Platform
+  language_default: en
+  public_demo_mode: true
+
+gemini:
+  enabled: true
+  model: gemini-3.8-flash
+  temperature: 1.0
+  max_output_tokens: 1800
+  timeout_seconds: 60
+  max_retries: 3
+  pricing_usd_per_1m_input_tokens: 0.75
+  pricing_usd_per_1m_output_tokens: 3.75
+
+embedding:
+  provider: auto  # auto | gemini | local_hashing
+  model: gemini-embedding-2
+  output_dimensionality: 768
+  batch_size: 16
+  timeout_seconds: 60
+  max_retries: 3
+
+multimodal:
+  enabled: true
+  analyze_figures_during_ingestion: false
+
+parsing:
+  extract_images: false
+  detect_tables: false
+
+chunking:
+  strategy: structure_aware  # fixed | recursive | structure_aware | semantic
+  chunk_size: 900
+  overlap: 120
+  min_chunk_chars: 120
+  max_chunk_chars: 5000
+
+retrieval:
+  bm25_k: 20
+  dense_k: 20
+  hybrid_k: 24
+  final_k: 8
+  fusion: rrf
+  rrf_k: 60
+  query_rewrite: false
+
+reranking:
+  enabled: true
+  provider: lexical_cross_signal  # lightweight default; optional cross_encoder
+  top_n: 8
+  cross_encoder_model: cross-encoder/ms-marco-MiniLM-L-6-v2
+
+vector_store:
+  # NumPy is the default local backend because the private-book corpus contains
+  # well over 20k chunks. Set provider=qdrant and qdrant_mode=server when a
+  # normal Qdrant service (for example Docker) is running.
+  provider: numpy  # numpy | qdrant
+  collection_name: technical_knowledge
+  qdrant_mode: server  # server | local
+  qdrant_url: http://127.0.0.1:6333
+  qdrant_path: 01_data/indexes/qdrant
+  max_local_points: 20000
+  upsert_batch_size: 128
+  fallback_to_numpy: true
+
+context:
+  max_chars: 16000
+  max_chunks_per_document: 3
+  require_document_diversity: true
+  deduplicate_threshold: 0.92
+
+agent:
+  max_tool_calls: 4
+  max_agent_steps: 5
+
+guardrails:
+  max_quote_chars_per_source: 900
+  reject_full_document_exfiltration: true
+
+monitoring:
+  enabled: true
+  json_log_path: 08_logs/requests.jsonl
+  sqlite_path: 01_data/processed/telemetry.sqlite3
+  drift_window: 50
+
+paths:
+  user_library: 01_data/user_library
+  reference_docs: 01_data/reference_docs
+  raw: 01_data/raw
+  interim: 01_data/interim
+  processed: 01_data/processed
+  indexes: 01_data/indexes
+  evaluation: 01_data/evaluation
+  feedback: 01_data/feedback
+  results: 07_results

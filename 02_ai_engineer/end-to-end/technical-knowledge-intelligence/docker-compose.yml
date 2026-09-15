@@ -1,0 +1,46 @@
+services:
+  api:
+    build: .
+    image: technical-knowledge-intelligence:local
+    command: ["python", "-m", "uvicorn", "04_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./01_data/user_library:/app/01_data/user_library:ro
+      - ./01_data/indexes:/app/01_data/indexes
+      - ./01_data/interim:/app/01_data/interim
+      - ./01_data/processed:/app/01_data/processed
+      - ./08_logs:/app/08_logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  ui:
+    image: technical-knowledge-intelligence:local
+    command: ["python", "-m", "streamlit", "run", "05_ui/app.py", "--server.address", "0.0.0.0", "--server.port", "8501"]
+    ports:
+      - "8501:8501"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./01_data/user_library:/app/01_data/user_library:ro
+      - ./01_data/indexes:/app/01_data/indexes
+      - ./01_data/interim:/app/01_data/interim
+      - ./01_data/processed:/app/01_data/processed
+      - ./08_logs:/app/08_logs
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

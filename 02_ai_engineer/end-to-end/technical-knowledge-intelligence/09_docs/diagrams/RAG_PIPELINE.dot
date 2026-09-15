@@ -1,0 +1,1 @@
+digraph G { rankdir=LR; Query->{BM25 Dense}; BM25->RRF; Dense->RRF; RRF->Reranker->Context->LLM->GroundedAnswer; }

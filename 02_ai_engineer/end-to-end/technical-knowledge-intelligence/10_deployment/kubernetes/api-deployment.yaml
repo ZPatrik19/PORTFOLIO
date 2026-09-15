@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tki-api
+  namespace: tki
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: tki-api}
+  template:
+    metadata:
+      labels: {app: tki-api}
+    spec:
+      containers:
+        - name: api
+          image: technical-knowledge-intelligence:latest
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "uvicorn", "04_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+          ports: [{containerPort: 8000}]
+          envFrom:
+            - configMapRef: {name: tki-config}
+            - secretRef: {name: tki-secrets, optional: true}
+          volumeMounts:
+            - {name: data, mountPath: /app/01_data}
+          readinessProbe:
+            httpGet: {path: /ready, port: 8000}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: 8000}
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests: {cpu: "250m", memory: "512Mi"}
+            limits: {cpu: "1", memory: "2Gi"}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: tki-data}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tki-api
+  namespace: tki
+spec:
+  selector: {app: tki-api}
+  ports:
+    - {name: http, port: 8000, targetPort: 8000}

@@ -1,0 +1,29 @@
+{
+  "answer": "A rendelkezésre álló dokumentumok alapján ezt nem tudom megbízhatóan megválaszolni.",
+  "confidence": 0.1,
+  "sources": [],
+  "used_documents": [],
+  "used_tools": [],
+  "answer_type": "factual",
+  "insufficient_evidence": true,
+  "follow_up_questions": [],
+  "request_id": "16caeb9c1c134ec98455b244329c5ca0",
+  "trace_id": "32fb81eac227428f861db8d0965eac43",
+  "latency_ms": 5.15490699996235,
+  "diagnostics": {
+    "intent": "FACTUAL",
+    "language": "hu",
+    "retrieval_ms": 0.3701660000388074,
+    "gemini_ms": 0.03176799998527713,
+    "citation_validation": {
+      "valid": true,
+      "errors": []
+    },
+    "retrieved": 8,
+    "gemini_available": false,
+    "input_tokens": null,
+    "output_tokens": null,
+    "total_tokens": null,
+    "estimated_cost_usd": null
+  }
+}
