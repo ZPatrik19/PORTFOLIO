@@ -1,15 +1,32 @@
-# ML & AI Engineering Portfolio
+ML & AI Engineering Portfolio
 
-Engineering-focused portfolio covering Machine Learning, AI Engineering, Data Science, MLOps/DevOps and Data Engineering projects.
+Engineering-focused portfolio covering Machine Learning and AI Engineering, with future projects in Data Science, MLOps and Data Engineering.
 
-## Structure
+Portfolio
+Machine Learning Engineering
 
-- `01_ml_engineer/` — Machine Learning Engineering projects
-- `02_ai_engineer/` — AI / LLM Engineering projects
-- `03_data_scientist/` — Data Science projects
-- `04_mlops_devops/` — MLOps and DevOps projects
-- `05_data_engineering/` — Data Engineering projects
+01_ml_engineer/
 
-### Current project
+Projects focused on classical ML, deep learning and reinforcement learning.
 
-- `01_ml_engineer/reinforcement_learning/smart_battery_energy_management/` — Smart Battery Energy Management: Reinforcement Learning Decision System
+AI Engineering
+
+02_ai_engineer/
+
+Projects focused on LLM applications, prompt engineering, tool calling, RAG and end-to-end AI systems.
+
+Currently Building
+
+🚧 LLM Fine-Tuning & Evaluation
+
+Fine-tuning, LoRA/QLoRA, model evaluation and baseline comparison.
+
+Roadmap
+✅ Machine Learning Engineering
+✅ AI Engineering
+🚧 LLM Fine-Tuning
+📋 Data Science
+📋 MLOps / DevOps
+📋 Data Engineering
+
+This portfolio is continuously expanded with production-oriented ML and AI Engineering projects.
