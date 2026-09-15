@@ -1,0 +1,812 @@
+name: Technical Knowledge Intelligence CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "add-*"
+    paths:
+      - "02_ai_engineer/end-to-end/technical-knowledge-intelligence/**"
+      - ".github/workflows/technical-knowledge-intelligence.yml"
+
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "02_ai_engineer/end-to-end/technical-knowledge-intelligence/**"
+      - ".github/workflows/technical-knowledge-intelligence.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tki-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  PROJECT_DIR: "02_ai_engineer/end-to-end/technical-knowledge-intelligence"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUNBUFFERED: "1"
+
+
+# ============================================================
+# 1. CODE QUALITY + TESTS
+# ============================================================
+
+jobs:
+
+  quality-and-tests:
+    name: Quality, tests & release audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: 02_ai_engineer/end-to-end/technical-knowledge-intelligence
+
+    steps:
+
+      # ------------------------------------------------------
+      # CHECKOUT
+      # ------------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # ------------------------------------------------------
+      # PYTHON
+      # ------------------------------------------------------
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: |
+            02_ai_engineer/end-to-end/technical-knowledge-intelligence/pyproject.toml
+            02_ai_engineer/end-to-end/technical-knowledge-intelligence/requirements.txt
+
+
+      # ------------------------------------------------------
+      # DEPENDENCIES
+      # ------------------------------------------------------
+
+      - name: Install project and CI dependencies
+        run: |
+          set -euo pipefail
+
+          python -m pip install --upgrade pip setuptools wheel
+
+          python -m pip install \
+            -e '.[dev]' \
+            --no-build-isolation
+
+
+      - name: Dependency consistency
+        run: python -m pip check
+
+
+      # ------------------------------------------------------
+      # PROJECT STRUCTURE
+      # ------------------------------------------------------
+
+      - name: Project structure gate
+        run: |
+          set -euo pipefail
+
+          required=(
+            "README.md"
+            "CHANGELOG.md"
+            "FINAL_VALIDATION_REPORT.md"
+            "pyproject.toml"
+            "requirements.txt"
+            ".gitignore"
+            ".env.example"
+            "Dockerfile"
+            "docker-compose.yml"
+            "config.yaml"
+            "run_project.bat"
+            "run_project.sh"
+            "03_pipeline/tkip"
+            "04_api/main.py"
+            "05_ui/app.py"
+            "05_scripts/release_audit.py"
+            "06_tests"
+            "09_docs"
+            "10_deployment/kubernetes"
+          )
+
+          failed=0
+
+          echo "Checking required project files..."
+
+          for item in "${required[@]}"; do
+            if [ -e "$item" ]; then
+              echo "OK: $item"
+            else
+              echo "::error::Required project item is missing: $item"
+              failed=1
+            fi
+          done
+
+          exit "$failed"
+
+
+      # ------------------------------------------------------
+      # SECRET / PRIVATE FILE GUARD
+      # ------------------------------------------------------
+
+      - name: Check tracked private and secret files
+        working-directory: .
+        run: |
+          python - <<'PY'
+          import subprocess
+
+          prefix = "02_ai_engineer/end-to-end/technical-knowledge-intelligence/"
+
+          tracked = subprocess.check_output(
+              ["git", "ls-files"],
+              text=True
+          ).splitlines()
+
+          tracked = [
+              path[len(prefix):]
+              for path in tracked
+              if path.startswith(prefix)
+          ]
+
+          bad = []
+
+          for path in tracked:
+
+              if path == ".env":
+                  bad.append(path)
+
+              if path == ".streamlit/secrets.toml":
+                  bad.append(path)
+
+              if path.startswith(".venv/"):
+                  bad.append(path)
+
+              if "__pycache__/" in path:
+                  bad.append(path)
+
+              if path.endswith(".key"):
+                  bad.append(path)
+
+              if path.endswith(".pem"):
+                  bad.append(path)
+
+              if path.startswith("01_data/user_library/"):
+                  if path != "01_data/user_library/.gitkeep":
+                      bad.append(path)
+
+              if path.startswith("01_data/interim/parse_cache/"):
+                  bad.append(path)
+
+              if path.startswith("01_data/indexes/embedding_cache/"):
+                  bad.append(path)
+
+              if path.startswith("01_data/indexes/numpy/"):
+                  bad.append(path)
+
+              if path.startswith("01_data/indexes/variants/"):
+                  bad.append(path)
+
+              if path.endswith(".sqlite3"):
+                  bad.append(path)
+
+          if bad:
+              print("Forbidden/private files are tracked:")
+              for item in bad:
+                  print(f"  - {item}")
+              raise SystemExit(1)
+
+          print("Private file guard passed.")
+          PY
+
+
+      # ------------------------------------------------------
+      # PYTHON SYNTAX
+      # ------------------------------------------------------
+
+      - name: Python syntax check
+        run: |
+          python -m compileall -q \
+            00_setup \
+            03_pipeline \
+            04_api \
+            05_scripts \
+            05_ui \
+            06_tests
+
+
+      # ------------------------------------------------------
+      # RUFF
+      # ------------------------------------------------------
+
+      - name: Ruff lint
+        run: |
+          python -m ruff check \
+            00_setup \
+            03_pipeline \
+            04_api \
+            05_scripts \
+            05_ui \
+            06_tests \
+            --output-format=github
+
+
+      - name: Ruff formatting report
+        continue-on-error: true
+        run: |
+          python -m ruff format \
+            --check \
+            --diff \
+            00_setup \
+            03_pipeline \
+            04_api \
+            05_scripts \
+            05_ui \
+            06_tests
+
+
+      # ------------------------------------------------------
+      # TYPE CHECK
+      # ------------------------------------------------------
+
+      - name: MyPy static type check
+        run: |
+          python -m mypy 03_pipeline/tkip
+
+
+      # ------------------------------------------------------
+      # NOTEBOOK VALIDATION
+      # ------------------------------------------------------
+
+      - name: Validate Jupyter notebooks
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          notebooks = sorted(
+              path
+              for path in Path("02_notebooks").rglob("*.ipynb")
+              if ".ipynb_checkpoints" not in path.parts
+          )
+
+          if not notebooks:
+              raise SystemExit("No Jupyter notebooks found.")
+
+          broken = []
+
+          for path in notebooks:
+              try:
+                  data = json.loads(
+                      path.read_text(encoding="utf-8")
+                  )
+
+                  if "cells" not in data:
+                      raise ValueError("missing 'cells'")
+
+                  if "nbformat" not in data:
+                      raise ValueError("missing 'nbformat'")
+
+              except Exception as exc:
+                  broken.append((path, exc))
+
+          if broken:
+              for path, exc in broken:
+                  print(f"ERROR: {path}: {exc}")
+              raise SystemExit(1)
+
+          print(
+              f"Validated {len(notebooks)} notebook(s)."
+          )
+          PY
+
+
+      # ------------------------------------------------------
+      # UNIT TESTS
+      # ------------------------------------------------------
+
+      - name: Unit tests
+        run: |
+          python -m pytest \
+            06_tests/unit \
+            -ra \
+            -q \
+            --maxfail=1
+
+
+      # ------------------------------------------------------
+      # INTEGRATION TESTS
+      # ------------------------------------------------------
+
+      - name: Integration tests
+        run: |
+          python -m pytest \
+            06_tests/integration \
+            -ra \
+            -q \
+            --maxfail=1
+
+
+      # ------------------------------------------------------
+      # RETRIEVAL / AI EVALUATION TESTS
+      # ------------------------------------------------------
+
+      - name: Evaluation tests
+        run: |
+          python -m pytest \
+            06_tests/evaluation \
+            -ra \
+            -q \
+            --maxfail=1
+
+
+      # ------------------------------------------------------
+      # REGRESSION TESTS
+      # ------------------------------------------------------
+
+      - name: Regression tests
+        run: |
+          python -m pytest \
+            06_tests/regression \
+            -ra \
+            -q \
+            --maxfail=1
+
+
+      # ------------------------------------------------------
+      # ROBUSTNESS / PROMPT INJECTION
+      # ------------------------------------------------------
+
+      - name: Robustness tests
+        run: |
+          python -m pytest \
+            06_tests/robustness \
+            -ra \
+            -q \
+            --maxfail=1
+
+
+      # ------------------------------------------------------
+      # SMOKE TESTS
+      # ------------------------------------------------------
+
+      - name: Application smoke tests
+        run: |
+          python -m pytest \
+            06_tests/smoke \
+            -ra \
+            -q \
+            --maxfail=1
+
+
+      # ------------------------------------------------------
+      # PERFORMANCE
+      #
+      # Advisory because shared GitHub runners can fluctuate.
+      # ------------------------------------------------------
+
+      - name: Performance guardrails
+        continue-on-error: true
+        run: |
+          python -m pytest \
+            06_tests/performance \
+            -ra \
+            -q
+
+
+      # ------------------------------------------------------
+      # COMPLETE OFFLINE TEST SUITE + COVERAGE
+      #
+      # live_gemini explicitly excluded:
+      # no API key and no Gemini quota consumed in CI.
+      # ------------------------------------------------------
+
+      - name: Full offline test suite with coverage
+        run: |
+          set -o pipefail
+
+          python -m pytest \
+            06_tests \
+            -m "not live_gemini" \
+            -ra \
+            -q \
+            --maxfail=1 \
+            --cov=tkip \
+            --cov-branch \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-report=json:coverage.json \
+            | tee pytest.log
+
+
+      # ------------------------------------------------------
+      # RELEASE AUDIT
+      # ------------------------------------------------------
+
+      - name: Release audit
+        run: |
+          python 05_scripts/release_audit.py
+
+
+      # ------------------------------------------------------
+      # TEST ARTIFACTS
+      # ------------------------------------------------------
+
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tki-test-reports-${{ github.run_number }}
+          path: |
+            02_ai_engineer/end-to-end/technical-knowledge-intelligence/pytest.log
+            02_ai_engineer/end-to-end/technical-knowledge-intelligence/coverage.xml
+            02_ai_engineer/end-to-end/technical-knowledge-intelligence/coverage.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+
+
+  # ============================================================
+  # 2. REAL APPLICATION SMOKE TEST
+  # ============================================================
+
+  application-runtime:
+    name: API & Streamlit runtime smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: 02_ai_engineer/end-to-end/technical-knowledge-intelligence
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: |
+            02_ai_engineer/end-to-end/technical-knowledge-intelligence/pyproject.toml
+            02_ai_engineer/end-to-end/technical-knowledge-intelligence/requirements.txt
+
+
+      - name: Install runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . --no-build-isolation
+
+
+      # ------------------------------------------------------
+      # API STARTUP
+      # ------------------------------------------------------
+
+      - name: Start FastAPI
+        run: |
+          python -m uvicorn 04_api.main:app \
+            --host 127.0.0.1 \
+            --port 8000 \
+            > api.log 2>&1 &
+
+          echo $! > api.pid
+
+
+      - name: Wait for FastAPI health endpoint
+        run: |
+          set -euo pipefail
+
+          for attempt in {1..45}; do
+
+            if curl \
+              --fail \
+              --silent \
+              http://127.0.0.1:8000/health \
+              > /dev/null; then
+
+              echo "FastAPI health check passed."
+              exit 0
+
+            fi
+
+            echo "Waiting for FastAPI... attempt ${attempt}/45"
+            sleep 2
+
+          done
+
+          echo "::error::FastAPI failed to become healthy."
+
+          cat api.log || true
+
+          exit 1
+
+
+      - name: FastAPI readiness check
+        run: |
+          curl \
+            --fail \
+            --silent \
+            http://127.0.0.1:8000/ready
+
+
+      # ------------------------------------------------------
+      # STREAMLIT STARTUP
+      # ------------------------------------------------------
+
+      - name: Start Streamlit UI
+        run: |
+          python -m streamlit run 05_ui/app.py \
+            --server.headless=true \
+            --server.address=127.0.0.1 \
+            --server.port=8501 \
+            > streamlit.log 2>&1 &
+
+          echo $! > streamlit.pid
+
+
+      - name: Wait for Streamlit
+        run: |
+          set -euo pipefail
+
+          for attempt in {1..45}; do
+
+            if curl \
+              --fail \
+              --silent \
+              http://127.0.0.1:8501/_stcore/health \
+              > /dev/null; then
+
+              echo "Streamlit health check passed."
+              exit 0
+
+            fi
+
+            echo "Waiting for Streamlit... attempt ${attempt}/45"
+            sleep 2
+
+          done
+
+          echo "::error::Streamlit failed to become healthy."
+
+          cat streamlit.log || true
+
+          exit 1
+
+
+      # ------------------------------------------------------
+      # LOG CHECK
+      # ------------------------------------------------------
+
+      - name: Check runtime logs for critical errors
+        run: |
+          set -euo pipefail
+
+          sleep 3
+
+          if grep -E \
+            "Traceback|ModuleNotFoundError|ImportError|KeyError:|StreamlitAPIException" \
+            api.log streamlit.log; then
+
+            echo "::error::Critical runtime error detected."
+            exit 1
+
+          fi
+
+          echo "No critical runtime errors detected."
+
+
+      # ------------------------------------------------------
+      # LOG OUTPUT
+      # ------------------------------------------------------
+
+      - name: Show API logs
+        if: always()
+        run: |
+          cat api.log || true
+
+
+      - name: Show Streamlit logs
+        if: always()
+        run: |
+          cat streamlit.log || true
+
+
+      # ------------------------------------------------------
+      # CLEANUP
+      # ------------------------------------------------------
+
+      - name: Stop runtime services
+        if: always()
+        run: |
+          if [ -f streamlit.pid ]; then
+            kill "$(cat streamlit.pid)" || true
+          fi
+
+          if [ -f api.pid ]; then
+            kill "$(cat api.pid)" || true
+          fi
+
+
+
+  # ============================================================
+  # 3. DEPENDENCY / SECURITY AUDIT
+  # ============================================================
+
+  security:
+    name: Dependency & security audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: 02_ai_engineer/end-to-end/technical-knowledge-intelligence
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e . --no-build-isolation
+
+
+      - name: Install security tools
+        run: |
+          python -m pip install pip-audit bandit
+
+
+      # Advisory rather than blocking the portfolio build.
+      - name: Dependency vulnerability audit
+        continue-on-error: true
+        run: |
+          pip-audit
+
+
+      - name: Bandit source security scan
+        continue-on-error: true
+        run: |
+          bandit \
+            -r \
+            03_pipeline \
+            04_api \
+            05_ui \
+            -q
+
+
+
+  # ============================================================
+  # 4. DOCKER BUILD + REAL CONTAINER HEALTH TEST
+  # ============================================================
+
+  container-build:
+    name: Docker build & container smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: 02_ai_engineer/end-to-end/technical-knowledge-intelligence
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # ------------------------------------------------------
+      # BUILD
+      # ------------------------------------------------------
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --file Dockerfile \
+            --tag technical-knowledge-intelligence:ci \
+            .
+
+
+      # ------------------------------------------------------
+      # RUN
+      # ------------------------------------------------------
+
+      - name: Start container
+        run: |
+          docker run \
+            -d \
+            --name tki-ci \
+            -p 8000:8000 \
+            technical-knowledge-intelligence:ci
+
+
+      # ------------------------------------------------------
+      # HEALTH
+      # ------------------------------------------------------
+
+      - name: Wait for container health endpoint
+        run: |
+          set -euo pipefail
+
+          for attempt in {1..45}; do
+
+            if curl \
+              --fail \
+              --silent \
+              http://127.0.0.1:8000/health \
+              > /dev/null; then
+
+              echo "Docker container health check passed."
+              exit 0
+
+            fi
+
+            echo "Waiting for container... attempt ${attempt}/45"
+
+            sleep 2
+
+          done
+
+          echo "::error::Docker container did not become healthy."
+
+          docker logs tki-ci || true
+
+          exit 1
+
+
+      # ------------------------------------------------------
+      # DOCKER HEALTH STATUS
+      # ------------------------------------------------------
+
+      - name: Inspect Docker health
+        run: |
+          docker inspect \
+            --format='{{json .State.Health}}' \
+            tki-ci || true
+
+
+      # ------------------------------------------------------
+      # LOGS
+      # ------------------------------------------------------
+
+      - name: Container logs
+        if: always()
+        run: |
+          docker logs tki-ci || true
+
+
+      # ------------------------------------------------------
+      # CLEANUP
+      # ------------------------------------------------------
+
+      - name: Stop container
+        if: always()
+        run: |
+          docker rm -f tki-ci || true
