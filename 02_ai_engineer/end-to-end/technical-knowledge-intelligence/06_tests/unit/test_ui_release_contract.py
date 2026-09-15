@@ -53,16 +53,17 @@ def test_question_bank_is_substantially_expanded_and_bilingual() -> None:
     assert len(questions["hu"]) == len(questions["en"])
 
 
-def test_lightweight_demo_corpus_contains_many_documents_without_user_library_files() -> None:
+def test_lightweight_demo_corpus_contains_many_documents_without_tracked_user_library_files() -> (
+    None
+):
     reference_docs = list((PROJECT_ROOT / "01_data" / "reference_docs").glob("demo_*.md"))
-    user_docs = [
-        p
-        for p in (PROJECT_ROOT / "01_data" / "user_library").glob("*")
-        if p.is_file() and p.name != ".gitkeep"
-    ]
 
     assert len(reference_docs) >= 30
-    assert user_docs == []
+
+    gitignore = (PROJECT_ROOT / ".gitignore").read_text(encoding="utf-8")
+
+    assert "01_data/user_library/*" in gitignore
+    assert "!01_data/user_library/.gitkeep" in gitignore
 
 
 def test_launcher_restarts_stale_tki_ports_by_default() -> None:

@@ -89,10 +89,16 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
                             output_dimensionality=self.dimension,
                         ),
                     )
-                    rows.extend([embedding.values for embedding in response.embeddings])
+                    embeddings = response.embeddings or []
+                    for embedding in embeddings:
+                        if embedding.values is None:
+                            raise RuntimeError(
+                                "Gemini returned an embedding without vector values."
+                            )
+                        rows.append([float(value) for value in embedding.values])
                     last_error = None
                     break
-                except Exception as exc:  # provider SDK exposes several runtime error classes
+                except Exception as exc:
                     last_error = exc
                     delay_seconds = min(8, 2**attempt)
                     LOGGER.warning(

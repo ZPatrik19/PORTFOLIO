@@ -82,8 +82,6 @@ class BM25Index:
         chapter = chunk.chapter or ""
         section = chunk.section or ""
         keywords = " ".join(chunk.keywords or [])
-        # A bounded title prior makes exact book/topic matches visible without a
-        # separate search engine while leaving the body text dominant overall.
         lexical_text = f"{title} {title} {title} {chapter} {section} {keywords} {chunk.text}"
         return tokenize(lexical_text)
 
@@ -173,7 +171,11 @@ def reciprocal_rank_fusion(
         fused_scores[chunk.chunk_id] += 1 / (k + rank)
         chunks_by_id[chunk.chunk_id] = chunk
 
-    ordered_ids = sorted(fused_scores, key=fused_scores.get, reverse=True)[:limit]
+    ordered_ids = sorted(
+        fused_scores,
+        key=lambda chunk_id: fused_scores[chunk_id],
+        reverse=True,
+    )[:limit]
     return [
         SearchHit(
             chunk=chunks_by_id[chunk_id],
@@ -227,5 +229,4 @@ def _matches_filters(chunk: Chunk, filters: dict[str, object] | None) -> bool:
     )
 
 
-# Backward-compatible internal alias.
 _query_tokens = query_tokens

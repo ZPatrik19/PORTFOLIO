@@ -74,7 +74,7 @@ class IndexService:
                         chunking_config["overlap"],
                     )
                 )
-            except Exception as exc:  # document-level fault isolation is intentional
+            except Exception as exc:
                 LOGGER.exception("Document ingestion failed: %s", document.path)
                 failures.append({"document_id": document.document_id, "error": str(exc)})
 
@@ -205,7 +205,8 @@ class IndexService:
 
     def _align_embedder_with_index(self, metadata: dict[str, Any], vectors: np.ndarray) -> None:
         built_provider = metadata.get("provider_class")
-        dimension = int(metadata.get("output_dimensionality", vectors.shape[1]))
+        raw_dimension = metadata.get("output_dimensionality")
+        dimension = int(raw_dimension) if raw_dimension is not None else int(vectors.shape[1])
         if built_provider == "LocalHashingEmbeddingProvider" and not isinstance(
             self.embedder, LocalHashingEmbeddingProvider
         ):

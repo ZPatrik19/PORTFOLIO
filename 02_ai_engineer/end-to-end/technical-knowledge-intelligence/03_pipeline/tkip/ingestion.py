@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from .config import load_config, resolve_path
 from .logging_config import get_logger
@@ -42,7 +42,9 @@ def build_manifest(config: dict[str, Any] | None = None) -> list[DocumentRecord]
     records: list[DocumentRecord] = []
     for path in discover_files([user_root, reference_root]):
         relative_path = path.relative_to(project_root)
-        source_type = "private" if user_root in path.parents else "public"
+        source_type: Literal["private", "public", "demo"] = (
+            "private" if user_root in path.parents else "public"
+        )
         record = DocumentRecord(
             document_id=stable_id(str(relative_path).lower(), prefix="doc"),
             filename=path.name,
