@@ -1,4 +1,5 @@
 """FastAPI smoke tests that avoid loading the full private corpus."""
+
 from __future__ import annotations
 
 import importlib.util

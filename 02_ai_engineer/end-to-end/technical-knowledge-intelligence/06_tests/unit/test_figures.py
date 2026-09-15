@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
-
 from test_support.factories import make_chunk
 from tkip.figures import save_basic_figures
 

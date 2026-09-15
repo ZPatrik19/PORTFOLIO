@@ -10,8 +10,8 @@ from .config import resolve_path
 from .logging_config import get_logger
 from .models import Chunk
 
-
 LOGGER = get_logger(__name__)
+
 
 class NumpyVectorStore:
     """Portable vector index used by the default local portfolio runtime.

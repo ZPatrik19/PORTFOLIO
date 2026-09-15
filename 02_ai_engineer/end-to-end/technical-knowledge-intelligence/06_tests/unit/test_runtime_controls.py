@@ -1,8 +1,8 @@
 """Unit tests for request-time chunking and offline prompt composition."""
+
 from __future__ import annotations
 
 import pytest
-
 from test_support.factories import make_chunk, make_search_hit
 from tkip.config import load_config
 from tkip.gemini_service import GeminiService
@@ -13,8 +13,7 @@ pytestmark = pytest.mark.unit
 
 def test_runtime_rechunking_splits_context_without_changing_document_identity() -> None:
     source_text = (
-        "Sentence one about RAG. Sentence two about retrieval. "
-        "Sentence three about citations. "
+        "Sentence one about RAG. Sentence two about retrieval. Sentence three about citations. "
     ) * 10
     original_chunk = make_chunk(chunk_id="original", text=source_text, document_id="doc-1")
     original_hit = make_search_hit(original_chunk)
@@ -38,7 +37,10 @@ def test_prompt_composition_is_available_without_live_gemini_api() -> None:
 
     system_prompt, final_prompt = service._compose_prompt(
         "Mi az a RAG?",
-        {"prompt": "USER INTENT: CONCEPTUAL\nRETRIEVED SOURCES:\n[SOURCE]demo[/SOURCE]", "selected_hits": []},
+        {
+            "prompt": "USER INTENT: CONCEPTUAL\nRETRIEVED SOURCES:\n[SOURCE]demo[/SOURCE]",
+            "selected_hits": [],
+        },
         [],
         "CONCEPTUAL",
         "teacher",

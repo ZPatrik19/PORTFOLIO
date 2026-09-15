@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import tomllib
 from pathlib import Path
+
+import tomllib
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
@@ -65,8 +66,6 @@ def test_first_run_wrappers_run_setup_then_application() -> None:
     assert "pip install" not in linux_setup
 
 
-
-
 def test_daily_run_starts_only_the_streamlit_ui() -> None:
     windows = (PROJECT_ROOT / "run_project.bat").read_text(encoding="utf-8")
     linux = (PROJECT_ROOT / "run_project.sh").read_text(encoding="utf-8")
@@ -77,11 +76,12 @@ def test_daily_run_starts_only_the_streamlit_ui() -> None:
     assert '"--server.headless"' in launcher
     assert '"true"' in launcher
 
+
 def test_daily_run_uses_python_service_launcher() -> None:
     windows_runner = (PROJECT_ROOT / "run_project.bat").read_text(encoding="utf-8")
     linux_runner = (PROJECT_ROOT / "run_project.sh").read_text(encoding="utf-8")
 
-    assert '05_scripts\\launch_app.py' in windows_runner
+    assert "05_scripts\\launch_app.py" in windows_runner
     assert "05_scripts/launch_app.py" in linux_runner
     launcher = (PROJECT_ROOT / "05_scripts" / "launch_app.py").read_text(encoding="utf-8")
     assert "subprocess.Popen" in launcher
@@ -114,12 +114,16 @@ def test_normal_setup_installs_runtime_only_and_dev_tools_are_lazy() -> None:
     windows = (PROJECT_ROOT / "run_project.bat").read_text(encoding="utf-8")
     linux = (PROJECT_ROOT / "run_project.sh").read_text(encoding="utf-8")
 
-    assert 'pip install -e . --no-build-isolation' in windows
+    assert "pip install -e . --no-build-isolation" in windows
     assert 'pip install -e ".[dev]" --no-build-isolation' in windows
     assert "pip install -e . --no-build-isolation" in linux
     assert "pip install -e '.[dev]' --no-build-isolation" in linux
-    assert windows.index('pip install -e . --no-build-isolation') < windows.index(':ensure_dev_environment')
-    assert linux.index("pip install -e . --no-build-isolation") < linux.index('ensure_dev_environment()')
+    assert windows.index("pip install -e . --no-build-isolation") < windows.index(
+        ":ensure_dev_environment"
+    )
+    assert linux.index("pip install -e . --no-build-isolation") < linux.index(
+        "ensure_dev_environment()"
+    )
 
 
 def test_pytest_imports_tkip_from_current_repository_source() -> None:

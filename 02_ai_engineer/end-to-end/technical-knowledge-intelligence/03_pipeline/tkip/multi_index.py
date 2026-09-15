@@ -28,11 +28,19 @@ INDEX_STRATEGIES = ("fixed", "recursive", "structure_aware", "semantic")
 
 
 def _provider_metadata(embedder, cfg, vectors: np.ndarray) -> dict:
-    effective_model = "local_hashing_blake2b" if isinstance(embedder, LocalHashingEmbeddingProvider) else str(cfg["embedding"].get("model", "unknown"))
+    effective_model = (
+        "local_hashing_blake2b"
+        if isinstance(embedder, LocalHashingEmbeddingProvider)
+        else str(cfg["embedding"].get("model", "unknown"))
+    )
     return {
         "provider_class": type(embedder).__name__,
         "model": effective_model,
-        "output_dimensionality": int(vectors.shape[1] if vectors.ndim == 2 and vectors.size else cfg["embedding"].get("output_dimensionality", 768)),
+        "output_dimensionality": int(
+            vectors.shape[1]
+            if vectors.ndim == 2 and vectors.size
+            else cfg["embedding"].get("output_dimensionality", 768)
+        ),
     }
 
 
@@ -49,7 +57,13 @@ class MultiIndexManager:
         self.root.mkdir(parents=True, exist_ok=True)
 
     def available(self) -> list[dict]:
-        rows = [{"name": "primary", "ready": self._primary_ready(), "strategy": self.cfg["chunking"].get("strategy", "structure_aware")}]
+        rows = [
+            {
+                "name": "primary",
+                "ready": self._primary_ready(),
+                "strategy": self.cfg["chunking"].get("strategy", "structure_aware"),
+            }
+        ]
         for strategy in INDEX_STRATEGIES:
             base = self.root / strategy
             meta = {}
@@ -59,21 +73,29 @@ class MultiIndexManager:
                 except (OSError, json.JSONDecodeError) as exc:
                     LOGGER.warning("Ignoring invalid index metadata for %s: %s", strategy, exc)
                     meta = {}
-            native_ready = (base / "numpy" / "vectors.npy").exists() and (base / "numpy" / "chunks.json").exists()
-            primary_alias = strategy == self.cfg["chunking"].get("strategy") and self._primary_ready() and not native_ready
-            rows.append({
-                "name": strategy,
-                "ready": native_ready or primary_alias,
-                "strategy": strategy,
-                "alias_of": "primary" if primary_alias else None,
-                "chunks": meta.get("chunks"),
-                "documents": meta.get("documents"),
-                "chunk_size": meta.get("chunk_size"),
-                "overlap": meta.get("overlap"),
-                "provider_class": meta.get("provider_class"),
-                "model": meta.get("model"),
-                "built_at": meta.get("built_at"),
-            })
+            native_ready = (base / "numpy" / "vectors.npy").exists() and (
+                base / "numpy" / "chunks.json"
+            ).exists()
+            primary_alias = (
+                strategy == self.cfg["chunking"].get("strategy")
+                and self._primary_ready()
+                and not native_ready
+            )
+            rows.append(
+                {
+                    "name": strategy,
+                    "ready": native_ready or primary_alias,
+                    "strategy": strategy,
+                    "alias_of": "primary" if primary_alias else None,
+                    "chunks": meta.get("chunks"),
+                    "documents": meta.get("documents"),
+                    "chunk_size": meta.get("chunk_size"),
+                    "overlap": meta.get("overlap"),
+                    "provider_class": meta.get("provider_class"),
+                    "model": meta.get("model"),
+                    "built_at": meta.get("built_at"),
+                }
+            )
         return rows
 
     def _primary_ready(self) -> bool:
@@ -87,7 +109,11 @@ class MultiIndexManager:
             if name not in INDEX_STRATEGIES:
                 raise ValueError(f"Unknown index variant: {name}")
             candidate = self.root / name
-            if not (candidate / "numpy" / "vectors.npy").exists() and name == self.cfg["chunking"].get("strategy") and self._primary_ready():
+            if (
+                not (candidate / "numpy" / "vectors.npy").exists()
+                and name == self.cfg["chunking"].get("strategy")
+                and self._primary_ready()
+            ):
                 base = resolve_path(self.cfg["paths"]["indexes"])
             else:
                 base = candidate
@@ -100,11 +126,22 @@ class MultiIndexManager:
             embedder = LocalHashingEmbeddingProvider(dim)
         elif embedder is None:
             embedder = create_embedding_provider(self.cfg)
-        if built_provider == "GeminiEmbeddingProvider" and not isinstance(embedder, GeminiEmbeddingProvider):
-            raise RuntimeError("This variant was built with Gemini embeddings. Configure a Gemini embedding provider or rebuild it locally.")
+        if built_provider == "GeminiEmbeddingProvider" and not isinstance(
+            embedder, GeminiEmbeddingProvider
+        ):
+            raise RuntimeError(
+                "This variant was built with Gemini embeddings. Configure a Gemini embedding provider or rebuild it locally."
+            )
         return chunks, vectors, HybridRetriever(chunks, vectors, embedder, self.cfg), meta
 
-    def build(self, strategies: Iterable[str], *, chunk_size: int | None = None, overlap: int | None = None, force: bool = False) -> list[dict]:
+    def build(
+        self,
+        strategies: Iterable[str],
+        *,
+        chunk_size: int | None = None,
+        overlap: int | None = None,
+        force: bool = False,
+    ) -> list[dict]:
         strategies = [s for s in dict.fromkeys(strategies) if s in INDEX_STRATEGIES]
         if not strategies:
             return []
@@ -132,7 +169,11 @@ class MultiIndexManager:
             base = self.root / strategy
             if force and base.exists():
                 shutil.rmtree(base)
-            if not force and (base / "numpy" / "vectors.npy").exists() and (base / "numpy" / "chunks.json").exists():
+            if (
+                not force
+                and (base / "numpy" / "vectors.npy").exists()
+                and (base / "numpy" / "chunks.json").exists()
+            ):
                 _, _, _, meta = self.load(strategy, embedder)
                 results.append({"strategy": strategy, "status": "reused", **meta})
                 continue
@@ -144,7 +185,14 @@ class MultiIndexManager:
                     continue
                 chunks.extend(chunk_document(doc, blocks, strategy, size, ov))
 
-            provider_meta = _provider_metadata(embedder, self.cfg, np.empty((0, int(self.cfg["embedding"].get("output_dimensionality", 768))), dtype=np.float32))
+            provider_meta = _provider_metadata(
+                embedder,
+                self.cfg,
+                np.empty(
+                    (0, int(self.cfg["embedding"].get("output_dimensionality", 768))),
+                    dtype=np.float32,
+                ),
+            )
             cache_name = f"variant_{strategy}_{provider_meta['provider_class']}_{provider_meta['model']}_{provider_meta['output_dimensionality']}"
             ecache = EmbeddingCache(self.root / "embedding_cache", cache_name)
             cached = ecache.load()
@@ -153,7 +201,11 @@ class MultiIndexManager:
                 new_vecs = embedder.embed_documents([c.text for c in missing])
                 cached.update({c.chunk_id: v for c, v in zip(missing, new_vecs, strict=False)})
                 ecache.save(cached)
-            vectors = np.vstack([cached[c.chunk_id] for c in chunks]) if chunks else np.empty((0, provider_meta["output_dimensionality"]), dtype=np.float32)
+            vectors = (
+                np.vstack([cached[c.chunk_id] for c in chunks])
+                if chunks
+                else np.empty((0, provider_meta["output_dimensionality"]), dtype=np.float32)
+            )
             NumpyVectorStore(base / "numpy").build(chunks, vectors)
             meta = {
                 **_provider_metadata(embedder, self.cfg, vectors),
@@ -169,6 +221,8 @@ class MultiIndexManager:
                 "build_seconds": round(time.perf_counter() - started, 3),
             }
             base.mkdir(parents=True, exist_ok=True)
-            (base / "index_metadata.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+            (base / "index_metadata.json").write_text(
+                json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
             results.append({"strategy": strategy, "status": "built", **meta})
         return results

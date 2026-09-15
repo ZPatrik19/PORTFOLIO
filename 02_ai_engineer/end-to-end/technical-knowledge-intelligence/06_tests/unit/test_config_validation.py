@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from tkip.config import ConfigurationError, _discover_project_root, load_config, resolve_path
 
 

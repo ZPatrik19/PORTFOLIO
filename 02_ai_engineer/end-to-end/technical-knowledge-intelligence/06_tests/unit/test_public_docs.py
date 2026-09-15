@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import requests
-
 from tkip import public_docs
 
 

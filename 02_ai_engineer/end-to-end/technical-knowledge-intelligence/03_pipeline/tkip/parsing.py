@@ -214,17 +214,12 @@ def _parse_pdf_text_block(
         return None
 
     text = "\n".join(
-        "".join(span.get("text", "") for span in line.get("spans", [])).strip()
-        for line in lines
+        "".join(span.get("text", "") for span in line.get("spans", [])).strip() for line in lines
     ).strip()
     if not text:
         return None
 
-    span_sizes = [
-        float(span.get("size", 10))
-        for line in lines
-        for span in line.get("spans", [])
-    ]
+    span_sizes = [float(span.get("size", 10)) for line in lines for span in line.get("spans", [])]
     average_size = sum(span_sizes) / len(span_sizes) if span_sizes else median_font_size
     block_type = classify_text_block(text, average_size, median_font_size)
 
@@ -288,9 +283,7 @@ def _extract_pdf_tables(
     for table in getattr(found, "tables", []) or []:
         data = table.extract()
         table_text = "\n".join(
-            " | ".join("" if value is None else str(value) for value in row)
-            for row in data
-            if row
+            " | ".join("" if value is None else str(value) for value in row) for row in data if row
         ).strip()
         if not table_text:
             continue

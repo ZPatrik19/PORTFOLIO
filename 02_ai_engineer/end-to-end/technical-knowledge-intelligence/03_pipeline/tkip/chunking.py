@@ -23,19 +23,28 @@ SUPPORTED_FRAMEWORKS = (
     "pandas",
 )
 STOPWORDS = {
-    "the", "and", "for", "with", "that", "this", "from", "into",
-    "egy", "hogy", "ami", "az", "és", "vagy", "van",
+    "the",
+    "and",
+    "for",
+    "with",
+    "that",
+    "this",
+    "from",
+    "into",
+    "egy",
+    "hogy",
+    "ami",
+    "az",
+    "és",
+    "vagy",
+    "van",
 }
 
 
 def extract_keywords(text: str, limit: int = DEFAULT_KEYWORD_COUNT) -> list[str]:
     """Return deterministic high-frequency keywords for metadata and semantic heuristics."""
 
-    candidates = [
-        token
-        for token in tokenize(text)
-        if len(token) > 3 and token not in STOPWORDS
-    ]
+    candidates = [token for token in tokenize(text) if len(token) > 3 and token not in STOPWORDS]
     return [word for word, _ in Counter(candidates).most_common(limit)]
 
 
@@ -201,7 +210,9 @@ def semantic_chunks(
         similarity = _jaccard_similarity(current_terms, previous_terms) if previous_terms else 1.0
         current_length = sum(len(item.text) for item in group)
 
-        if group and (similarity < SEMANTIC_BOUNDARY_THRESHOLD or current_length + len(block.text) > size):
+        if group and (
+            similarity < SEMANTIC_BOUNDARY_THRESHOLD or current_length + len(block.text) > size
+        ):
             chunks.append(
                 make_chunk(
                     document,

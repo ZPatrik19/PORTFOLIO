@@ -19,7 +19,6 @@ def estimate_gemini_cost_usd(
     if input_price is None or output_price is None:
         return None
 
-    return (
-        (input_tokens / 1_000_000) * float(input_price)
-        + (output_tokens / 1_000_000) * float(output_price)
+    return (input_tokens / 1_000_000) * float(input_price) + (output_tokens / 1_000_000) * float(
+        output_price
     )

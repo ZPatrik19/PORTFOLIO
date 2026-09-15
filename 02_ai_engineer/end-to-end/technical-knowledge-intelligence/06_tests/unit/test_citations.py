@@ -1,8 +1,8 @@
 """Unit tests for citation validation."""
+
 from __future__ import annotations
 
 import pytest
-
 from test_support.factories import make_chunk, make_citation, make_search_hit
 from tkip.citations import validate_citations
 

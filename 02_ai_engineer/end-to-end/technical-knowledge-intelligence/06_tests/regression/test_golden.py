@@ -1,8 +1,8 @@
 """Golden regression tests for stable deterministic behaviors."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.query_understanding import classify_intent
 
 pytestmark = pytest.mark.regression

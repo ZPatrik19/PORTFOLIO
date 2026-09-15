@@ -3,10 +3,10 @@
 These tests do not ask whether an AI answer *sounds* good. They validate the
 mathematical evaluation functions against hand-calculable examples.
 """
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.evaluation import _ndcg, retrieval_metrics, tool_call_metrics
 
 pytestmark = pytest.mark.evaluation

@@ -85,7 +85,9 @@ class IndexService:
             encoding="utf-8",
         )
 
-        quality_summary, per_document, chunk_frame = build_quality_report(documents, chunks, failures)
+        quality_summary, per_document, chunk_frame = build_quality_report(
+            documents, chunks, failures
+        )
         (processed_dir / "quality_summary.json").write_text(
             json.dumps(quality_summary, indent=2), encoding="utf-8"
         )
@@ -160,7 +162,10 @@ class IndexService:
         if missing_chunks:
             new_vectors = self.embedder.embed_documents([chunk.text for chunk in missing_chunks])
             cached_vectors.update(
-                {chunk.chunk_id: vector for chunk, vector in zip(missing_chunks, new_vectors, strict=False)}
+                {
+                    chunk.chunk_id: vector
+                    for chunk, vector in zip(missing_chunks, new_vectors, strict=False)
+                }
             )
             cache.save(cached_vectors)
 

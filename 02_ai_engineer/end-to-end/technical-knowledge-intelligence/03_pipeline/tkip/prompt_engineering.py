@@ -185,23 +185,108 @@ PROFILES: dict[str, dict[str, str]] = {
 
 
 PROFILE_HU: dict[str, dict[str, str]] = {
-    "none": {"label": "Nincs optimalizálás", "category": "Kontroll", "purpose": "A javított kérdés változtatás nélküli használata.", "template": "{question}"},
-    "rag_grounded": {"label": "01 · Forrásalapú RAG — ajánlott", "category": "Forrásalapúság", "purpose": "Bizonyítékalapú, jól hivatkozott, koherens válasz.", "template": "CÉL\nVálaszold meg a kérdést az indexelt technikai könyvtár alapján, koherens szakértői magyarázatként.\n\nKÉRDÉS\n{question}\n\nGROUNDING SZABÁLYOK\nA dokumentumspecifikus állításokat a visszakeresett bizonyítékokra alapozd. Ne másolj nyers darabokat vagy töredékes szöveget. A fontos állításokat hivatkozd, elégtelen bizonyíték esetén jelezd a bizonytalanságot.\n\nKIMENET\nKözvetlen válasz → működés/mechanizmus → bizonyítékalapú részletek → gyakorlati következtetés → források és korlátok."},
-    "concise_expert": {"label": "02 · Tömör szakértő", "category": "Hatékonyság", "purpose": "Rövid, tapasztalt szakértői szintű, technikailag pontos válasz.", "template": "Dolgozz tömör, tapasztalt technikai szakértőként. Kérdés: {question}\nVálaszolj közvetlenül 4–7 fókuszált bekezdésben vagy kompakt strukturált listában. Tartsd meg a technikai pontosságot, hivatkozd a forrásalapú állításokat, és zárd egy gyakorlati következtetéssel."},
-    "technical_deep_dive": {"label": "03 · Technikai mélyelemzés", "category": "Mélység", "purpose": "Részletes mérnöki vizsgálat kompromisszumokkal és hibamódokkal.", "template": "Vizsgáld meg mélyen ezt a technikai kérdést: {question}\nAhol releváns, térj ki az intuícióra, formális működésre/matematikára, architektúrára, implementációra, hibamódokra, kompromisszumokra és éles üzemi következményekre. A könyvspecifikus állításokat alapozd bizonyítékra, a következtetéseket jelöld külön."},
-    "structured_tutor": {"label": "04 · Strukturált oktató", "category": "Tanulás", "purpose": "Fokozatos tanítás intuíciótól implementációig.", "template": "Tanítsd meg ezt a témát a technikai könyvtár alapján: {question}\nSorrend: előfeltételek → intuíció → alapfogalmak → matematika → minimális példa → implementáció → gyakori hibák → önellenőrző kérdések → releváns források. Ne találj ki könyvhivatkozást."},
-    "socratic_tutor": {"label": "05 · Szókratészi oktató", "category": "Tanulás", "purpose": "Magyarázat diagnosztikus kérdésekkel és önellenőrzéssel.", "template": "Használj szókratészi tanítási stílust ehhez: {question}\nElőször adj rövid orientáló magyarázatot, majd fogalmazz meg 3–5 mérnöki ellenőrző kérdést, válaszold meg őket a visszakeresett bizonyítékokkal, és zárd rövid tudásellenőrzéssel."},
-    "comparison_matrix": {"label": "06 · Forrás-összehasonlítás", "category": "Összehasonlítás", "purpose": "Források közös pontjainak és eltéréseinek összevetése.", "template": "Hasonlítsd össze a visszakeresett forrásokat ehhez a kérdéshez: {question}\nAzonosítsd a közös állításokat, terminológiai és hangsúlybeli eltéréseket, implementációs különbségeket, kompromisszumokat és esetleges ellentmondásokat. Ha hasznos, használj kompakt összehasonlító táblát, majd adj indokolt szintézist."},
-    "code_first": {"label": "07 · Kódközpontú mérnök", "category": "Implementáció", "purpose": "API-k, kódminták és implementációs részletek előtérben.", "template": "Oldd meg implementációközpontú mérnökként: {question}\nHelyezd előtérbe a releváns API-kat, kódmintákat, adatfolyamot, szélső eseteket és minimális futtatható példákat, ha a források támogatják. Magyarázd el, miért működik a minta, és hivatkozd a fontos implementációs állításokat."},
-    "debug_root_cause": {"label": "08 · Hibakeresés / gyökérok", "category": "Mérnöki", "purpose": "Hipotézis → bizonyíték → diagnosztika → javítás struktúra.", "template": "Kezeld gyökérok-elemzésként: {question}\nStruktúra: tünetek → valószínű hipotézisek → könyvtári bizonyíték → diagnosztikai ellenőrzések → valószínű gyökérok(ok) → javítás → megelőzés. Válaszd szét a bizonyított tényeket és a hipotéziseket."},
-    "system_architecture": {"label": "09 · Rendszerarchitektúra", "category": "Architektúra", "purpose": "Komponensek, interfészek, adatfolyam és kompromisszumok.", "template": "Elemezd rendszerarchitektúra-kérdésként: {question}\nMutasd be a komponenseket, felelősségeket, interfészeket, adat- és vezérlési folyamatot, állapotot, hibahatárokat, skálázási szempontokat és tervezési kompromisszumokat. Ha a bizonyíték támogatja, adj forrásalapú architektúradiagramot."},
-    "production_readiness": {"label": "10 · Éles üzemre készség / SRE", "category": "Éles üzem", "purpose": "Megbízhatóság, megfigyelhetőség, költség és üzemeltetés.", "template": "Értékeld éles üzemre készségi nézőpontból: {question}\nTérj ki a megbízhatóságra, késleltetésre, költségre, megfigyelhetőségre, tesztelésre, hibakezelésre, biztonsági és védelmi szempontokra, visszaállítási és helyreállítási megoldásokra és üzemeltetési kompromisszumokra. A javaslatokat alapozd a forrásokra, a következtetést jelöld."},
-    "mathematical_derivation": {"label": "11 · Matematikai levezetés", "category": "Matematika", "purpose": "Feltételezések, jelölések és lépésenkénti levezetés.", "template": "Magyarázd el és vezesd le a matematika lényegét ehhez: {question}\nElőször definiáld a jelöléseket és feltételezéseket, majd vezesd le lépésenként a kulcsösszefüggéseket, kapcsold őket intuícióhoz, végül adj kis numerikus vagy implementációs példát, ha támogatott."},
-    "research_synthesis": {"label": "12 · Többforrású kutatási szintézis", "category": "Kutatás", "purpose": "Több dokumentumból állításközpontú, rigorózus szintézis.", "template": "Készíts többforrású technikai szintézist ehhez: {question}\nAz anyagot állítások szerint szervezd, ne dokumentumonként. A fő állításokat lehetőség szerint több forrásból trianguláld, őrizd meg az eltéréseket, jelöld a bizonyítékhiányokat, és zárd tömör szintézissel és további olvasnivalóval."},
-    "decision_tradeoff": {"label": "13 · Döntési és kompromisszumelemzés", "category": "Döntés", "purpose": "Opciók és mérnöki döntési kritériumok összevetése.", "template": "Támogass mérnöki döntést ebben: {question}\nAzonosítsd a döntési kritériumokat, opciókat, előnyöket, hátrányokat, kockázatokat, korlátokat és alkalmazási feltételeket. Ha hasznos, készíts bizonyítékalapú döntési mátrixot, majd adj feltételes ajánlást."},
-    "costar": {"label": "14 · CO-STAR", "category": "Keretrendszer", "purpose": "Kontextus, cél, stílus, hangnem, célközönség és válaszforma explicit megadása.", "template": "Kontextus: privát technikai tudásbázist kérdezek programozás, ML, AI és adatmérnökségi témákban.\nCél: {question}\nStílus: pontos, technikailag rigorózus, magyarázó.\nHangnem: professzionális, a technikai fogalmakat ne egyszerűsítsd túl.\nKözönség: AI/ML-mérnöki irányba fejlődő mérnök.\nVálasz: koherens forrásalapú szintézis hivatkozásokkal, támogatott példákkal és explicit bizonytalansággal."},
-    "crispe": {"label": "15 · CRISPE", "category": "Keretrendszer", "purpose": "Szerep, kontextus, feladat, korlátok és elvárt kimenet rögzítése.", "template": "Szerep: tapasztalt AI/ML technikai oktató az indexelt könyvtár felett.\nKontextus: a visszakeresett bizonyíték mérvadó a könyvspecifikus állításokhoz.\nFeladat: {question}\nStílus: rigorózus, mérnöki, világos.\nKorlátok: válaszd szét a bizonyítékot és a következtetést, hivatkozz pontosan, ne találj ki hiányzó részleteket.\nElvárt kimenet: közvetlen válasz, magyarázat, gyakorlati példa, korlátok és ajánlott forrásszakaszok."},
-    "evidence_verification": {"label": "16 · Bizonyítékellenőrzés", "category": "Minőség", "purpose": "Állítás–bizonyíték megfelelés és explicit bizonytalanság.", "template": "Válaszolj bizonyítékellenőrzési fegyelemmel: {question}\nMinden fontos állításnál ellenőrizd, hogy a visszakeresett bizonyíték valóban támogatja-e. Inkább kevesebb jól alátámasztott állítást adj, mint széles spekulációt. Jelöld az ellentmondást, gyenge támogatást és hiányzó bizonyítékot. Zárd rövid 'bizonyított vs. következtetett' összefoglalóval."},
+    "none": {
+        "label": "Nincs optimalizálás",
+        "category": "Kontroll",
+        "purpose": "A javított kérdés változtatás nélküli használata.",
+        "template": "{question}",
+    },
+    "rag_grounded": {
+        "label": "01 · Forrásalapú RAG — ajánlott",
+        "category": "Forrásalapúság",
+        "purpose": "Bizonyítékalapú, jól hivatkozott, koherens válasz.",
+        "template": "CÉL\nVálaszold meg a kérdést az indexelt technikai könyvtár alapján, koherens szakértői magyarázatként.\n\nKÉRDÉS\n{question}\n\nGROUNDING SZABÁLYOK\nA dokumentumspecifikus állításokat a visszakeresett bizonyítékokra alapozd. Ne másolj nyers darabokat vagy töredékes szöveget. A fontos állításokat hivatkozd, elégtelen bizonyíték esetén jelezd a bizonytalanságot.\n\nKIMENET\nKözvetlen válasz → működés/mechanizmus → bizonyítékalapú részletek → gyakorlati következtetés → források és korlátok.",
+    },
+    "concise_expert": {
+        "label": "02 · Tömör szakértő",
+        "category": "Hatékonyság",
+        "purpose": "Rövid, tapasztalt szakértői szintű, technikailag pontos válasz.",
+        "template": "Dolgozz tömör, tapasztalt technikai szakértőként. Kérdés: {question}\nVálaszolj közvetlenül 4–7 fókuszált bekezdésben vagy kompakt strukturált listában. Tartsd meg a technikai pontosságot, hivatkozd a forrásalapú állításokat, és zárd egy gyakorlati következtetéssel.",
+    },
+    "technical_deep_dive": {
+        "label": "03 · Technikai mélyelemzés",
+        "category": "Mélység",
+        "purpose": "Részletes mérnöki vizsgálat kompromisszumokkal és hibamódokkal.",
+        "template": "Vizsgáld meg mélyen ezt a technikai kérdést: {question}\nAhol releváns, térj ki az intuícióra, formális működésre/matematikára, architektúrára, implementációra, hibamódokra, kompromisszumokra és éles üzemi következményekre. A könyvspecifikus állításokat alapozd bizonyítékra, a következtetéseket jelöld külön.",
+    },
+    "structured_tutor": {
+        "label": "04 · Strukturált oktató",
+        "category": "Tanulás",
+        "purpose": "Fokozatos tanítás intuíciótól implementációig.",
+        "template": "Tanítsd meg ezt a témát a technikai könyvtár alapján: {question}\nSorrend: előfeltételek → intuíció → alapfogalmak → matematika → minimális példa → implementáció → gyakori hibák → önellenőrző kérdések → releváns források. Ne találj ki könyvhivatkozást.",
+    },
+    "socratic_tutor": {
+        "label": "05 · Szókratészi oktató",
+        "category": "Tanulás",
+        "purpose": "Magyarázat diagnosztikus kérdésekkel és önellenőrzéssel.",
+        "template": "Használj szókratészi tanítási stílust ehhez: {question}\nElőször adj rövid orientáló magyarázatot, majd fogalmazz meg 3–5 mérnöki ellenőrző kérdést, válaszold meg őket a visszakeresett bizonyítékokkal, és zárd rövid tudásellenőrzéssel.",
+    },
+    "comparison_matrix": {
+        "label": "06 · Forrás-összehasonlítás",
+        "category": "Összehasonlítás",
+        "purpose": "Források közös pontjainak és eltéréseinek összevetése.",
+        "template": "Hasonlítsd össze a visszakeresett forrásokat ehhez a kérdéshez: {question}\nAzonosítsd a közös állításokat, terminológiai és hangsúlybeli eltéréseket, implementációs különbségeket, kompromisszumokat és esetleges ellentmondásokat. Ha hasznos, használj kompakt összehasonlító táblát, majd adj indokolt szintézist.",
+    },
+    "code_first": {
+        "label": "07 · Kódközpontú mérnök",
+        "category": "Implementáció",
+        "purpose": "API-k, kódminták és implementációs részletek előtérben.",
+        "template": "Oldd meg implementációközpontú mérnökként: {question}\nHelyezd előtérbe a releváns API-kat, kódmintákat, adatfolyamot, szélső eseteket és minimális futtatható példákat, ha a források támogatják. Magyarázd el, miért működik a minta, és hivatkozd a fontos implementációs állításokat.",
+    },
+    "debug_root_cause": {
+        "label": "08 · Hibakeresés / gyökérok",
+        "category": "Mérnöki",
+        "purpose": "Hipotézis → bizonyíték → diagnosztika → javítás struktúra.",
+        "template": "Kezeld gyökérok-elemzésként: {question}\nStruktúra: tünetek → valószínű hipotézisek → könyvtári bizonyíték → diagnosztikai ellenőrzések → valószínű gyökérok(ok) → javítás → megelőzés. Válaszd szét a bizonyított tényeket és a hipotéziseket.",
+    },
+    "system_architecture": {
+        "label": "09 · Rendszerarchitektúra",
+        "category": "Architektúra",
+        "purpose": "Komponensek, interfészek, adatfolyam és kompromisszumok.",
+        "template": "Elemezd rendszerarchitektúra-kérdésként: {question}\nMutasd be a komponenseket, felelősségeket, interfészeket, adat- és vezérlési folyamatot, állapotot, hibahatárokat, skálázási szempontokat és tervezési kompromisszumokat. Ha a bizonyíték támogatja, adj forrásalapú architektúradiagramot.",
+    },
+    "production_readiness": {
+        "label": "10 · Éles üzemre készség / SRE",
+        "category": "Éles üzem",
+        "purpose": "Megbízhatóság, megfigyelhetőség, költség és üzemeltetés.",
+        "template": "Értékeld éles üzemre készségi nézőpontból: {question}\nTérj ki a megbízhatóságra, késleltetésre, költségre, megfigyelhetőségre, tesztelésre, hibakezelésre, biztonsági és védelmi szempontokra, visszaállítási és helyreállítási megoldásokra és üzemeltetési kompromisszumokra. A javaslatokat alapozd a forrásokra, a következtetést jelöld.",
+    },
+    "mathematical_derivation": {
+        "label": "11 · Matematikai levezetés",
+        "category": "Matematika",
+        "purpose": "Feltételezések, jelölések és lépésenkénti levezetés.",
+        "template": "Magyarázd el és vezesd le a matematika lényegét ehhez: {question}\nElőször definiáld a jelöléseket és feltételezéseket, majd vezesd le lépésenként a kulcsösszefüggéseket, kapcsold őket intuícióhoz, végül adj kis numerikus vagy implementációs példát, ha támogatott.",
+    },
+    "research_synthesis": {
+        "label": "12 · Többforrású kutatási szintézis",
+        "category": "Kutatás",
+        "purpose": "Több dokumentumból állításközpontú, rigorózus szintézis.",
+        "template": "Készíts többforrású technikai szintézist ehhez: {question}\nAz anyagot állítások szerint szervezd, ne dokumentumonként. A fő állításokat lehetőség szerint több forrásból trianguláld, őrizd meg az eltéréseket, jelöld a bizonyítékhiányokat, és zárd tömör szintézissel és további olvasnivalóval.",
+    },
+    "decision_tradeoff": {
+        "label": "13 · Döntési és kompromisszumelemzés",
+        "category": "Döntés",
+        "purpose": "Opciók és mérnöki döntési kritériumok összevetése.",
+        "template": "Támogass mérnöki döntést ebben: {question}\nAzonosítsd a döntési kritériumokat, opciókat, előnyöket, hátrányokat, kockázatokat, korlátokat és alkalmazási feltételeket. Ha hasznos, készíts bizonyítékalapú döntési mátrixot, majd adj feltételes ajánlást.",
+    },
+    "costar": {
+        "label": "14 · CO-STAR",
+        "category": "Keretrendszer",
+        "purpose": "Kontextus, cél, stílus, hangnem, célközönség és válaszforma explicit megadása.",
+        "template": "Kontextus: privát technikai tudásbázist kérdezek programozás, ML, AI és adatmérnökségi témákban.\nCél: {question}\nStílus: pontos, technikailag rigorózus, magyarázó.\nHangnem: professzionális, a technikai fogalmakat ne egyszerűsítsd túl.\nKözönség: AI/ML-mérnöki irányba fejlődő mérnök.\nVálasz: koherens forrásalapú szintézis hivatkozásokkal, támogatott példákkal és explicit bizonytalansággal.",
+    },
+    "crispe": {
+        "label": "15 · CRISPE",
+        "category": "Keretrendszer",
+        "purpose": "Szerep, kontextus, feladat, korlátok és elvárt kimenet rögzítése.",
+        "template": "Szerep: tapasztalt AI/ML technikai oktató az indexelt könyvtár felett.\nKontextus: a visszakeresett bizonyíték mérvadó a könyvspecifikus állításokhoz.\nFeladat: {question}\nStílus: rigorózus, mérnöki, világos.\nKorlátok: válaszd szét a bizonyítékot és a következtetést, hivatkozz pontosan, ne találj ki hiányzó részleteket.\nElvárt kimenet: közvetlen válasz, magyarázat, gyakorlati példa, korlátok és ajánlott forrásszakaszok.",
+    },
+    "evidence_verification": {
+        "label": "16 · Bizonyítékellenőrzés",
+        "category": "Minőség",
+        "purpose": "Állítás–bizonyíték megfelelés és explicit bizonytalanság.",
+        "template": "Válaszolj bizonyítékellenőrzési fegyelemmel: {question}\nMinden fontos állításnál ellenőrizd, hogy a visszakeresett bizonyíték valóban támogatja-e. Inkább kevesebb jól alátámasztott állítást adj, mint széles spekulációt. Jelöld az ellentmondást, gyenge támogatást és hiányzó bizonyítékot. Zárd rövid 'bizonyított vs. következtetett' összefoglalóval.",
+    },
 }
 
 # Exactly sixteen named experimental profiles, excluding the no-optimization control.
@@ -239,4 +324,3 @@ def local_optimize(question: str, profile: str, language: str = "en") -> dict[st
         "improvements": improvements,
         "reviewer": "local-template",
     }
-

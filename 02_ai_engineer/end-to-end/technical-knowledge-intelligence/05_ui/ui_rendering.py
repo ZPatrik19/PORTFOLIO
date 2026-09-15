@@ -89,24 +89,26 @@ def render_zoomable_dot(
 
 def render_header(kp, ui_lang: str, gemini_available: bool) -> None:
     documents = {chunk.document_id for chunk in kp.chunks}
-    private_documents = {
-        chunk.document_id for chunk in kp.chunks if chunk.source_type == "private"
-    }
-    gemini_label = tr(ui_lang, "gemini_verified") if gemini_available else pick(
-        ui_lang,
-        "Gemini nincs ellenőrizve",
-        "Gemini not verified",
+    private_documents = {chunk.document_id for chunk in kp.chunks if chunk.source_type == "private"}
+    gemini_label = (
+        tr(ui_lang, "gemini_verified")
+        if gemini_available
+        else pick(
+            ui_lang,
+            "Gemini nincs ellenőrizve",
+            "Gemini not verified",
+        )
     )
     dot_class = "" if gemini_available else " off"
     st.markdown(
         f"""
 <div class="tki-hero">
-  <div class="tki-title">{html.escape(tr(ui_lang, 'title'))}</div>
+  <div class="tki-title">{html.escape(tr(ui_lang, "title"))}</div>
   <div class="status-row">
     <span class="status-pill"><span class="status-dot{dot_class}"></span>{html.escape(gemini_label)}</span>
-    <span class="status-pill">📚 {len(documents)} {html.escape(tr(ui_lang, 'documents'))}</span>
-    <span class="status-pill">🔒 {len(private_documents)} {html.escape(tr(ui_lang, 'private'))}</span>
-    <span class="status-pill">🧩 {len(kp.chunks):,} {html.escape(tr(ui_lang, 'indexed_chunks'))}</span>
+    <span class="status-pill">📚 {len(documents)} {html.escape(tr(ui_lang, "documents"))}</span>
+    <span class="status-pill">🔒 {len(private_documents)} {html.escape(tr(ui_lang, "private"))}</span>
+    <span class="status-pill">🧩 {len(kp.chunks):,} {html.escape(tr(ui_lang, "indexed_chunks"))}</span>
   </div>
 </div>
 """,
@@ -131,7 +133,9 @@ def render_pipeline(diag: dict, ui_lang: str) -> None:
     latency_frame = pd.DataFrame(
         [
             {
-                pick(ui_lang, "lépés", "stage"): _stage_label(ui_lang, str(step.get("stage") or "")),
+                pick(ui_lang, "lépés", "stage"): _stage_label(
+                    ui_lang, str(step.get("stage") or "")
+                ),
                 "latency_ms": float(step.get("duration_ms") or 0),
             }
             for step in steps
@@ -147,7 +151,9 @@ def render_pipeline(diag: dict, ui_lang: str) -> None:
         analysis = diag.get("query_analysis") or {}
         st.markdown(f"#### {tr(ui_lang, 'request_interpretation')}")
         st.metric(tr(ui_lang, "intent"), localize_value(ui_lang, diag.get("intent", "—")))
-        st.write(f"**{tr(ui_lang, 'topics')}:** " + (", ".join(analysis.get("topics") or []) or "—"))
+        st.write(
+            f"**{tr(ui_lang, 'topics')}:** " + (", ".join(analysis.get("topics") or []) or "—")
+        )
         st.write(
             f"**{tr(ui_lang, 'context_strategy')}:** "
             f"{localize_value(ui_lang, analysis.get('context_strategy') or '—')}"
@@ -166,8 +172,12 @@ def render_pipeline(diag: dict, ui_lang: str) -> None:
         for index, step in enumerate(steps, 1):
             row = {
                 "#": index,
-                pick(ui_lang, "lépés", "stage"): _stage_label(ui_lang, str(step.get("stage") or "")),
-                pick(ui_lang, "állapot", "status"): _status_label(ui_lang, str(step.get("status") or "")),
+                pick(ui_lang, "lépés", "stage"): _stage_label(
+                    ui_lang, str(step.get("stage") or "")
+                ),
+                pick(ui_lang, "állapot", "status"): _status_label(
+                    ui_lang, str(step.get("status") or "")
+                ),
                 pick(ui_lang, "késleltetés (ms)", "latency (ms)"): step.get("duration_ms"),
                 pick(ui_lang, "részlet", "detail"): _stage_detail(ui_lang, step),
             }
@@ -223,7 +233,12 @@ def render_ranking(
     stages = ["BM25", "Dense", "Hybrid", pick(ui_lang, "Végső", "Final")]
     for _, row in top.head(min(6, len(top))).iterrows():
         name = f"#{int(row['final_rank'])} {str(row['document'])[:24]}"
-        ranks = [row.get("bm25_rank"), row.get("dense_rank"), row.get("hybrid_rank"), row.get("final_rank")]
+        ranks = [
+            row.get("bm25_rank"),
+            row.get("dense_rank"),
+            row.get("hybrid_rank"),
+            row.get("final_rank"),
+        ]
         movement[name] = [1.0 / max(1, float(value)) if pd.notna(value) else 0.0 for value in ranks]
     if movement:
         st.line_chart(pd.DataFrame(movement, index=stages), height=300)
@@ -253,7 +268,9 @@ def render_ranking(
             if column in shown:
                 shown[column] = shown[column].map(fmt_score)
         shown = shown.rename(columns=_ranking_column_labels(ui_lang))
-        st.dataframe(shown, use_container_width=True, hide_index=True, height=min(580, 95 + 40 * len(shown)))
+        st.dataframe(
+            shown, use_container_width=True, hide_index=True, height=min(580, 95 + 40 * len(shown))
+        )
     with right:
         st.markdown(f"#### {tr(ui_lang, 'evidence_distribution')}")
         st.bar_chart(frame["document"].value_counts().head(10), height=300)
@@ -388,15 +405,14 @@ def diagram_dot(diagram) -> str:
         label = safe_label(node.label, 80).replace('"', "'")
         lines.append(f'{node_id} [label="{label}"];')
     id_map = {
-        node.id: re.sub(r"[^A-Za-z0-9_]", "_", node.id) or "node"
-        for node in diagram.nodes[:12]
+        node.id: re.sub(r"[^A-Za-z0-9_]", "_", node.id) or "node" for node in diagram.nodes[:12]
     }
     for edge in diagram.edges[:18]:
         if edge.source not in known or edge.target not in known:
             continue
         label = safe_label(edge.label or "", 44).replace('"', "'")
         attribute = f' [label="{label}"]' if label else ""
-        lines.append(f'{id_map[edge.source]} -> {id_map[edge.target]}{attribute};')
+        lines.append(f"{id_map[edge.source]} -> {id_map[edge.target]}{attribute};")
     lines.append("}")
     return "\n".join(lines)
 
@@ -407,7 +423,9 @@ def render_evidence(answer, diag: dict, ui_lang: str) -> None:
     col_1, col_2, col_3 = st.columns(3)
     col_1.metric(tr(ui_lang, "citation_validator"), "PASS" if validation.get("valid") else "CHECK")
     col_2.metric(tr(ui_lang, "citations"), len(answer.sources))
-    document_count = len(answer.used_documents or {source.document_title for source in answer.sources})
+    document_count = len(
+        answer.used_documents or {source.document_title for source in answer.sources}
+    )
     col_3.metric(tr(ui_lang, "documents_used"), document_count)
 
     for index, source in enumerate(answer.sources, 1):
@@ -490,18 +508,23 @@ def render_quality(answer, diag: dict, ui_lang: str) -> None:
     if not score_frame.empty:
         metric_columns = st.columns(min(5, len(score_frame)))
         for index, row in score_frame.head(5).iterrows():
-            metric_columns[index % len(metric_columns)].metric(row["dimension"], f"{int(row['score'])}/100")
+            metric_columns[index % len(metric_columns)].metric(
+                row["dimension"], f"{int(row['score'])}/100"
+            )
         st.bar_chart(score_frame.set_index("dimension"), height=330)
 
     left, right = st.columns(2)
     with left:
         st.markdown(f"#### {tr(ui_lang, 'topic_intent')}")
+        st.write(f"**{tr(ui_lang, 'intent')}:** {localize_value(ui_lang, diag.get('intent', '—'))}")
         st.write(
-            f"**{tr(ui_lang, 'intent')}:** "
-            f"{localize_value(ui_lang, diag.get('intent', '—'))}"
+            f"**{tr(ui_lang, 'topics')}:** "
+            + (", ".join(query_analysis.get("topics") or []) or "—")
         )
-        st.write(f"**{tr(ui_lang, 'topics')}:** " + (", ".join(query_analysis.get("topics") or []) or "—"))
-        st.write(f"**{pick(ui_lang, 'Keretrendszerek', 'Frameworks')}:** " + (", ".join(query_analysis.get("frameworks") or []) or "—"))
+        st.write(
+            f"**{pick(ui_lang, 'Keretrendszerek', 'Frameworks')}:** "
+            + (", ".join(query_analysis.get("frameworks") or []) or "—")
+        )
         st.write(
             f"**{tr(ui_lang, 'complexity')}:** "
             f"{localize_value(ui_lang, query_analysis.get('complexity', '—'))}"
@@ -512,8 +535,12 @@ def render_quality(answer, diag: dict, ui_lang: str) -> None:
         )
     with right:
         st.markdown(f"#### {tr(ui_lang, 'context_tool_analysis')}")
-        st.write(f"**{tr(ui_lang, 'context_documents')}:** {pipeline_evaluation.get('context_documents', '—')}")
-        st.write(f"**{tr(ui_lang, 'context_chars_label')}:** {pipeline_evaluation.get('context_chars', '—')}")
+        st.write(
+            f"**{tr(ui_lang, 'context_documents')}:** {pipeline_evaluation.get('context_documents', '—')}"
+        )
+        st.write(
+            f"**{tr(ui_lang, 'context_chars_label')}:** {pipeline_evaluation.get('context_chars', '—')}"
+        )
         st.write(
             f"**{tr(ui_lang, 'expected_tools')}:** "
             + (", ".join(pipeline_evaluation.get("expected_tools") or []) or tr(ui_lang, "none"))
@@ -522,14 +549,18 @@ def render_quality(answer, diag: dict, ui_lang: str) -> None:
             f"**{tr(ui_lang, 'actual_tools')}:** "
             + (", ".join(pipeline_evaluation.get("actual_tools") or []) or tr(ui_lang, "none"))
         )
-        st.write(f"**{tr(ui_lang, 'avg_reranker')}:** {pipeline_evaluation.get('avg_reranker_score', '—')}")
+        st.write(
+            f"**{tr(ui_lang, 'avg_reranker')}:** {pipeline_evaluation.get('avg_reranker_score', '—')}"
+        )
 
     st.markdown(f"#### {tr(ui_lang, 'query_language_review')}")
     original = query_review.get("original", diag.get("original_query", ""))
     corrected = query_review.get("corrected", diag.get("corrected_query", ""))
     left, right = st.columns(2)
     left.text_area(tr(ui_lang, "original_query"), value=original or "", height=100, disabled=True)
-    right.text_area(tr(ui_lang, "corrected_query"), value=corrected or "", height=100, disabled=True)
+    right.text_area(
+        tr(ui_lang, "corrected_query"), value=corrected or "", height=100, disabled=True
+    )
 
     prompt_optimization = diag.get("prompt_optimization") or {}
     if prompt_optimization and prompt_optimization.get("profile") != "none":
@@ -537,11 +568,15 @@ def render_quality(answer, diag: dict, ui_lang: str) -> None:
         left, right = st.columns(2)
         with left:
             st.caption(tr(ui_lang, "original_corrected_task"))
-            st.code(str(prompt_optimization.get("original") or corrected or original), language="text")
+            st.code(
+                str(prompt_optimization.get("original") or corrected or original), language="text"
+            )
         with right:
             st.caption(tr(ui_lang, "optimized"))
             st.code(
-                str(prompt_optimization.get("optimized") or diag.get("optimized_query") or corrected),
+                str(
+                    prompt_optimization.get("optimized") or diag.get("optimized_query") or corrected
+                ),
                 language="text",
             )
 
@@ -576,7 +611,10 @@ def render_quality(answer, diag: dict, ui_lang: str) -> None:
             for item in diag.get("tool_results", [])
             if isinstance(item, dict)
         ),
-        pick(ui_lang, "Validált forrásvizuál", "Trusted source visual"): bool(getattr(answer, "visuals", [])) or not answer.sources,
+        pick(ui_lang, "Validált forrásvizuál", "Trusted source visual"): bool(
+            getattr(answer, "visuals", [])
+        )
+        or not answer.sources,
     }
     check_key = pick(ui_lang, "ellenőrzés", "check")
     status_key = pick(ui_lang, "állapot", "status")
@@ -667,7 +705,9 @@ def render_answer(
         metric_2.metric(tr(ui_lang, "latency"), f"{answer.latency_ms or 0:,.0f} ms")
         metric_3.metric(tr(ui_lang, "citations"), len(answer.sources))
         metric_4.metric(tr(ui_lang, "tools"), len(answer.used_tools))
-        metric_5.metric(tr(ui_lang, "cost"), f"${float(diagnostics.get('estimated_cost_usd') or 0):.5f}")
+        metric_5.metric(
+            tr(ui_lang, "cost"), f"${float(diagnostics.get('estimated_cost_usd') or 0):.5f}"
+        )
 
         if answer.insufficient_evidence:
             st.warning(tr(ui_lang, "insufficient_evidence"))
@@ -711,10 +751,16 @@ def render_answer(
                     st.markdown(answer.answer)
 
         feedback_1, feedback_2, trace_column = st.columns([1, 1, 3])
-        if feedback_1.button(tr(ui_lang, "helpful"), key=f"helpful_{answer.request_id}", use_container_width=True):
+        if feedback_1.button(
+            tr(ui_lang, "helpful"), key=f"helpful_{answer.request_id}", use_container_width=True
+        ):
             kp.telemetry.feedback(answer.request_id, True)
             st.toast(tr(ui_lang, "feedback_saved"))
-        if feedback_2.button(tr(ui_lang, "not_helpful"), key=f"not_helpful_{answer.request_id}", use_container_width=True):
+        if feedback_2.button(
+            tr(ui_lang, "not_helpful"),
+            key=f"not_helpful_{answer.request_id}",
+            use_container_width=True,
+        ):
             kp.telemetry.feedback(answer.request_id, False)
             st.toast(tr(ui_lang, "feedback_saved"))
         trace_column.caption(f"request_id: {answer.request_id} · trace_id: {answer.trace_id}")

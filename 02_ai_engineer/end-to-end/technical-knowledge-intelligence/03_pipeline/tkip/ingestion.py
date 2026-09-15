@@ -69,9 +69,13 @@ def build_manifest(config: dict[str, Any] | None = None) -> list[DocumentRecord]
     return records
 
 
-def changed_documents(records: list[DocumentRecord], indexed_state_path: Path) -> list[DocumentRecord]:
+def changed_documents(
+    records: list[DocumentRecord], indexed_state_path: Path
+) -> list[DocumentRecord]:
     indexed_state = _read_json_dict(indexed_state_path)
-    return [record for record in records if indexed_state.get(record.document_id) != record.checksum]
+    return [
+        record for record in records if indexed_state.get(record.document_id) != record.checksum
+    ]
 
 
 def _load_previous_manifest(path: Path) -> dict[str, dict[str, Any]]:

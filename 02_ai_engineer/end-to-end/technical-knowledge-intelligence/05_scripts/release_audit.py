@@ -88,7 +88,10 @@ def audit_yaml(report: AuditReport) -> None:
 def audit_secrets_and_paths(report: AuditReport) -> None:
     hits: list[str] = []
     for path in iter_repo_files():
-        if path.suffix.lower() not in TEXT_SUFFIXES and path.name not in {"Dockerfile", ".gitignore"}:
+        if path.suffix.lower() not in TEXT_SUFFIXES and path.name not in {
+            "Dockerfile",
+            ".gitignore",
+        }:
             continue
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
@@ -122,7 +125,6 @@ def audit_git_hygiene(report: AuditReport) -> None:
     if missing:
         report.errors.append(f".gitignore missing required entries: {missing}")
     report.check("Repository hygiene rules checked")
-
 
 
 def audit_architecture_hygiene(report: AuditReport) -> None:
@@ -201,16 +203,12 @@ def audit_launcher_integrity(report: AuditReport) -> None:
     for path in batch_files:
         raw = path.read_bytes()
         if not raw or raw.count(b"\n") != raw.count(b"\r\n"):
-            report.errors.append(
-                f"Windows batch file must use CRLF only: {path.relative_to(ROOT)}"
-            )
+            report.errors.append(f"Windows batch file must use CRLF only: {path.relative_to(ROOT)}")
 
     for path in shell_files:
         raw = path.read_bytes()
         if b"\r\n" in raw:
-            report.errors.append(
-                f"Unix shell file must use LF only: {path.relative_to(ROOT)}"
-            )
+            report.errors.append(f"Unix shell file must use LF only: {path.relative_to(ROOT)}")
 
     windows_runner = ROOT / "run_project.bat"
     if windows_runner.exists():
@@ -234,6 +232,7 @@ def audit_launcher_integrity(report: AuditReport) -> None:
         f"Launcher integrity checked: {len(batch_files)} batch file(s), "
         f"{len(shell_files)} shell file(s)"
     )
+
 
 def audit_tools(report: AuditReport) -> None:
     for command in ("docker", "kubectl", "dot"):

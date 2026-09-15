@@ -69,9 +69,7 @@ def _run_figures(platform: KnowledgePlatform, config: dict) -> None:
     method_summary_path = benchmark_dir / "retrieval_methods_summary.csv"
     benchmark = pd.read_csv(benchmark_path) if benchmark_path.exists() else pd.DataFrame()
     method_summary = (
-        pd.read_csv(method_summary_path)
-        if method_summary_path.exists()
-        else pd.DataFrame()
+        pd.read_csv(method_summary_path) if method_summary_path.exists() else pd.DataFrame()
     )
     telemetry = pd.DataFrame(platform.telemetry.recent(1000))
     save_basic_figures(

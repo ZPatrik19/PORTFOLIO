@@ -1,8 +1,8 @@
 """Unit tests for query analysis and pipeline quality scoring."""
+
 from __future__ import annotations
 
 import pytest
-
 from test_support.factories import make_chunk, make_search_hit
 from tkip.query_analysis import analyze_query, evaluate_pipeline
 

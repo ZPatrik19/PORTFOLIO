@@ -6,6 +6,7 @@ Examples:
     python 06_tests/run_suite.py evaluation
     python 06_tests/run_suite.py live
 """
+
 from __future__ import annotations
 
 import argparse
@@ -42,7 +43,9 @@ PROFILES: dict[str, TestProfile] = {
     "integration": TestProfile("Integration tests only.", ("06_tests/integration",)),
     "evaluation": TestProfile("AI/retrieval metric validation only.", ("06_tests/evaluation",)),
     "regression": TestProfile("Golden regression tests only.", ("06_tests/regression",)),
-    "robustness": TestProfile("Prompt-injection and unusual-input tests.", ("06_tests/robustness",)),
+    "robustness": TestProfile(
+        "Prompt-injection and unusual-input tests.", ("06_tests/robustness",)
+    ),
     "performance": TestProfile("Local performance guardrails.", ("06_tests/performance",)),
     "smoke": TestProfile("API/application smoke tests.", ("06_tests/smoke",)),
     "all-offline": TestProfile(
@@ -57,7 +60,9 @@ PROFILES: dict[str, TestProfile] = {
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run a named Technical Knowledge Intelligence test profile.")
+    parser = argparse.ArgumentParser(
+        description="Run a named Technical Knowledge Intelligence test profile."
+    )
     parser.add_argument("profile", choices=sorted(PROFILES), nargs="?", default="offline")
     parser.add_argument("--verbose", action="store_true", help="Use verbose pytest output.")
     return parser.parse_args()

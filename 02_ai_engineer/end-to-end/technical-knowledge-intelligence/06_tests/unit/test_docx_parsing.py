@@ -1,11 +1,11 @@
 """Unit tests for DOCX parsing."""
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
 from docx import Document
-
 from test_support.factories import make_document_record
 from tkip.parsing import parse_document
 
@@ -31,6 +31,8 @@ def test_docx_parser_preserves_heading_paragraph_and_table(tmp_path: Path) -> No
     blocks = parse_document(document)
 
     # Assert
-    assert any(block.block_type == "heading" and "Machine Learning" in block.text for block in blocks)
+    assert any(
+        block.block_type == "heading" and "Machine Learning" in block.text for block in blocks
+    )
     assert any("Random forests" in block.text for block in blocks)
     assert any(block.block_type == "table" and "Random Forest" in block.text for block in blocks)

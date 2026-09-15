@@ -12,10 +12,48 @@ from .models import Chunk, SearchHit
 from .utils import tokenize
 
 BM25_STOPWORDS = {
-    "the", "and", "for", "with", "from", "this", "that", "what", "how", "where",
-    "when", "why", "are", "its", "into", "does", "is", "a", "an", "of", "to", "in",
-    "on", "or", "be", "can", "do", "mit", "mi", "melyik", "hogyan", "hogy", "egy",
-    "az", "és", "vagy", "van", "hol", "mikor", "miért", "erre", "ezt",
+    "the",
+    "and",
+    "for",
+    "with",
+    "from",
+    "this",
+    "that",
+    "what",
+    "how",
+    "where",
+    "when",
+    "why",
+    "are",
+    "its",
+    "into",
+    "does",
+    "is",
+    "a",
+    "an",
+    "of",
+    "to",
+    "in",
+    "on",
+    "or",
+    "be",
+    "can",
+    "do",
+    "mit",
+    "mi",
+    "melyik",
+    "hogyan",
+    "hogy",
+    "egy",
+    "az",
+    "és",
+    "vagy",
+    "van",
+    "hol",
+    "mikor",
+    "miért",
+    "erre",
+    "ezt",
 }
 
 
@@ -90,9 +128,7 @@ class BM25Index:
         if not self.document_count:
             return 0.0
         return math.log(
-            1
-            + (self.document_count - document_frequency + 0.5)
-            / (document_frequency + 0.5)
+            1 + (self.document_count - document_frequency + 0.5) / (document_frequency + 0.5)
         )
 
 
@@ -186,7 +222,9 @@ class HybridRetriever:
 def _matches_filters(chunk: Chunk, filters: dict[str, object] | None) -> bool:
     if not filters:
         return True
-    return all(value is None or getattr(chunk, key, None) == value for key, value in filters.items())
+    return all(
+        value is None or getattr(chunk, key, None) == value for key, value in filters.items()
+    )
 
 
 # Backward-compatible internal alias.

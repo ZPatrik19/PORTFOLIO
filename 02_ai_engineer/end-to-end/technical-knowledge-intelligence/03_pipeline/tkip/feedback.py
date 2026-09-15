@@ -53,9 +53,7 @@ def export_negative_feedback(
                 "expected_documents": [],
                 "expected_chunks": [],
                 "expected_concepts": [],
-                "expected_answer_available": not bool(
-                    request_payload.get("insufficient_evidence")
-                ),
+                "expected_answer_available": not bool(request_payload.get("insufficient_evidence")),
                 "expected_tool": None,
                 "feedback_text": feedback_text,
                 "feedback_timestamp": timestamp,

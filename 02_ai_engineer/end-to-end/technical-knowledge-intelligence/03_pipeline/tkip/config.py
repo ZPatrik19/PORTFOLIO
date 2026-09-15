@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 
 from .exceptions import ConfigurationError
 
+
 def _discover_project_root() -> Path:
     """Locate the runtime project root in source, editable and wheel installs.
 

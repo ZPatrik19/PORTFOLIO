@@ -27,8 +27,16 @@ class ParsedBlock(BaseModel):
     document_id: str
     page: int
     block_type: Literal[
-        "heading", "paragraph", "list", "code", "table", "caption", "figure",
-        "equation", "header_footer", "unknown"
+        "heading",
+        "paragraph",
+        "list",
+        "code",
+        "table",
+        "caption",
+        "figure",
+        "equation",
+        "header_footer",
+        "unknown",
     ]
     text: str
     chapter: str | None = None
@@ -141,22 +149,46 @@ class AskRequest(BaseModel):
     # Optional advanced prompt-engineering rewrite. The optimizer transforms the
     # user request before query understanding/retrieval while preserving the
     # original question for diagnostics and QA.
-    prompt_optimization: Literal["none", "rag_grounded", "concise_expert", "technical_deep_dive", "structured_tutor", "socratic_tutor", "comparison_matrix", "code_first", "debug_root_cause", "system_architecture", "production_readiness", "mathematical_derivation", "research_synthesis", "decision_tradeoff", "costar", "crispe", "evidence_verification"] = "none"
+    prompt_optimization: Literal[
+        "none",
+        "rag_grounded",
+        "concise_expert",
+        "technical_deep_dive",
+        "structured_tutor",
+        "socratic_tutor",
+        "comparison_matrix",
+        "code_first",
+        "debug_root_cause",
+        "system_architecture",
+        "production_readiness",
+        "mathematical_derivation",
+        "research_synthesis",
+        "decision_tradeoff",
+        "costar",
+        "crispe",
+        "evidence_verification",
+    ] = "none"
     prompt_optimization_use_gemini: bool = True
 
     # Select a persistent embedding/index variant. ``primary`` is the standard
     # production index; the others are independent chunking experiments.
-    index_variant: Literal["primary", "fixed", "recursive", "structure_aware", "semantic"] = "primary"
+    index_variant: Literal["primary", "fixed", "recursive", "structure_aware", "semantic"] = (
+        "primary"
+    )
 
     # Query-time context re-chunking. The persistent retrieval index is not
     # rebuilt; only the retrieved candidates are reshaped before context build.
     runtime_chunking: bool = False
-    runtime_chunk_strategy: Literal["fixed", "recursive", "structure_aware", "semantic"] = "structure_aware"
+    runtime_chunk_strategy: Literal["fixed", "recursive", "structure_aware", "semantic"] = (
+        "structure_aware"
+    )
     runtime_chunk_size: int = Field(default=900, ge=250, le=3000)
     runtime_chunk_overlap: int = Field(default=120, ge=0, le=1000)
 
     # Request-level cost/quality budget controls used by presets and A/B tests.
-    answer_preset: Literal["economy", "recommended", "deep", "max_quality", "custom"] = "recommended"
+    answer_preset: Literal["economy", "recommended", "deep", "max_quality", "custom"] = (
+        "recommended"
+    )
     context_max_chars: int | None = Field(default=None, ge=3000, le=60000)
     retrieval_final_k: int | None = Field(default=None, ge=3, le=20)
     max_output_tokens: int | None = Field(default=None, ge=300, le=8000)

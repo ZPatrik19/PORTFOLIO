@@ -11,6 +11,7 @@ exposes the same engine through LangChain Core interfaces when desired.
 def langchain_available() -> bool:
     try:
         import importlib.util
+
         return importlib.util.find_spec("langchain_core") is not None
     except ImportError:
         return False
@@ -18,7 +19,9 @@ def langchain_available() -> bool:
 
 def create_langchain_retriever(native_retriever, *, k: int = 8):
     if not langchain_available():
-        raise RuntimeError("langchain-core is not installed. Run setup or install langchain-core>=1.6,<2.")
+        raise RuntimeError(
+            "langchain-core is not installed. Run setup or install langchain-core>=1.6,<2."
+        )
 
     from langchain_core.documents import Document
     from langchain_core.retrievers import BaseRetriever
@@ -56,7 +59,9 @@ def create_langchain_retriever(native_retriever, *, k: int = 8):
 
 def create_context_runnable(native_retriever, *, k: int = 8):
     if not langchain_available():
-        raise RuntimeError("langchain-core is not installed. Run setup or install langchain-core>=1.6,<2.")
+        raise RuntimeError(
+            "langchain-core is not installed. Run setup or install langchain-core>=1.6,<2."
+        )
     from langchain_core.runnables import RunnableLambda
 
     retriever = create_langchain_retriever(native_retriever, k=k)

@@ -21,7 +21,9 @@ def _chunk_by_id(chunks: Iterable[Chunk], chunk_id: str) -> Chunk | None:
     return None
 
 
-def extract_source_visuals(citations: list[SourceCitation], chunks: list[Chunk], max_visuals: int = 1) -> list[SourceVisual]:
+def extract_source_visuals(
+    citations: list[SourceCitation], chunks: list[Chunk], max_visuals: int = 1
+) -> list[SourceVisual]:
     """Create query-time source visuals without re-indexing the library.
 
     For PDFs, prefer the largest embedded image on the cited page. If the page has
@@ -72,27 +74,29 @@ def extract_source_visuals(citations: list[SourceCitation], chunks: list[Chunk],
             if best is not None:
                 info = best[1]
                 ext = str(info.get("ext") or "png").lower()
-                asset = doc_dir / f"page_{idx+1:04d}_figure.{ext}"
+                asset = doc_dir / f"page_{idx + 1:04d}_figure.{ext}"
                 if not asset.exists():
                     asset.write_bytes(info["image"])
                 kind = "embedded_figure"
-                caption = f"Extracted figure from {chunk.title}, page {idx+1}."
+                caption = f"Extracted figure from {chunk.title}, page {idx + 1}."
             else:
-                asset = doc_dir / f"page_{idx+1:04d}_preview.png"
+                asset = doc_dir / f"page_{idx + 1:04d}_preview.png"
                 if not asset.exists():
                     pix = page.get_pixmap(matrix=fitz.Matrix(1.45, 1.45), alpha=False)
                     pix.save(str(asset))
                 kind = "page_preview"
-                caption = f"Source page preview: {chunk.title}, page {idx+1}."
+                caption = f"Source page preview: {chunk.title}, page {idx + 1}."
             pdf.close()
-            out.append(SourceVisual(
-                document_id=chunk.document_id,
-                document_title=chunk.title,
-                page=idx + 1,
-                kind=kind,
-                asset_path=str(asset.relative_to(PROJECT_ROOT)),
-                caption=caption,
-            ))
+            out.append(
+                SourceVisual(
+                    document_id=chunk.document_id,
+                    document_title=chunk.title,
+                    page=idx + 1,
+                    kind=kind,
+                    asset_path=str(asset.relative_to(PROJECT_ROOT)),
+                    caption=caption,
+                )
+            )
         except (ImportError, OSError, RuntimeError, ValueError) as exc:
             LOGGER.warning("Source visual extraction failed for %s: %s", source, exc)
             continue

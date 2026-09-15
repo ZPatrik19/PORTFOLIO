@@ -9,19 +9,20 @@ def classify_intent(query: str) -> str:
     normalized = query.lower()
     if any(token in normalized for token in ["compare", "hasonlíts", "különbség"]):
         return "COMPARISON"
-    if any(token in normalized for token in ["code", "kód", "implement", "dataset example", "példa"]):
+    if any(
+        token in normalized for token in ["code", "kód", "implement", "dataset example", "példa"]
+    ):
         return "CODE_SEARCH"
-    if any(token in normalized for token in ["teach me", "taníts", "learning plan", "tanulási terv"]):
+    if any(
+        token in normalized for token in ["teach me", "taníts", "learning plan", "tanulási terv"]
+    ):
         return "LEARNING"
     if any(
         token in normalized
         for token in ["which document", "melyik dokument", "hol talál", "where can i find"]
     ):
         return "METADATA_SEARCH"
-    if any(
-        token in normalized
-        for token in ["official documentation", "hivatalos dokumentáció"]
-    ):
+    if any(token in normalized for token in ["official documentation", "hivatalos dokumentáció"]):
         return "PUBLIC_DOC_COMPARISON"
     if any(token in normalized for token in ["what is", "mi az", "magyarázd", "explain"]):
         return "CONCEPTUAL"

@@ -4,10 +4,10 @@ These tests are NEVER required for the normal offline test suite. They consume
 Gemini quota and can fail for quota/billing/network reasons unrelated to local
 application correctness.
 """
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.config import load_config
 from tkip.gemini_service import GeminiService
 

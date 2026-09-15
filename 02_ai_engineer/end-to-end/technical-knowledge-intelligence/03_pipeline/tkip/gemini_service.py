@@ -11,7 +11,6 @@ from .logging_config import get_logger
 from .models import KnowledgeAnswer
 from .prompt_engineering import PROFILES, local_optimize
 
-
 BASE_SYSTEM = """You are the grounded synthesis engine of a technical knowledge intelligence platform.
 Use retrieved library evidence and validated tool results as the factual basis for document-grounded claims.
 
@@ -47,7 +46,6 @@ LOGGER = get_logger(__name__)
 
 class GeminiGenerationError(ExternalServiceError):
     """Raised when grounded answer synthesis fails after supported fallbacks."""
-
 
 
 class GeminiService:
@@ -86,9 +84,21 @@ class GeminiService:
         usage = getattr(interaction, "usage", None) or getattr(interaction, "usage_metadata", None)
         if usage is None:
             return
-        inp = (getattr(usage, "total_input_tokens", None) or getattr(usage, "prompt_token_count", None) or 0)
-        out = (getattr(usage, "total_output_tokens", None) or getattr(usage, "candidates_token_count", None) or 0)
-        total = (getattr(usage, "total_tokens", None) or getattr(usage, "total_token_count", None) or (inp + out))
+        inp = (
+            getattr(usage, "total_input_tokens", None)
+            or getattr(usage, "prompt_token_count", None)
+            or 0
+        )
+        out = (
+            getattr(usage, "total_output_tokens", None)
+            or getattr(usage, "candidates_token_count", None)
+            or 0
+        )
+        total = (
+            getattr(usage, "total_tokens", None)
+            or getattr(usage, "total_token_count", None)
+            or (inp + out)
+        )
         self.last_usage["input_tokens"] += int(inp or 0)
         self.last_usage["output_tokens"] += int(out or 0)
         self.last_usage["total_tokens"] += int(total or 0)
@@ -115,7 +125,9 @@ class GeminiService:
             text = (getattr(interaction, "output_text", "") or "").strip()
             self.last_backend = "interactions"
             self.last_error = None
-            return True, f"Connected to {self.cfg['gemini']['model']} via Interactions API" + (f" · {text[:30]}" if text else "")
+            return True, f"Connected to {self.cfg['gemini']['model']} via Interactions API" + (
+                f" · {text[:30]}" if text else ""
+            )
         except Exception as exc:
             errors.append(f"Interactions API: {exc}")
 
@@ -129,7 +141,9 @@ class GeminiService:
             text = (getattr(response, "text", "") or "").strip()
             self.last_backend = "generate_content"
             self.last_error = None
-            return True, f"Connected to {self.cfg['gemini']['model']} via generateContent" + (f" · {text[:30]}" if text else "")
+            return True, f"Connected to {self.cfg['gemini']['model']} via generateContent" + (
+                f" · {text[:30]}" if text else ""
+            )
         except Exception as exc:
             errors.append(f"generateContent: {exc}")
 
@@ -192,7 +206,9 @@ QUERY:
             self.last_query_review = fallback
             return fallback
 
-    def optimize_user_prompt(self, question: str, profile: str, language: str = "auto") -> dict[str, Any]:
+    def optimize_user_prompt(
+        self, question: str, profile: str, language: str = "auto"
+    ) -> dict[str, Any]:
         """Transform a raw question into an explicit advanced prompt-engineering scaffold.
 
         The optimizer is deliberately separate from answer generation. It may
@@ -220,15 +236,15 @@ Preserve product names, code identifiers, technical terminology, requested langu
 Make the retrieval target, evidence constraints and desired output structure clearer.
 Avoid requesting hidden chain-of-thought; ask for concise explanations or verifiable steps instead.
 
-PROFILE: {profile_info['label']}
-PROFILE PURPOSE: {profile_info['purpose']}
+PROFILE: {profile_info["label"]}
+PROFILE PURPOSE: {profile_info["purpose"]}
 EXPECTED LANGUAGE: {LANGUAGE_NAMES.get(language, language)}
 
 ORIGINAL QUESTION:
 {question}
 
 LOCAL SCAFFOLD TO IMPROVE (use as guidance, not as factual content):
-{fallback['optimized']}"""
+{fallback["optimized"]}"""
         try:
             interaction = self.client.interactions.create(
                 model=self.cfg["gemini"]["model"],
@@ -250,8 +266,14 @@ LOCAL SCAFFOLD TO IMPROVE (use as guidance, not as factual content):
             fallback["review_error"] = str(exc)
             return fallback
 
-    def _system_prompt(self, prompt_style: str, custom_system_prompt: str | None, answer_language: str) -> str:
-        base = custom_system_prompt.strip() if (prompt_style == "custom" and custom_system_prompt and custom_system_prompt.strip()) else BASE_SYSTEM
+    def _system_prompt(
+        self, prompt_style: str, custom_system_prompt: str | None, answer_language: str
+    ) -> str:
+        base = (
+            custom_system_prompt.strip()
+            if (prompt_style == "custom" and custom_system_prompt and custom_system_prompt.strip())
+            else BASE_SYSTEM
+        )
         style = PROMPT_PRESETS.get(prompt_style, PROMPT_PRESETS["grounded"])
         language_rule = f"Respond in {LANGUAGE_NAMES.get(answer_language, answer_language)} unless the user explicitly requests another language."
         diagram_rule = "When the topic is conceptual, architectural, procedural, or comparative, include a compact diagram with 3-8 grounded nodes and directed edges. Otherwise set diagram to null."
@@ -282,12 +304,12 @@ LOCAL SCAFFOLD TO IMPROVE (use as guidance, not as factual content):
 {system_prompt}
 
 TASK-SPECIFIC INSTRUCTIONS:
-{mode_instruction or 'Use the detected intent and answer directly.'}
+{mode_instruction or "Use the detected intent and answer directly."}
 
 USER-SUPPLIED ADDITIONAL INSTRUCTIONS:
-{custom_instructions or 'None'}
+{custom_instructions or "None"}
 
-{context_bundle['prompt']}
+{context_bundle["prompt"]}
 
 VALID CITATION OBJECTS:
 {valid_citations}
@@ -328,7 +350,9 @@ OUTPUT REQUIREMENTS:
         if cls._is_quota_error(exc) or cls._is_auth_error(exc):
             return False
         text = cls._error_text(exc)
-        return any(token in text for token in ("timeout", "timed out", "connection", "503", "502", "500"))
+        return any(
+            token in text for token in ("timeout", "timed out", "connection", "503", "502", "500")
+        )
 
     def generate_structured(
         self,
@@ -345,8 +369,14 @@ OUTPUT REQUIREMENTS:
         max_output_tokens: int | None = None,
     ):
         _, prompt = self._compose_prompt(
-            question, context_bundle, citations, intent, prompt_style,
-            custom_system_prompt, custom_instructions, answer_language,
+            question,
+            context_bundle,
+            citations,
+            intent,
+            prompt_style,
+            custom_system_prompt,
+            custom_instructions,
+            answer_language,
         )
         if not self.available:
             return self._fallback(question, context_bundle, citations, intent)
@@ -361,13 +391,19 @@ OUTPUT REQUIREMENTS:
                     effective_temperature = self.cfg["gemini"].get("temperature")
                 if effective_temperature is not None:
                     generation_config["temperature"] = float(effective_temperature)
-                effective_max_output = max_output_tokens or self.cfg["gemini"].get("max_output_tokens")
+                effective_max_output = max_output_tokens or self.cfg["gemini"].get(
+                    "max_output_tokens"
+                )
                 if effective_max_output is not None:
                     generation_config["max_output_tokens"] = int(effective_max_output)
                 interaction = self.client.interactions.create(
                     model=self.cfg["gemini"]["model"],
                     input=prompt,
-                    response_format={"type": "text", "mime_type": "application/json", "schema": schema},
+                    response_format={
+                        "type": "text",
+                        "mime_type": "application/json",
+                        "schema": schema,
+                    },
                     generation_config=generation_config or None,
                 )
                 self._record_usage(interaction)
@@ -379,18 +415,30 @@ OUTPUT REQUIREMENTS:
                 return ans
             except Exception as exc:
                 last = exc
-                if not self._is_retryable_error(exc) or attempt >= self.cfg["gemini"].get("max_retries", 3) - 1:
+                if (
+                    not self._is_retryable_error(exc)
+                    or attempt >= self.cfg["gemini"].get("max_retries", 3) - 1
+                ):
                     break
-                delay_seconds = min(8, 2 ** attempt)
-                LOGGER.warning("Transient Gemini generation error; retrying in %ss: %s", delay_seconds, exc)
+                delay_seconds = min(8, 2**attempt)
+                LOGGER.warning(
+                    "Transient Gemini generation error; retrying in %ss: %s", delay_seconds, exc
+                )
                 time.sleep(delay_seconds)
         # Compatibility fallback: some SDK/API combinations may support the
         # standard generateContent path even when Interactions is unavailable.
         try:
             from google.genai import types
+
             config_kwargs = {
-                "temperature": float(temperature if temperature is not None else self.cfg["gemini"].get("temperature", 0.4)),
-                "max_output_tokens": int(max_output_tokens or self.cfg["gemini"].get("max_output_tokens", 1800)),
+                "temperature": float(
+                    temperature
+                    if temperature is not None
+                    else self.cfg["gemini"].get("temperature", 0.4)
+                ),
+                "max_output_tokens": int(
+                    max_output_tokens or self.cfg["gemini"].get("max_output_tokens", 1800)
+                ),
                 "response_mime_type": "application/json",
                 "response_json_schema": schema,
             }
@@ -407,14 +455,15 @@ OUTPUT REQUIREMENTS:
             self.last_error = None
             return ans
         except Exception as fallback_exc:
-            last = RuntimeError(f"Interactions failed: {last}; generateContent fallback failed: {fallback_exc}")
+            last = RuntimeError(
+                f"Interactions failed: {last}; generateContent fallback failed: {fallback_exc}"
+            )
 
         # A configured Gemini client must never silently degrade into a fake
         # "finished" answer. Surface the real API/SDK/model error to the caller.
         self.last_error = str(last)
         message = (
-            "Gemini answer generation failed. "
-            f"Model={self.cfg['gemini']['model']}. Error: {last}"
+            f"Gemini answer generation failed. Model={self.cfg['gemini']['model']}. Error: {last}"
         )
         if last is not None and self._is_quota_error(last):
             raise QuotaExceededError(message) from last
@@ -435,26 +484,52 @@ OUTPUT REQUIREMENTS:
             )
             self._record_usage(interaction)
             steps = 0
-            while steps < self.cfg.get("agent", {}).get("max_agent_steps", 5) and len(results) < max_calls:
-                calls = [s for s in interaction.steps if getattr(s, "type", None) == "function_call"]
+            while (
+                steps < self.cfg.get("agent", {}).get("max_agent_steps", 5)
+                and len(results) < max_calls
+            ):
+                calls = [
+                    s for s in interaction.steps if getattr(s, "type", None) == "function_call"
+                ]
                 if not calls:
                     break
                 fc = calls[0]
                 try:
                     result = registry.execute(fc.name, dict(fc.arguments))
-                    row = {"tool": fc.name, "arguments": dict(fc.arguments), "result": result, "call_id": fc.id, "status": "success"}
+                    row = {
+                        "tool": fc.name,
+                        "arguments": dict(fc.arguments),
+                        "result": result,
+                        "call_id": fc.id,
+                        "status": "success",
+                    }
                 except Exception as exc:
                     result = {"error": str(exc)}
-                    row = {"tool": fc.name, "arguments": dict(fc.arguments), "result": result, "call_id": fc.id, "status": "error"}
+                    row = {
+                        "tool": fc.name,
+                        "arguments": dict(fc.arguments),
+                        "result": result,
+                        "call_id": fc.id,
+                        "status": "error",
+                    }
                 results.append(row)
                 interaction = self.client.interactions.create(
                     model=self.cfg["gemini"]["model"],
                     previous_interaction_id=interaction.id,
                     tools=decls,
-                    input=[{
-                        "type": "function_result", "name": fc.name, "call_id": fc.id,
-                        "result": [{"type": "text", "text": json.dumps(result, ensure_ascii=False, default=str)}],
-                    }],
+                    input=[
+                        {
+                            "type": "function_result",
+                            "name": fc.name,
+                            "call_id": fc.id,
+                            "result": [
+                                {
+                                    "type": "text",
+                                    "text": json.dumps(result, ensure_ascii=False, default=str),
+                                }
+                            ],
+                        }
+                    ],
                 )
                 self._record_usage(interaction)
                 steps += 1
@@ -476,17 +551,37 @@ OUTPUT REQUIREMENTS:
         """Audit prompt/output quality. Gemini provides linguistic review when available."""
         local_issues: list[dict[str, str]] = []
         if len(final_prompt) > 30000:
-            local_issues.append({"type": "prompt_length", "severity": "warning", "message": "The assembled prompt is very large; context compression may improve latency/cost."})
+            local_issues.append(
+                {
+                    "type": "prompt_length",
+                    "severity": "warning",
+                    "message": "The assembled prompt is very large; context compression may improve latency/cost.",
+                }
+            )
         if not citation_valid:
-            local_issues.append({"type": "citation", "severity": "warning", "message": "Citation validation reported at least one mismatch."})
+            local_issues.append(
+                {
+                    "type": "citation",
+                    "severity": "warning",
+                    "message": "Citation validation reported at least one mismatch.",
+                }
+            )
         if "  " in original_question:
-            local_issues.append({"type": "language", "severity": "info", "message": "Repeated whitespace was detected in the original query."})
+            local_issues.append(
+                {
+                    "type": "language",
+                    "severity": "info",
+                    "message": "Repeated whitespace was detected in the original query.",
+                }
+            )
 
         fallback = {
             "prompt_score": max(0, 100 - 10 * len(local_issues)),
             "output_score": 95 if citation_valid else 70,
             "language_score": 90 if original_question.strip() else 0,
-            "grounding_score": 95 if citation_valid and not insufficient_evidence else (85 if insufficient_evidence else 70),
+            "grounding_score": 95
+            if citation_valid and not insufficient_evidence
+            else (85 if insufficient_evidence else 70),
             "language_issues": [x["message"] for x in local_issues if x["type"] == "language"],
             "prompt_issues": [x["message"] for x in local_issues if x["type"] != "language"],
             "output_issues": [] if citation_valid else ["Citation validation requires attention."],
@@ -509,7 +604,16 @@ OUTPUT REQUIREMENTS:
                 "output_issues": {"type": "array", "items": {"type": "string"}},
                 "recommendations": {"type": "array", "items": {"type": "string"}},
             },
-            "required": ["prompt_score", "output_score", "language_score", "grounding_score", "language_issues", "prompt_issues", "output_issues", "recommendations"],
+            "required": [
+                "prompt_score",
+                "output_score",
+                "language_score",
+                "grounding_score",
+                "language_issues",
+                "prompt_issues",
+                "output_issues",
+                "recommendations",
+            ],
         }
         review_prompt = f"""You are a QA reviewer for a grounded RAG system. Audit the user query, the assembled model prompt, and the final answer.
 Check spelling, grammar, punctuation, accidental language mixing, prompt clarity, contradictory instructions, grounding behavior, and output language quality.
@@ -550,14 +654,19 @@ FINAL ANSWER:
 
     def _fallback(self, question, bundle, citations, intent):
         hits = bundle["selected_hits"]
-        hu = any(x in question.lower() for x in ["mi ", "hogyan", "magyarázd", "könyv", "taníts", "hasonlíts", "működik"])
+        hu = any(
+            x in question.lower()
+            for x in ["mi ", "hogyan", "magyarázd", "könyv", "taníts", "hasonlíts", "működik"]
+        )
         if not hits:
             msg = (
                 "A rendelkezésre álló dokumentumok alapján ezt nem tudom megbízhatóan megválaszolni."
-                if hu else
-                "The available documents do not contain enough evidence to answer this reliably."
+                if hu
+                else "The available documents do not contain enough evidence to answer this reliably."
             )
-            return KnowledgeAnswer(answer=msg, confidence=0.0, insufficient_evidence=True, answer_type=intent.lower())
+            return KnowledgeAnswer(
+                answer=msg, confidence=0.0, insufficient_evidence=True, answer_type=intent.lower()
+            )
 
         # Retrieval-only mode is intentionally not presented as a generated answer.
         # The UI requires Gemini for synthesis; API/offline tests still receive the
@@ -565,8 +674,8 @@ FINAL ANSWER:
         msg = (
             "A releváns könyvrészleteket megtaláltam és validáltam, de összefüggő, grounded válasz generálásához Gemini API-kulcs szükséges. "
             "A források és retrieval diagnosztika továbbra is elérhető."
-            if hu else
-            "Relevant library evidence was retrieved and validated, but a Gemini API key is required to synthesize a coherent grounded answer. "
+            if hu
+            else "Relevant library evidence was retrieved and validated, but a Gemini API key is required to synthesize a coherent grounded answer. "
             "Sources and retrieval diagnostics remain available."
         )
         return KnowledgeAnswer(
@@ -577,4 +686,3 @@ FINAL ANSWER:
             answer_type="retrieval_only",
             insufficient_evidence=False,
         )
-

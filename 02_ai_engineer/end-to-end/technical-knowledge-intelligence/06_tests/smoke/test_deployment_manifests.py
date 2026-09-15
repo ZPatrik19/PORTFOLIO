@@ -2,7 +2,6 @@ from pathlib import Path
 
 import yaml
 
-
 ROOT = Path(__file__).resolve().parents[2]
 K8S_DIR = ROOT / "10_deployment" / "kubernetes"
 
@@ -25,7 +24,9 @@ def test_docker_files_exist_and_do_not_contain_secrets() -> None:
 def test_kubernetes_deployments_have_health_probes_and_resources() -> None:
     deployments = []
     for filename in ("api-deployment.yaml", "ui-deployment.yaml"):
-        deployments.extend(doc for doc in _documents(K8S_DIR / filename) if doc["kind"] == "Deployment")
+        deployments.extend(
+            doc for doc in _documents(K8S_DIR / filename) if doc["kind"] == "Deployment"
+        )
 
     assert len(deployments) == 2
     for deployment in deployments:

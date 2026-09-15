@@ -1,8 +1,8 @@
 """Robustness tests for hostile and normal user inputs."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.config import load_config
 from tkip.guardrails import validate_request
 

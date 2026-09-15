@@ -54,7 +54,11 @@ def _pids_on_port(port: int) -> list[int]:
                     continue
     else:
         result = subprocess.run(
-            ["bash", "-lc", f"command -v lsof >/dev/null && lsof -tiTCP:{port} -sTCP:LISTEN || true"],
+            [
+                "bash",
+                "-lc",
+                f"command -v lsof >/dev/null && lsof -tiTCP:{port} -sTCP:LISTEN || true",
+            ],
             capture_output=True,
             text=True,
             check=False,
@@ -74,7 +78,9 @@ def _stop_port_owner(port: int, label: str) -> None:
         if pid == os.getpid():
             continue
         if os.name == "nt":
-            subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], check=False, capture_output=True)
+            subprocess.run(
+                ["taskkill", "/PID", str(pid), "/T", "/F"], check=False, capture_output=True
+            )
         else:
             try:
                 os.kill(pid, 15)
@@ -100,7 +106,9 @@ def _spawn(command: list[str], label: str) -> subprocess.Popen:
     )
 
 
-def _wait_for_port(host: str, port: int, process: subprocess.Popen | None, label: str, timeout: int = 35) -> bool:
+def _wait_for_port(
+    host: str, port: int, process: subprocess.Popen | None, label: str, timeout: int = 35
+) -> bool:
     deadline = time.time() + timeout
     while time.time() < deadline:
         if _port_open(host, port):
@@ -114,7 +122,9 @@ def _wait_for_port(host: str, port: int, process: subprocess.Popen | None, label
     return False
 
 
-def launch(*, api: bool = True, ui: bool = True, open_browser: bool = True, restart_existing: bool = True) -> int:
+def launch(
+    *, api: bool = True, ui: bool = True, open_browser: bool = True, restart_existing: bool = True
+) -> int:
     processes: list[tuple[str, subprocess.Popen | None]] = []
 
     if api:
@@ -180,7 +190,9 @@ def launch(*, api: bool = True, ui: bool = True, open_browser: bool = True, rest
             print(f"        UI : http://localhost:{UI_PORT}")
         return 0
 
-    print("\n[ERROR] One or more services failed to start. Check the service console window for the traceback.")
+    print(
+        "\n[ERROR] One or more services failed to start. Check the service console window for the traceback."
+    )
     return 1
 
 
@@ -190,7 +202,11 @@ def build_parser() -> argparse.ArgumentParser:
     mode.add_argument("--api-only", action="store_true")
     mode.add_argument("--ui-only", action="store_true")
     parser.add_argument("--no-browser", action="store_true")
-    parser.add_argument("--reuse-existing", action="store_true", help="Do not restart services already listening on TKI ports")
+    parser.add_argument(
+        "--reuse-existing",
+        action="store_true",
+        help="Do not restart services already listening on TKI ports",
+    )
     return parser
 
 
