@@ -1,0 +1,1 @@
+digraph G { rankdir=LR; Sources->Validation->Parsing->Chunking->Embeddings->Indexes->IndexValidation; }

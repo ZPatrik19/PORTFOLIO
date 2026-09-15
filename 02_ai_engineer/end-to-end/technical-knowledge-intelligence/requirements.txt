@@ -1,0 +1,2 @@
+# Convenience runtime install. Dependency source of truth: pyproject.toml
+-e .

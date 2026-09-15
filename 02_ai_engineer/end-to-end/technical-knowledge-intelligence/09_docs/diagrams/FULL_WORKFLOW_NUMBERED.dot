@@ -1,0 +1,69 @@
+digraph TKI {
+rankdir=TB;
+graph [bgcolor="transparent", pad="0.25", nodesep="0.28", ranksep="0.46", splines="ortho"];
+node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, margin="0.16,0.09"];
+edge [color="#7B8492", penwidth=1.5, arrowsize=0.7];
+subgraph cluster_indexing {
+label="INDEXING"; color="#5B8FF9"; penwidth=1.2; style="rounded";
+sources [label="01  Data sources\nPrivate books + public technical docs", fillcolor="#E8F1FF", color="#5B8FF9"];
+discovery [label="02  File discovery & versioning\nStable document_id + checksum/version detection", fillcolor="#E8F1FF", color="#5B8FF9"];
+parse [label="03  Document parsing\nPDF/DOCX/MD/HTML structure extraction", fillcolor="#E8F1FF", color="#5B8FF9"];
+quality [label="04  Data quality validation\nFailures, empty pages, duplicates, size distributions", fillcolor="#E8F1FF", color="#5B8FF9"];
+chunk [label="05  Chunking strategy\nfixed / recursive / structure-aware / semantic", fillcolor="#E8F1FF", color="#5B8FF9"];
+embed [label="06  Embedding generation\nProvider abstraction + cache + batching", fillcolor="#E8F1FF", color="#5B8FF9"];
+multi_index [label="07  Chunk-specific indexes\nIndependent vector/BM25 index for each experiment", fillcolor="#E8F1FF", color="#5B8FF9"];
+}
+subgraph cluster_query {
+label="QUERY"; color="#8A6DF1"; penwidth=1.2; style="rounded";
+ui [label="08  Streamlit research workspace\nQuestion, API key, prompt/chunk/index controls", fillcolor="#F1ECFF", color="#8A6DF1"];
+fastapi [label="09  FastAPI service boundary\nTyped request/response models and external API", fillcolor="#F1ECFF", color="#8A6DF1"];
+trace [label="10  Request + trace middleware\nrequest_id, trace_id and request telemetry", fillcolor="#F1ECFF", color="#8A6DF1"];
+guard [label="11  Input guardrails\nInjection/exfiltration and request validation", fillcolor="#F1ECFF", color="#8A6DF1"];
+promptclean [label="12  Language / clarity check\nConservative grammar cleanup without changing intent", fillcolor="#F1ECFF", color="#8A6DF1"];
+promptopt [label="13  Advanced prompt optimizer\nCO-STAR / CRISPE / RAG-grounded / deep-dive scaffold", fillcolor="#F1ECFF", color="#8A6DF1"];
+understand [label="14  Query understanding\nIntent, language and optional rewrite", fillcolor="#F1ECFF", color="#8A6DF1"];
+strategy [label="15  Chunk-index selection\nPrimary or independent persistent embedding variant", fillcolor="#F1ECFF", color="#8A6DF1"];
+retrieve [label="16  BM25 + Dense retrieval\nLexical and semantic candidate generation", fillcolor="#F1ECFF", color="#8A6DF1"];
+fusion [label="17  Hybrid fusion\nReciprocal Rank Fusion", fillcolor="#F1ECFF", color="#8A6DF1"];
+rerank [label="18  Reranking\nRe-score strongest hybrid candidates", fillcolor="#F1ECFF", color="#8A6DF1"];
+context [label="19  Context engineering\nDedup, diversity and context budget", fillcolor="#F1ECFF", color="#8A6DF1"];
+tools [label="20  Tool calling\nGemini selects allowlisted backend functions", fillcolor="#F1ECFF", color="#8A6DF1"];
+gemini [label="21  Gemini structured generation\nGrounded answer + structured diagram", fillcolor="#F1ECFF", color="#8A6DF1"];
+citation [label="22  Citation & output validation\nResolve citations against selected evidence", fillcolor="#F1ECFF", color="#8A6DF1"];
+response [label="23  Answer + inspectors\nSources, tools, ranking, prompt, graph and diagnostics", fillcolor="#F1ECFF", color="#8A6DF1"];
+}
+subgraph cluster_quality {
+label="QUALITY"; color="#35B779"; penwidth=1.2; style="rounded";
+telemetry [label="24  Tracing & AI monitoring\nLatency, token, cost, quality and retrieval metrics", fillcolor="#EAF8F0", color="#35B779"];
+feedback [label="25  Feedback & failure analysis\nNegative feedback → regression sample", fillcolor="#EAF8F0", color="#35B779"];
+eval [label="26  Offline evaluation\nRetrieval, generation, tool and no-answer benchmarks", fillcolor="#EAF8F0", color="#35B779"];
+improve [label="27  Improve & re-evaluate\nBuild → Measure → Analyze → Improve → Re-evaluate", fillcolor="#EAF8F0", color="#35B779"];
+}
+sources -> discovery;
+discovery -> parse;
+parse -> quality;
+quality -> chunk;
+chunk -> embed;
+embed -> multi_index;
+multi_index -> ui;
+ui -> fastapi;
+fastapi -> trace;
+trace -> guard;
+guard -> promptclean;
+promptclean -> promptopt;
+promptopt -> understand;
+understand -> strategy;
+strategy -> retrieve;
+retrieve -> fusion;
+fusion -> rerank;
+rerank -> context;
+context -> tools;
+tools -> gemini;
+gemini -> citation;
+citation -> response;
+response -> telemetry;
+telemetry -> feedback;
+feedback -> eval;
+eval -> improve;
+improve -> chunk [style=dashed, color="#35B779", label="new version"];
+}

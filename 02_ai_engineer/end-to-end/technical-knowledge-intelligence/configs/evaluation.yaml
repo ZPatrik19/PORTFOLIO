@@ -1,0 +1,7 @@
+evaluation:
+  default_sample_count: 300
+  retrieval_k: [1, 3, 5, 10]
+  golden_regression_size: 50
+  fail_on_metric_drop_fraction: 0.10
+  performance:
+    local_retrieval_p95_ms: 1000

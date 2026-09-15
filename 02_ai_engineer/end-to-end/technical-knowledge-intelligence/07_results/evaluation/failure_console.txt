@@ -1,0 +1,4 @@
+failure_type
+PASS                 227
+RERANKING_FAILURE     43
+Name: count, dtype: int64

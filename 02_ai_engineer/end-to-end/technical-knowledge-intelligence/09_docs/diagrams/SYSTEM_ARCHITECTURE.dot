@@ -1,0 +1,1 @@
+digraph G { rankdir=LR; UI->FastAPI->Orchestrator; Orchestrator->Retrieval; Retrieval->BM25; Retrieval->Dense; Retrieval->Reranker; Orchestrator->Gemini; Gemini->Tools; Orchestrator->Telemetry; }

@@ -1,0 +1,5 @@
+{
+  "provider_class": "LocalHashingEmbeddingProvider",
+  "model": "local_hashing_blake2b",
+  "output_dimensionality": 768
+}

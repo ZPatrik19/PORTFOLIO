@@ -1,0 +1,38 @@
+document_id,title,chunks
+doc_a6fa1173bf25b38e,Demo Advanced Rag,2
+doc_d3dbbd162774bc4a,Demo Adversarial Ml,2
+doc_0ed9a87929364516,Demo Agentic Ai,2
+doc_371ae4021b478bf3,Demo Benchmark Design,2
+doc_22d6f4e6ec74b6ad,Demo Chunking,2
+doc_b347cce7eb727c8e,Demo Ci Cd Ai,2
+doc_bf6e3b87a53fcd66,Demo Context Engineering,2
+doc_c46497f93f96cc3b,Demo Data Drift,2
+doc_28422111a6120f50,Demo Data Quality,2
+doc_fc0283f05bfbb652,Demo Databricks Lakehouse,2
+doc_3fe07daa6b873e6f,Demo Docker,1
+doc_e251ffc7e0440e8d,Demo Docker Ai,2
+doc_4e5adf93c9e6abca,Demo Embeddings,2
+doc_6f98e76b433f6467,Demo Etl Elt,2
+doc_423beaea2fd3dd93,Demo Fastapi,1
+doc_7395de6975ff02de,Demo Fastapi Ai,2
+doc_a5bf48eddcbdfa95,Demo Fine Tuning Vs Rag,2
+doc_e9d301aec3512a5b,Demo Gemini,1
+doc_fd5e8324195437ce,Demo Kubernetes,1
+doc_6cbe82907af879a5,Demo Kubernetes Ai,2
+doc_e3152e2083bb070d,Demo Langchain Patterns,2
+doc_44a35a3111581c2c,Demo Langgraph Patterns,2
+doc_4e7af8b42378a247,Demo Llm Evaluation,2
+doc_5b1a732e9a0f2f3f,Demo Llm Monitoring,2
+doc_0fa3df5082850152,Demo Ml Monitoring,2
+doc_a8853b189d6c04c1,Demo Pca,2
+doc_9b1e400c19ae511f,Demo Prompt Engineering,2
+doc_a65ffd11e4e331b1,Demo Prompt Injection,2
+doc_7e74ac287fe981a8,Demo Python,2
+doc_8bc7b590ea5ed157,Demo Pytorch,2
+doc_077cf26f47acaa5a,Demo Random Forest,2
+doc_2f819703ae16088e,Demo Reranking,2
+doc_399d6dd605a16151,Demo Sklearn,2
+doc_5744cad0fb6ab659,Demo Structured Output,2
+doc_b8f5a0eca3c18a98,Demo Tool Calling,2
+doc_327053686d02b15b,Demo Vector Databases,2
+doc_4273494a72bdb1cd,9781509302963 Microsoft Azure Essentials Fundamentals Of Azure 2Nd Ed Mobile  1 ,1023

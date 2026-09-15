@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tki-ui
+  namespace: tki
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: tki-ui}
+  template:
+    metadata:
+      labels: {app: tki-ui}
+    spec:
+      containers:
+        - name: ui
+          image: technical-knowledge-intelligence:latest
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "streamlit", "run", "05_ui/app.py", "--server.address", "0.0.0.0", "--server.port", "8501"]
+          ports: [{containerPort: 8501}]
+          envFrom:
+            - configMapRef: {name: tki-config}
+            - secretRef: {name: tki-secrets, optional: true}
+          volumeMounts:
+            - {name: data, mountPath: /app/01_data}
+          readinessProbe:
+            httpGet: {path: /_stcore/health, port: 8501}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /_stcore/health, port: 8501}
+            initialDelaySeconds: 25
+            periodSeconds: 20
+          resources:
+            requests: {cpu: "250m", memory: "512Mi"}
+            limits: {cpu: "1", memory: "2Gi"}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: tki-data}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tki-ui
+  namespace: tki
+spec:
+  selector: {app: tki-ui}
+  ports:
+    - {name: http, port: 8501, targetPort: 8501}

@@ -1,0 +1,41 @@
+{
+  "answer": "Offline/demo grounded extractive answer:\n- Containers have isolated networking namespaces. User-defined bridge networks provide name-based service discovery between containers on the same Docker host. Port publishing maps a host port to a container port; it is distinct from service-to-service traffic inside the bridge network.",
+  "confidence": 0.85,
+  "sources": [
+    {
+      "document_id": "doc_3a59df463ccf9c19",
+      "document_title": "Demo Docker",
+      "page": 1,
+      "chapter": null,
+      "section": "Docker Networking",
+      "chunk_id": "chk_90eb8b9c47d4bb8c",
+      "quote_or_evidence": "Containers have isolated networking namespaces. User-defined bridge networks provide name-based service discovery between containers on the same Docker host. Port publishing maps a host port to a container port; it is distinct from service-to-service traffic inside the bridge network."
+    }
+  ],
+  "used_documents": [
+    "Demo Docker"
+  ],
+  "used_tools": [],
+  "answer_type": "metadata_search",
+  "insufficient_evidence": false,
+  "follow_up_questions": [],
+  "request_id": "f46892d8a8b84aa38e97015f88daced5",
+  "trace_id": "773ba16a2435483abc9b8a297648e1d0",
+  "latency_ms": 5.386584999996558,
+  "diagnostics": {
+    "intent": "METADATA_SEARCH",
+    "language": "hu",
+    "retrieval_ms": 0.37550299998656556,
+    "gemini_ms": 0.04060100002334366,
+    "citation_validation": {
+      "valid": true,
+      "errors": []
+    },
+    "retrieved": 8,
+    "gemini_available": false,
+    "input_tokens": null,
+    "output_tokens": null,
+    "total_tokens": null,
+    "estimated_cost_usd": null
+  }
+}

@@ -1,0 +1,100 @@
+from __future__ import annotations
+
+# User-facing answer budgets. Token limits are budgets, not guaranteed usage.
+ANSWER_PRESETS = {
+    "economy": {
+        "label": "Economy",
+        "description": "Lowest token/cost footprint for quick grounded answers.",
+        "prompt_profile": "concise_expert",
+        "index_variant": "recursive",
+        "runtime_chunking": False,
+        "runtime_chunk_strategy": "recursive",
+        "runtime_chunk_size": 700,
+        "runtime_chunk_overlap": 80,
+        "context_max_chars": 9000,
+        "retrieval_final_k": 5,
+        "max_output_tokens": 900,
+        "max_tool_calls": 1,
+        "quality_review": True,
+        "temperature": 0.35,
+    },
+    "recommended": {
+        "label": "Recommended",
+        "description": "Best default balance of grounding, depth, latency and cost.",
+        "prompt_profile": "rag_grounded",
+        "index_variant": "primary",
+        "runtime_chunking": False,
+        "runtime_chunk_strategy": "structure_aware",
+        "runtime_chunk_size": 1000,
+        "runtime_chunk_overlap": 140,
+        "context_max_chars": 16000,
+        "retrieval_final_k": 8,
+        "max_output_tokens": 1800,
+        "max_tool_calls": 2,
+        "quality_review": True,
+        "temperature": 0.45,
+    },
+    "deep": {
+        "label": "Deep",
+        "description": "More context and output budget for technical deep dives.",
+        "prompt_profile": "technical_deep_dive",
+        "index_variant": "semantic",
+        "runtime_chunking": True,
+        "runtime_chunk_strategy": "semantic",
+        "runtime_chunk_size": 1400,
+        "runtime_chunk_overlap": 180,
+        "context_max_chars": 24000,
+        "retrieval_final_k": 10,
+        "max_output_tokens": 2800,
+        "max_tool_calls": 3,
+        "quality_review": True,
+        "temperature": 0.5,
+    },
+    "max_quality": {
+        "label": "Max Quality",
+        "description": "Largest token/context budget for multi-source research and QA.",
+        "prompt_profile": "research_synthesis",
+        "index_variant": "semantic",
+        "runtime_chunking": True,
+        "runtime_chunk_strategy": "semantic",
+        "runtime_chunk_size": 1600,
+        "runtime_chunk_overlap": 220,
+        "context_max_chars": 32000,
+        "retrieval_final_k": 12,
+        "max_output_tokens": 4200,
+        "max_tool_calls": 4,
+        "quality_review": True,
+        "temperature": 0.5,
+    },
+}
+
+CHUNK_PRESETS = {
+    "compact": {
+        "label": "Compact / Fast",
+        "description": "Smaller recursive chunks; fast and lexical-detail friendly.",
+        "index_variant": "recursive",
+        "runtime_strategy": "recursive",
+        "chunk_size": 700,
+        "overlap": 80,
+    },
+    "balanced": {
+        "label": "Balanced / Recommended",
+        "description": "Structure-aware chunks; best general default for technical books.",
+        "index_variant": "primary",
+        "runtime_strategy": "structure_aware",
+        "chunk_size": 1000,
+        "overlap": 140,
+    },
+    "semantic_deep": {
+        "label": "Semantic / Deep",
+        "description": "Larger semantic context units for conceptual synthesis.",
+        "index_variant": "semantic",
+        "runtime_strategy": "semantic",
+        "chunk_size": 1500,
+        "overlap": 220,
+    },
+}
+
+
+def preset(name: str) -> dict:
+    return dict(ANSWER_PRESETS[name])

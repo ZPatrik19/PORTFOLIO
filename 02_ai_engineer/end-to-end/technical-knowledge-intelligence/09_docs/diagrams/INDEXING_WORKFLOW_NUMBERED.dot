@@ -1,0 +1,22 @@
+digraph TKI {
+rankdir=TB;
+graph [bgcolor="transparent", pad="0.25", nodesep="0.28", ranksep="0.46", splines="ortho"];
+node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, margin="0.16,0.09"];
+edge [color="#7B8492", penwidth=1.5, arrowsize=0.7];
+subgraph cluster_indexing {
+label="INDEXING"; color="#5B8FF9"; penwidth=1.2; style="rounded";
+sources [label="01  Data sources\nPrivate books + public technical docs", fillcolor="#E8F1FF", color="#5B8FF9"];
+discovery [label="02  File discovery & versioning\nStable document_id + checksum/version detection", fillcolor="#E8F1FF", color="#5B8FF9"];
+parse [label="03  Document parsing\nPDF/DOCX/MD/HTML structure extraction", fillcolor="#E8F1FF", color="#5B8FF9"];
+quality [label="04  Data quality validation\nFailures, empty pages, duplicates, size distributions", fillcolor="#E8F1FF", color="#5B8FF9"];
+chunk [label="05  Chunking strategy\nfixed / recursive / structure-aware / semantic", fillcolor="#E8F1FF", color="#5B8FF9"];
+embed [label="06  Embedding generation\nProvider abstraction + cache + batching", fillcolor="#E8F1FF", color="#5B8FF9"];
+multi_index [label="07  Chunk-specific indexes\nIndependent vector/BM25 index for each experiment", fillcolor="#E8F1FF", color="#5B8FF9"];
+}
+sources -> discovery;
+discovery -> parse;
+parse -> quality;
+quality -> chunk;
+chunk -> embed;
+embed -> multi_index;
+}
