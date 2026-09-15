@@ -1,12 +1,12 @@
 """Unit tests for prompt profiles, workflow definition and index inventory."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.config import load_config
 from tkip.multi_index import MultiIndexManager
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
-from tkip.prompt_engineering import PROFILES, PROFILE_KEYS, local_optimize
+from tkip.prompt_engineering import PROFILE_KEYS, PROFILES, local_optimize
 from tkip.workflow_graph import workflow_dot, workflow_rows
 
 pytestmark = pytest.mark.unit
@@ -52,4 +52,7 @@ def test_multi_index_inventory_exposes_all_supported_variants() -> None:
 def test_answer_and_chunk_presets_define_clear_quality_levels() -> None:
     assert set(ANSWER_PRESETS) == {"economy", "recommended", "deep", "max_quality"}
     assert set(CHUNK_PRESETS) == {"compact", "balanced", "semantic_deep"}
-    assert ANSWER_PRESETS["recommended"]["max_output_tokens"] < ANSWER_PRESETS["max_quality"]["max_output_tokens"]
+    assert (
+        ANSWER_PRESETS["recommended"]["max_output_tokens"]
+        < ANSWER_PRESETS["max_quality"]["max_output_tokens"]
+    )

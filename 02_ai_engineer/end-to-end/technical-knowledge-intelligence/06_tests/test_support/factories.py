@@ -4,6 +4,7 @@ The goal of these helpers is to keep individual tests focused on behavior rather
 than boilerplate model construction. They intentionally create small, explicit,
 deterministic objects suitable for unit/integration tests.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

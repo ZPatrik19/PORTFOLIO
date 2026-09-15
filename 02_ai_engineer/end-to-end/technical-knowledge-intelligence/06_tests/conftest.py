@@ -1,4 +1,5 @@
 """Shared pytest fixtures for the Technical Knowledge Intelligence test suite."""
+
 from __future__ import annotations
 
 import copy
@@ -6,7 +7,6 @@ import os
 from pathlib import Path
 
 import pytest
-
 from tkip.config import gemini_api_key, load_config
 
 

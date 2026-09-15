@@ -4,21 +4,12 @@ import hashlib
 import time
 
 import streamlit as st
-
+from i18n import budget_description, chunk_description, normalize_language, pick, stage_label, tr
 from tkip.config import PROJECT_ROOT, load_config
 from tkip.gemini_service import GeminiService
 from tkip.orchestration import KnowledgePlatform
-from tkip.prompt_engineering import local_optimize
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
-from i18n import (
-    budget_description,
-    chunk_description,
-    normalize_language,
-    pick,
-    profile_label,
-    stage_label,
-    tr,
-)
+from tkip.prompt_engineering import local_optimize
 from ui_experiments import (
     _budget_label_map,
     _chunk_label_map,
@@ -30,7 +21,6 @@ from ui_experiments import (
 )
 from ui_pages import render_library, render_monitoring, render_workflow_page
 from ui_rendering import render_answer, render_header
-
 
 st.set_page_config(
     page_title="TKI",
@@ -194,6 +184,7 @@ QUESTIONS = {
     ],
 }
 
+
 @st.cache_resource(show_spinner=False)
 def get_platform() -> KnowledgePlatform:
     platform = KnowledgePlatform(load_config())
@@ -276,7 +267,9 @@ effective_key = entered_key.strip() or None
 gem_probe = GeminiService(kp.cfg, api_key=effective_key)
 gemini_client_ready = gem_probe.available
 key_material = gem_probe.key or ""
-key_fingerprint = hashlib.sha256(key_material.encode("utf-8")).hexdigest()[:12] if key_material else "none"
+key_fingerprint = (
+    hashlib.sha256(key_material.encode("utf-8")).hexdigest()[:12] if key_material else "none"
+)
 if st.session_state.get("gemini_verified_fp") != key_fingerprint:
     st.session_state["gemini_verified"] = False
     st.session_state["gemini_verified_fp"] = key_fingerprint
@@ -291,7 +284,9 @@ else:
     detail = gem_probe.init_error or ""
     st.sidebar.warning(f"{tr(ui_lang, 'gemini_unavailable')}{': ' + detail if detail else ''}")
 
-if st.sidebar.button(tr(ui_lang, "test_connection"), use_container_width=True, disabled=not gemini_client_ready):
+if st.sidebar.button(
+    tr(ui_lang, "test_connection"), use_container_width=True, disabled=not gemini_client_ready
+):
     with st.sidebar.status(tr(ui_lang, "testing_connection"), expanded=True) as status:
         ok, message = gem_probe.test_connection()
         st.session_state["gemini_verified"] = bool(ok)
@@ -301,13 +296,19 @@ if st.sidebar.button(tr(ui_lang, "test_connection"), use_container_width=True, d
         if ok:
             status.update(label=tr(ui_lang, "gemini_verified"), state="complete", expanded=False)
         else:
-            status.update(label=tr(ui_lang, "gemini_connection_failed"), state="error", expanded=True)
+            status.update(
+                label=tr(ui_lang, "gemini_connection_failed"), state="error", expanded=True
+            )
             st.sidebar.error(message)
 
-if effective_key and st.sidebar.button(tr(ui_lang, "save_key"), use_container_width=True, help=tr(ui_lang, "api_help")):
+if effective_key and st.sidebar.button(
+    tr(ui_lang, "save_key"), use_container_width=True, help=tr(ui_lang, "api_help")
+):
     env_path = PROJECT_ROOT / ".env"
     existing = env_path.read_text(encoding="utf-8") if env_path.exists() else ""
-    lines = [line for line in existing.splitlines() if not line.strip().startswith("GEMINI_API_KEY=")]
+    lines = [
+        line for line in existing.splitlines() if not line.strip().startswith("GEMINI_API_KEY=")
+    ]
     lines.append(f"GEMINI_API_KEY={effective_key}")
     env_path.write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
     st.sidebar.success(tr(ui_lang, "saved_key"))
@@ -330,7 +331,11 @@ if nav == tr(ui_lang, "workspace"):
         tr(ui_lang, "question_bank"),
         ["—"] + qs,
         index=0,
-        help=pick(ui_lang, "Gyors próbakérdések a rendszer teszteléséhez.", "Quick test questions for the system."),
+        help=pick(
+            ui_lang,
+            "Gyors próbakérdések a rendszer teszteléséhez.",
+            "Quick test questions for the system.",
+        ),
     )
     if selected_example != "—" and st.button(tr(ui_lang, "use_question"), use_container_width=True):
         st.session_state["workspace_question"] = selected_example
@@ -359,15 +364,26 @@ if nav == tr(ui_lang, "workspace"):
     budget_key = budget_labels[budget_label]
     budget = ANSWER_PRESETS[budget_key]
     b1, b2, b3, b4 = st.columns(4)
-    b1.metric(tr(ui_lang, "context_budget"), f"{budget['context_max_chars']:,}", help=budget_description(ui_lang, budget_key, budget["description"]))
+    b1.metric(
+        tr(ui_lang, "context_budget"),
+        f"{budget['context_max_chars']:,}",
+        help=budget_description(ui_lang, budget_key, budget["description"]),
+    )
     b2.metric(tr(ui_lang, "output_budget"), f"{budget['max_output_tokens']:,}")
     b3.metric(tr(ui_lang, "top_evidence"), budget["retrieval_final_k"])
     b4.metric(tr(ui_lang, "max_tools"), budget["max_tool_calls"])
 
     st.markdown(f"#### 2 · {tr(ui_lang, 'prompt_profile')}")
     profile_map = _profile_options(ui_lang)
-    default_profile_label = next(label for label, key in profile_map.items() if key == budget["prompt_profile"])
-    prompt_label = st.selectbox(tr(ui_lang, "prompt_profile"), list(profile_map), index=list(profile_map).index(default_profile_label), label_visibility="collapsed")
+    default_profile_label = next(
+        label for label, key in profile_map.items() if key == budget["prompt_profile"]
+    )
+    prompt_label = st.selectbox(
+        tr(ui_lang, "prompt_profile"),
+        list(profile_map),
+        index=list(profile_map).index(default_profile_label),
+        label_visibility="collapsed",
+    )
     prompt_profile = profile_map[prompt_label]
     with st.expander(tr(ui_lang, "prompt_preview"), expanded=False):
         render_prompt_preview(question, prompt_profile, ui_lang)
@@ -384,7 +400,11 @@ if nav == tr(ui_lang, "workspace"):
     chunk_key = chunk_map[chunk_label]
     chunk = CHUNK_PRESETS[chunk_key]
     c1, c2, c3 = st.columns(3)
-    c1.metric(tr(ui_lang, "persistent_index"), chunk["index_variant"], help=chunk_description(ui_lang, chunk_key, chunk["description"]))
+    c1.metric(
+        tr(ui_lang, "persistent_index"),
+        chunk["index_variant"],
+        help=chunk_description(ui_lang, chunk_key, chunk["description"]),
+    )
     c2.metric(tr(ui_lang, "chunk_target"), f"{chunk['chunk_size']}")
     c3.metric(tr(ui_lang, "overlap"), chunk["overlap"])
 
@@ -403,7 +423,9 @@ if nav == tr(ui_lang, "workspace"):
         prompt_check = x1.toggle(tr(ui_lang, "prompt_check"), value=True)
         quality_review = x2.toggle(tr(ui_lang, "quality_review"), value=quality_review)
         y1, y2 = st.columns(2)
-        gemini_optimize = y1.toggle(tr(ui_lang, "gemini_prompt_refine"), value=True, disabled=not gemini_client_ready)
+        gemini_optimize = y1.toggle(
+            tr(ui_lang, "gemini_prompt_refine"), value=True, disabled=not gemini_client_ready
+        )
         include_visual = y2.toggle(tr(ui_lang, "source_visual"), value=True)
         custom_instruction = st.text_area(
             tr(ui_lang, "custom_instruction"),
@@ -414,7 +436,11 @@ if nav == tr(ui_lang, "workspace"):
         f1, f2, f3 = st.columns(3)
         doc_titles = sorted({chunk.title for chunk in kp.chunks})
         selected_titles = f1.multiselect(tr(ui_lang, "documents_filter"), doc_titles)
-        selected_docs = list(dict.fromkeys(chunk.document_id for chunk in kp.chunks if chunk.title in selected_titles))
+        selected_docs = list(
+            dict.fromkeys(
+                chunk.document_id for chunk in kp.chunks if chunk.title in selected_titles
+            )
+        )
         source_type = f2.selectbox(
             tr(ui_lang, "source_filter"),
             ["all", "private", "public", "demo"],
@@ -429,7 +455,13 @@ if nav == tr(ui_lang, "workspace"):
         topic = st.text_input(tr(ui_lang, "topic_filter"), value="")
 
     if not gemini_client_ready:
-        st.warning(pick(ui_lang, "Adj meg Gemini API-kulcsot az oldalsávban.", "Add a Gemini API key in the sidebar."))
+        st.warning(
+            pick(
+                ui_lang,
+                "Adj meg Gemini API-kulcsot az oldalsávban.",
+                "Add a Gemini API key in the sidebar.",
+            )
+        )
     run = st.button(
         f"✨ {tr(ui_lang, 'generate')}",
         type="primary",
@@ -475,8 +507,7 @@ if nav == tr(ui_lang, "workspace"):
                 )
                 live_box.caption(
                     " → ".join(
-                        stage_label(ui_lang, str(item.get("stage") or ""))
-                        for item in pipeline[-6:]
+                        stage_label(ui_lang, str(item.get("stage") or "")) for item in pipeline[-6:]
                     )
                 )
 
@@ -530,7 +561,9 @@ elif nav == tr(ui_lang, "playground"):
     ]:
         with column:
             st.markdown(f"### {tr(ui_lang, 'variant')} {key}")
-            budget_default_label = next(label for label, value in budget_map.items() if value == default_budget)
+            budget_default_label = next(
+                label for label, value in budget_map.items() if value == default_budget
+            )
             budget_label_value = st.selectbox(
                 f"{tr(ui_lang, 'answer_budget')} {key}",
                 list(budget_map),
@@ -540,7 +573,9 @@ elif nav == tr(ui_lang, "playground"):
             budget_key_value = budget_map[budget_label_value]
             base = ANSWER_PRESETS[budget_key_value]
 
-            profile_default_label = next(label for label, value in profile_map.items() if value == default_profile)
+            profile_default_label = next(
+                label for label, value in profile_map.items() if value == default_profile
+            )
             profile_label_value = st.selectbox(
                 f"{tr(ui_lang, 'prompt_profile')} {key}",
                 list(profile_map),
@@ -549,7 +584,9 @@ elif nav == tr(ui_lang, "playground"):
             )
             profile_key_value = profile_map[profile_label_value]
 
-            chunk_default_label = next(label for label, value in chunk_map.items() if value == default_chunk)
+            chunk_default_label = next(
+                label for label, value in chunk_map.items() if value == default_chunk
+            )
             chunk_label_value = st.selectbox(
                 f"{tr(ui_lang, 'chunk_profile')} {key}",
                 list(chunk_map),
@@ -559,12 +596,49 @@ elif nav == tr(ui_lang, "playground"):
             chunk_key_value = chunk_map[chunk_label_value]
 
             with st.expander(f"{tr(ui_lang, 'expert_controls')} {key}", expanded=False):
-                context_chars = st.slider(f"{tr(ui_lang, 'context_chars')} {key}", 6000, 40000, int(base["context_max_chars"]), 1000, key=f"ab_ctx_{key}")
-                output_tokens = st.slider(f"{tr(ui_lang, 'max_output_tokens')} {key}", 500, 6000, int(base["max_output_tokens"]), 250, key=f"ab_out_{key}")
-                tools = st.slider(f"{tr(ui_lang, 'max_tool_calls')} {key}", 0, 6, int(base["max_tool_calls"]), 1, key=f"ab_tools_{key}")
-                final_k = st.slider(f"{tr(ui_lang, 'final_evidence_chunks')} {key}", 3, 15, int(base["retrieval_final_k"]), 1, key=f"ab_k_{key}")
-                temperature = st.slider(f"{tr(ui_lang, 'temperature')} {key}", 0.0, 1.5, float(base["temperature"]), 0.05, key=f"ab_temp_{key}")
-                runtime = st.toggle(f"{tr(ui_lang, 'query_time_rechunk')} {key}", value=False, key=f"ab_rt_{key}")
+                context_chars = st.slider(
+                    f"{tr(ui_lang, 'context_chars')} {key}",
+                    6000,
+                    40000,
+                    int(base["context_max_chars"]),
+                    1000,
+                    key=f"ab_ctx_{key}",
+                )
+                output_tokens = st.slider(
+                    f"{tr(ui_lang, 'max_output_tokens')} {key}",
+                    500,
+                    6000,
+                    int(base["max_output_tokens"]),
+                    250,
+                    key=f"ab_out_{key}",
+                )
+                tools = st.slider(
+                    f"{tr(ui_lang, 'max_tool_calls')} {key}",
+                    0,
+                    6,
+                    int(base["max_tool_calls"]),
+                    1,
+                    key=f"ab_tools_{key}",
+                )
+                final_k = st.slider(
+                    f"{tr(ui_lang, 'final_evidence_chunks')} {key}",
+                    3,
+                    15,
+                    int(base["retrieval_final_k"]),
+                    1,
+                    key=f"ab_k_{key}",
+                )
+                temperature = st.slider(
+                    f"{tr(ui_lang, 'temperature')} {key}",
+                    0.0,
+                    1.5,
+                    float(base["temperature"]),
+                    0.05,
+                    key=f"ab_temp_{key}",
+                )
+                runtime = st.toggle(
+                    f"{tr(ui_lang, 'query_time_rechunk')} {key}", value=False, key=f"ab_rt_{key}"
+                )
 
             configs[key] = {
                 "budget_key": budget_key_value,
@@ -612,7 +686,9 @@ elif nav == tr(ui_lang, "playground"):
                 status.update(label=f"{tr(ui_lang, 'variant_ready')} {key}", state="complete")
         st.session_state["ab_results"] = results
     if "ab_results" in st.session_state:
-        render_ab_results(st.session_state["ab_results"]["A"], st.session_state["ab_results"]["B"], ui_lang)
+        render_ab_results(
+            st.session_state["ab_results"]["A"], st.session_state["ab_results"]["B"], ui_lang
+        )
 
 elif nav == tr(ui_lang, "library"):
     render_library(kp, ui_lang)

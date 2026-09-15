@@ -1,15 +1,17 @@
 """Offline integration test for ingestion -> indexing -> retrieval -> orchestration."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.models import AskRequest
 from tkip.orchestration import KnowledgePlatform
 
 pytestmark = pytest.mark.integration
 
 
-def test_demo_corpus_can_be_ingested_cached_retrieved_and_orchestrated(isolated_config: dict) -> None:
+def test_demo_corpus_can_be_ingested_cached_retrieved_and_orchestrated(
+    isolated_config: dict,
+) -> None:
     # Arrange
     platform = KnowledgePlatform(isolated_config)
 

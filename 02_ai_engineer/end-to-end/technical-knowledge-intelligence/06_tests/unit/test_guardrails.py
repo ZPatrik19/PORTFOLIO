@@ -1,8 +1,8 @@
 """Unit tests for prompt-injection and exfiltration guards."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.guardrails import detect_exfiltration_request
 
 pytestmark = pytest.mark.unit

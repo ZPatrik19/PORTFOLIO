@@ -1,14 +1,17 @@
 from __future__ import annotations
-from pathlib import Path
+
 import json
 import os
-import numpy as np
-from .models import Chunk
-from .logging_config import get_logger
-from .config import resolve_path
+from pathlib import Path
 
+import numpy as np
+
+from .config import resolve_path
+from .logging_config import get_logger
+from .models import Chunk
 
 LOGGER = get_logger(__name__)
+
 
 class NumpyVectorStore:
     """Portable vector index used by the default local portfolio runtime.

@@ -1,8 +1,8 @@
 """Unit tests for the allowlisted tool registry."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.tools import ToolRegistry, ToolSpec
 
 pytestmark = pytest.mark.unit

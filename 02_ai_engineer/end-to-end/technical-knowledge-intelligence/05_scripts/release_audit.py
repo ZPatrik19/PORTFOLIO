@@ -8,9 +8,9 @@ import json
 import re
 import shutil
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable
 
 import yaml
 
@@ -88,7 +88,10 @@ def audit_yaml(report: AuditReport) -> None:
 def audit_secrets_and_paths(report: AuditReport) -> None:
     hits: list[str] = []
     for path in iter_repo_files():
-        if path.suffix.lower() not in TEXT_SUFFIXES and path.name not in {"Dockerfile", ".gitignore"}:
+        if path.suffix.lower() not in TEXT_SUFFIXES and path.name not in {
+            "Dockerfile",
+            ".gitignore",
+        }:
             continue
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
@@ -106,12 +109,22 @@ def audit_secrets_and_paths(report: AuditReport) -> None:
 
 def audit_git_hygiene(report: AuditReport) -> None:
     gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
-    required = [".venv/", ".env", "__pycache__", ".pytest_cache", "01_data/user_library"]
+    required = [
+        ".venv/",
+        ".env",
+        "__pycache__",
+        ".pytest_cache",
+        "01_data/user_library",
+        "01_data/interim/",
+        "01_data/processed/",
+        "01_data/indexes/",
+        "08_logs/",
+        ".streamlit/secrets.toml",
+    ]
     missing = [entry for entry in required if entry not in gitignore]
     if missing:
         report.errors.append(f".gitignore missing required entries: {missing}")
     report.check("Repository hygiene rules checked")
-
 
 
 def audit_architecture_hygiene(report: AuditReport) -> None:
@@ -158,6 +171,7 @@ def audit_required_release_files(report: AuditReport) -> None:
         "09_docs/06_TESTING.md",
         "FINAL_VALIDATION_REPORT.md",
         "pyproject.toml",
+        "build_backend.py",
         "requirements.txt",
         ".env.example",
         ".gitignore",
@@ -189,16 +203,12 @@ def audit_launcher_integrity(report: AuditReport) -> None:
     for path in batch_files:
         raw = path.read_bytes()
         if not raw or raw.count(b"\n") != raw.count(b"\r\n"):
-            report.errors.append(
-                f"Windows batch file must use CRLF only: {path.relative_to(ROOT)}"
-            )
+            report.errors.append(f"Windows batch file must use CRLF only: {path.relative_to(ROOT)}")
 
     for path in shell_files:
         raw = path.read_bytes()
         if b"\r\n" in raw:
-            report.errors.append(
-                f"Unix shell file must use LF only: {path.relative_to(ROOT)}"
-            )
+            report.errors.append(f"Unix shell file must use LF only: {path.relative_to(ROOT)}")
 
     windows_runner = ROOT / "run_project.bat"
     if windows_runner.exists():
@@ -222,6 +232,7 @@ def audit_launcher_integrity(report: AuditReport) -> None:
         f"Launcher integrity checked: {len(batch_files)} batch file(s), "
         f"{len(shell_files)} shell file(s)"
     )
+
 
 def audit_tools(report: AuditReport) -> None:
     for command in ("docker", "kubectl", "dot"):

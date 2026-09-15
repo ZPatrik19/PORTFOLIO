@@ -1,22 +1,23 @@
-# Final Validation Report — v1.1.0
+# Final Validation Report — v1.1.1
 
 Validated: 2026-09-15
 
 ## What changed
 
-- Fixed legacy Streamlit language values (`Angol`, `Magyar`) by normalizing them to stable `en` / `hu` codes before question-bank and chart access.
-- Changed the daily launcher so `run_project.bat run` starts only the Streamlit UI. The FastAPI adapter remains available separately with `run_project.bat api`.
-- Added Library UI controls for uploading supported documents and rebuilding the search index.
-- Renamed the corpus folders to `01_data/user_library/` and `01_data/reference_docs/`, while keeping backward-compatible config aliases for older projects.
-- Reduced the Markdown set and consolidated overlapping technical notes into the core documentation.
-- Prevented user-library files and non-demo reference documents from being copied into Docker images by default.
+- Replaced the hidden setuptools CI dependency with a self-contained PEP 517/660 build backend.
+- Fixed runtime project/config discovery for installed wheel and Docker execution.
+- Updated the Docker build context to include the local build backend before package installation.
+- Fixed the Ruff violations reported by GitHub Actions without weakening lint rules.
+- Hardened `.gitignore` for private documents, indexes, parse caches, processed runtime state and logs.
 
 ## Validation
 
 - Python compile validation: PASS
-- Focused UI / language / Plotly / packaging tests: 37 passed
-- Full offline regression suite: 119 passed
+- Full offline pytest suite: **121 passed, 1 live-Gemini test deselected**
 - Release audit: PASS
-- English Plotly smoke test: PASS for both `en` and legacy `Angol` language values
+- Editable install in a clean environment with **no setuptools installed**: PASS
+- Normal wheel build/install: PASS
+- Installed-wheel config discovery from a Docker-like working directory: PASS
+- FastAPI startup + `/health`: PASS
 
-Docker and Kubernetes runtime validation was not executed in this environment because Docker/Kubectl are unavailable. Live Gemini calls were not required for this hotfix.
+A real Docker daemon and `kubectl` are not available in this execution environment, so container/Kubernetes runtime execution was not claimed as tested.

@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 from .models import Chunk
 
@@ -198,9 +199,7 @@ class LibraryTools:
         output: dict[str, Any] = {}
         for document_id in document_ids[: self.MAX_COMPARE_DOCUMENTS]:
             output[document_id] = [
-                hit.model_dump()
-                for hit in search_results
-                if hit.chunk.document_id == document_id
+                hit.model_dump() for hit in search_results if hit.chunk.document_id == document_id
             ][:3]
         return output
 
@@ -221,7 +220,9 @@ class LibraryTools:
         }
 
     def list_library_topics(self) -> list[tuple[str, int]]:
-        return Counter(keyword for chunk in self.chunks for keyword in chunk.keywords).most_common(40)
+        return Counter(keyword for chunk in self.chunks for keyword in chunk.keywords).most_common(
+            40
+        )
 
     def get_library_statistics(self) -> dict[str, Any]:
         return {

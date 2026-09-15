@@ -1,4 +1,4 @@
-from tkip.models import AnswerDiagram, AskRequest, Chunk, KnowledgeAnswer
+from tkip.models import AnswerDiagram, AskRequest, KnowledgeAnswer
 
 
 def test_mutable_defaults_are_not_shared_between_model_instances() -> None:

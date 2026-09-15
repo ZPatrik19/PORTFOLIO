@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 
 import pandas as pd
-
 from tkip.config import resolve_path
 from tkip.evaluation import evaluate_answer_record, generate_eval_dataset
 from tkip.models import AskRequest
@@ -50,10 +49,7 @@ def main() -> int:
         "no_answer_accuracy",
         "structured_output_validity",
     ]
-    summary = {
-        column: float(metrics[column].dropna().mean())
-        for column in measured_columns
-    }
+    summary = {column: float(metrics[column].dropna().mean()) for column in measured_columns}
     not_measured = "NOT_MEASURED_WITHOUT_LLM_JUDGE_OR_HUMAN_LABELS"
     summary.update(
         {

@@ -1,10 +1,10 @@
 """Unit tests for benchmark catalog, nDCG, experiment tracking and Gemini errors."""
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-
 from tkip.benchmark_catalog import BENCHMARK_CATALOG
 from tkip.config import load_config
 from tkip.evaluation import _ndcg

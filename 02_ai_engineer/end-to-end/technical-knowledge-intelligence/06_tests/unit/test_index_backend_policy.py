@@ -1,8 +1,8 @@
 """Unit tests for vector-store backend safety policy."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.indexing import _qdrant_local_is_too_large
 
 pytestmark = pytest.mark.unit

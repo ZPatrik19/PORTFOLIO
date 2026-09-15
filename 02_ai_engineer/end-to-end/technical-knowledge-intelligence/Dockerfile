@@ -9,7 +9,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY pyproject.toml README.md LICENSE ./
+COPY pyproject.toml build_backend.py README.md LICENSE ./
 COPY 03_pipeline ./03_pipeline
 RUN python -m pip install --upgrade pip \
     && python -m pip install .

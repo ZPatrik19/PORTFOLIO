@@ -1,10 +1,10 @@
 """Unit tests for lexical retrieval and reciprocal-rank fusion."""
+
 from __future__ import annotations
 
 import pytest
-
-from tkip.retrieval import BM25Index, reciprocal_rank_fusion
 from test_support.factories import make_chunk
+from tkip.retrieval import BM25Index, reciprocal_rank_fusion
 
 pytestmark = pytest.mark.unit
 

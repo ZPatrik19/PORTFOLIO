@@ -594,7 +594,6 @@ COLUMN_LABELS: Final[dict[str, tuple[str, str]]] = {
     "bm25_score": ("BM25-pontszám", "BM25 score"),
     "dense_score": ("Szemantikus pontszám", "Dense score"),
     "hybrid_score": ("Hibrid pontszám", "Hybrid score"),
-    "tool_score": ("Eszközhívási pontszám", "Tool score"),
     "cost": ("Költség", "Cost"),
 }
 
@@ -613,36 +612,116 @@ def localize_columns(language: str, columns: list[str]) -> dict[str, str]:
 
 
 PROFILE_UI_HU: dict[str, tuple[str, str, str]] = {
-    "none": ("Nincs optimalizálás", "Kontroll", "A javított kérdés változtatás nélküli használata."),
-    "rag_grounded": ("01 · Forrásalapú RAG — ajánlott", "Forrásalapúság", "Erős bizonyítékhasználat és hivatkozásfegyelem."),
-    "concise_expert": ("02 · Tömör szakértő", "Hatékonyság", "Rövid, senior szintű, technikailag pontos válasz."),
-    "technical_deep_dive": ("03 · Technikai mélyelemzés", "Mélység", "Részletes mérnöki vizsgálat kompromisszumokkal és hibamódokkal."),
-    "structured_tutor": ("04 · Strukturált oktató", "Tanulás", "Fokozatos tanítás intuíciótól implementációig."),
-    "socratic_tutor": ("05 · Szókratészi oktató", "Tanulás", "Magyarázat diagnosztikus kérdésekkel és önellenőrzéssel."),
-    "comparison_matrix": ("06 · Forrás-összehasonlítás", "Összehasonlítás", "Források közös pontjainak és eltéréseinek összevetése."),
-    "code_first": ("07 · Kódközpontú mérnök", "Implementáció", "API-k, kódminták és implementációs részletek előtérben."),
-    "debug_root_cause": ("08 · Hibakeresés / gyökérok", "Mérnöki", "Hipotézis → bizonyíték → diagnosztika → javítás struktúra."),
-    "system_architecture": ("09 · Rendszerarchitektúra", "Architektúra", "Komponensek, interfészek, adatfolyam és kompromisszumok."),
-    "production_readiness": ("10 · Éles üzemre készség / SRE", "Éles üzem", "Megbízhatóság, megfigyelhetőség, költség és üzemeltetés."),
-    "mathematical_derivation": ("11 · Matematikai levezetés", "Matematika", "Feltételezések, jelölések és lépésenkénti levezetés."),
-    "research_synthesis": ("12 · Többforrású kutatási szintézis", "Kutatás", "Több dokumentumból állításközpontú, rigorózus szintézis."),
-    "decision_tradeoff": ("13 · Döntési és kompromisszumelemzés", "Döntés", "Opciók és mérnöki döntési kritériumok összevetése."),
-    "costar": ("14 · CO-STAR", "Keretrendszer", "A kontextus, cél, stílus, hangnem, célközönség és válaszforma explicit megadása."),
-    "crispe": ("15 · CRISPE", "Keretrendszer", "Szerep, kontextus, feladat, korlátok és elvárt kimenet rögzítése."),
-    "evidence_verification": ("16 · Bizonyítékellenőrzés", "Minőség", "Állítás–bizonyíték megfelelés és explicit bizonytalanság."),
+    "none": (
+        "Nincs optimalizálás",
+        "Kontroll",
+        "A javított kérdés változtatás nélküli használata.",
+    ),
+    "rag_grounded": (
+        "01 · Forrásalapú RAG — ajánlott",
+        "Forrásalapúság",
+        "Erős bizonyítékhasználat és hivatkozásfegyelem.",
+    ),
+    "concise_expert": (
+        "02 · Tömör szakértő",
+        "Hatékonyság",
+        "Rövid, senior szintű, technikailag pontos válasz.",
+    ),
+    "technical_deep_dive": (
+        "03 · Technikai mélyelemzés",
+        "Mélység",
+        "Részletes mérnöki vizsgálat kompromisszumokkal és hibamódokkal.",
+    ),
+    "structured_tutor": (
+        "04 · Strukturált oktató",
+        "Tanulás",
+        "Fokozatos tanítás intuíciótól implementációig.",
+    ),
+    "socratic_tutor": (
+        "05 · Szókratészi oktató",
+        "Tanulás",
+        "Magyarázat diagnosztikus kérdésekkel és önellenőrzéssel.",
+    ),
+    "comparison_matrix": (
+        "06 · Forrás-összehasonlítás",
+        "Összehasonlítás",
+        "Források közös pontjainak és eltéréseinek összevetése.",
+    ),
+    "code_first": (
+        "07 · Kódközpontú mérnök",
+        "Implementáció",
+        "API-k, kódminták és implementációs részletek előtérben.",
+    ),
+    "debug_root_cause": (
+        "08 · Hibakeresés / gyökérok",
+        "Mérnöki",
+        "Hipotézis → bizonyíték → diagnosztika → javítás struktúra.",
+    ),
+    "system_architecture": (
+        "09 · Rendszerarchitektúra",
+        "Architektúra",
+        "Komponensek, interfészek, adatfolyam és kompromisszumok.",
+    ),
+    "production_readiness": (
+        "10 · Éles üzemre készség / SRE",
+        "Éles üzem",
+        "Megbízhatóság, megfigyelhetőség, költség és üzemeltetés.",
+    ),
+    "mathematical_derivation": (
+        "11 · Matematikai levezetés",
+        "Matematika",
+        "Feltételezések, jelölések és lépésenkénti levezetés.",
+    ),
+    "research_synthesis": (
+        "12 · Többforrású kutatási szintézis",
+        "Kutatás",
+        "Több dokumentumból állításközpontú, rigorózus szintézis.",
+    ),
+    "decision_tradeoff": (
+        "13 · Döntési és kompromisszumelemzés",
+        "Döntés",
+        "Opciók és mérnöki döntési kritériumok összevetése.",
+    ),
+    "costar": (
+        "14 · CO-STAR",
+        "Keretrendszer",
+        "A kontextus, cél, stílus, hangnem, célközönség és válaszforma explicit megadása.",
+    ),
+    "crispe": (
+        "15 · CRISPE",
+        "Keretrendszer",
+        "Szerep, kontextus, feladat, korlátok és elvárt kimenet rögzítése.",
+    ),
+    "evidence_verification": (
+        "16 · Bizonyítékellenőrzés",
+        "Minőség",
+        "Állítás–bizonyíték megfelelés és explicit bizonytalanság.",
+    ),
 }
 
 
 def profile_label(language: str, key: str, fallback: str) -> str:
-    return PROFILE_UI_HU.get(key, (fallback, "", ""))[0] if normalize_language(language) == "hu" else fallback
+    return (
+        PROFILE_UI_HU.get(key, (fallback, "", ""))[0]
+        if normalize_language(language) == "hu"
+        else fallback
+    )
 
 
 def profile_category(language: str, key: str, fallback: str) -> str:
-    return PROFILE_UI_HU.get(key, ("", fallback, ""))[1] if normalize_language(language) == "hu" else fallback
+    return (
+        PROFILE_UI_HU.get(key, ("", fallback, ""))[1]
+        if normalize_language(language) == "hu"
+        else fallback
+    )
 
 
 def profile_purpose(language: str, key: str, fallback: str) -> str:
-    return PROFILE_UI_HU.get(key, ("", "", fallback))[2] if normalize_language(language) == "hu" else fallback
+    return (
+        PROFILE_UI_HU.get(key, ("", "", fallback))[2]
+        if normalize_language(language) == "hu"
+        else fallback
+    )
 
 
 BUDGET_UI_HU: Final = {
@@ -654,25 +733,47 @@ BUDGET_UI_HU: Final = {
 
 CHUNK_UI_HU: Final = {
     "compact": ("Kompakt / gyors", "Kisebb rekurzív darabok, gyors visszakeresés."),
-    "balanced": ("Kiegyensúlyozott / ajánlott", "Szerkezetérzékeny darabolás technikai könyvekhez."),
-    "semantic_deep": ("Szemantikus / mély", "Nagyobb szemantikus egységek koncepcionális szintézishez."),
+    "balanced": (
+        "Kiegyensúlyozott / ajánlott",
+        "Szerkezetérzékeny darabolás technikai könyvekhez.",
+    ),
+    "semantic_deep": (
+        "Szemantikus / mély",
+        "Nagyobb szemantikus egységek koncepcionális szintézishez.",
+    ),
 }
 
 
 def budget_label(language: str, key: str, fallback: str) -> str:
-    return BUDGET_UI_HU.get(key, (fallback, ""))[0] if normalize_language(language) == "hu" else fallback
+    return (
+        BUDGET_UI_HU.get(key, (fallback, ""))[0]
+        if normalize_language(language) == "hu"
+        else fallback
+    )
 
 
 def budget_description(language: str, key: str, fallback: str) -> str:
-    return BUDGET_UI_HU.get(key, ("", fallback))[1] if normalize_language(language) == "hu" else fallback
+    return (
+        BUDGET_UI_HU.get(key, ("", fallback))[1]
+        if normalize_language(language) == "hu"
+        else fallback
+    )
 
 
 def chunk_label(language: str, key: str, fallback: str) -> str:
-    return CHUNK_UI_HU.get(key, (fallback, ""))[0] if normalize_language(language) == "hu" else fallback
+    return (
+        CHUNK_UI_HU.get(key, (fallback, ""))[0]
+        if normalize_language(language) == "hu"
+        else fallback
+    )
 
 
 def chunk_description(language: str, key: str, fallback: str) -> str:
-    return CHUNK_UI_HU.get(key, ("", fallback))[1] if normalize_language(language) == "hu" else fallback
+    return (
+        CHUNK_UI_HU.get(key, ("", fallback))[1]
+        if normalize_language(language) == "hu"
+        else fallback
+    )
 
 
 DYNAMIC_VALUE_LABELS_HU: Final[dict[str, str]] = {
@@ -766,6 +867,7 @@ STAGE_LABELS_HU: Final[dict[str, str]] = {
 def stage_label(language: str, stage: str) -> str:
     """Localize a pipeline-stage label for the active UI language."""
     return STAGE_LABELS_HU.get(stage, stage) if normalize_language(language) == "hu" else stage
+
 
 BENCHMARK_TERM_HU: Final[dict[str, str]] = {
     # Methods / variants. Algorithm and framework names stay unchanged.

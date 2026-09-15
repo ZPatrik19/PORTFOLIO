@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from test_support.factories import make_chunk, make_document_record, make_search_hit
 from tkip.chunking import chunk_document
 from tkip.context import ContextBuilder
@@ -33,7 +32,9 @@ def test_markdown_parser_preserves_heading_code_and_paragraph(tmp_path: Path) ->
 
 def test_html_parser_extracts_structural_block_types(tmp_path: Path) -> None:
     path = tmp_path / "demo.html"
-    path.write_text("<h1>Docker</h1><p>Bridge networking.</p><pre>docker ps</pre>", encoding="utf-8")
+    path.write_text(
+        "<h1>Docker</h1><p>Bridge networking.</p><pre>docker ps</pre>", encoding="utf-8"
+    )
     document = make_document_record(path)
 
     blocks = parse_document(document)
@@ -43,13 +44,27 @@ def test_html_parser_extracts_structural_block_types(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize("strategy", ["fixed", "recursive", "structure_aware", "semantic"])
-def test_all_chunking_strategies_return_source_grounded_chunks(strategy: str, tmp_path: Path) -> None:
+def test_all_chunking_strategies_return_source_grounded_chunks(
+    strategy: str, tmp_path: Path
+) -> None:
     path = tmp_path / "source.md"
     document = make_document_record(path)
     blocks = [
         ParsedBlock(document_id=document.document_id, page=1, block_type="heading", text="RAG"),
-        ParsedBlock(document_id=document.document_id, page=1, block_type="paragraph", text="Retrieval augmented generation uses relevant external context. " * 8, section="RAG"),
-        ParsedBlock(document_id=document.document_id, page=2, block_type="paragraph", text="Reranking improves candidate ordering. " * 6, section="RAG"),
+        ParsedBlock(
+            document_id=document.document_id,
+            page=1,
+            block_type="paragraph",
+            text="Retrieval augmented generation uses relevant external context. " * 8,
+            section="RAG",
+        ),
+        ParsedBlock(
+            document_id=document.document_id,
+            page=2,
+            block_type="paragraph",
+            text="Reranking improves candidate ordering. " * 6,
+            section="RAG",
+        ),
     ]
 
     chunks = chunk_document(document, blocks, strategy=strategy, size=240, overlap=40)
@@ -61,7 +76,10 @@ def test_all_chunking_strategies_return_source_grounded_chunks(strategy: str, tm
 
 def test_context_builder_enforces_per_document_limit_and_budget(isolated_config: dict) -> None:
     hits = [
-        make_search_hit(make_chunk(chunk_id=f"c{i}", document_id="doc-a", text=f"unique evidence {i} " * 20), rank=i)
+        make_search_hit(
+            make_chunk(chunk_id=f"c{i}", document_id="doc-a", text=f"unique evidence {i} " * 20),
+            rank=i,
+        )
         for i in range(1, 5)
     ]
 

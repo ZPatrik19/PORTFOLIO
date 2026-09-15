@@ -18,7 +18,7 @@ def _fixed(text: str, size: int, overlap: int) -> list[str]:
     step = max(1, size - overlap)
     out = []
     for start in range(0, len(text), step):
-        seg = text[start:start + size].strip()
+        seg = text[start : start + size].strip()
         if seg:
             out.append(seg)
         if start + size >= len(text):
@@ -107,11 +107,13 @@ def _split(text: str, strategy: str, size: int, overlap: int) -> list[str]:
 
 
 def _derive_chunk(parent: Chunk, text: str, suffix: str, page_end: int | None = None) -> Chunk:
-    return parent.model_copy(update={
-        "chunk_id": stable_id(parent.chunk_id, suffix, text[:96], prefix="rt"),
-        "page_end": page_end if page_end is not None else parent.page_end,
-        "text": text,
-    })
+    return parent.model_copy(
+        update={
+            "chunk_id": stable_id(parent.chunk_id, suffix, text[:96], prefix="rt"),
+            "page_end": page_end if page_end is not None else parent.page_end,
+            "text": text,
+        }
+    )
 
 
 def rechunk_hits(
@@ -129,7 +131,14 @@ def rechunk_hits(
     again afterwards by the caller.
     """
     if not hits:
-        return [], {"enabled": True, "before": 0, "after": 0, "strategy": strategy, "size": size, "overlap": overlap}
+        return [], {
+            "enabled": True,
+            "before": 0,
+            "after": 0,
+            "strategy": strategy,
+            "size": size,
+            "overlap": overlap,
+        }
 
     # Merge nearby retrieved chunks when the requested context chunk is larger.
     by_doc: dict[str, list[SearchHit]] = defaultdict(list)
@@ -158,14 +167,16 @@ def rechunk_hits(
                 j += 1
             best = min(consumed, key=lambda h: h.rank)
             merged = _derive_chunk(best.chunk, text, f"merge-{i}-{j}", page_end=page_end)
-            candidates.append(SearchHit(
-                chunk=merged,
-                rank=best.rank,
-                bm25_score=max((h.bm25_score or 0.0) for h in consumed),
-                dense_score=max((h.dense_score or 0.0) for h in consumed),
-                hybrid_score=max((h.hybrid_score or 0.0) for h in consumed),
-                reranker_score=max((h.reranker_score or 0.0) for h in consumed),
-            ))
+            candidates.append(
+                SearchHit(
+                    chunk=merged,
+                    rank=best.rank,
+                    bm25_score=max((h.bm25_score or 0.0) for h in consumed),
+                    dense_score=max((h.dense_score or 0.0) for h in consumed),
+                    hybrid_score=max((h.hybrid_score or 0.0) for h in consumed),
+                    reranker_score=max((h.reranker_score or 0.0) for h in consumed),
+                )
+            )
             i = max(j, i + 1)
 
     # Split merged/base candidates according to the selected strategy.
@@ -174,14 +185,16 @@ def rechunk_hits(
         segments = _split(h.chunk.text, strategy, size, overlap)
         for idx, seg in enumerate(segments[:6]):
             derived = _derive_chunk(h.chunk, seg, f"split-{idx}")
-            out.append(SearchHit(
-                chunk=derived,
-                rank=len(out) + 1,
-                bm25_score=h.bm25_score,
-                dense_score=h.dense_score,
-                hybrid_score=h.hybrid_score,
-                reranker_score=h.reranker_score,
-            ))
+            out.append(
+                SearchHit(
+                    chunk=derived,
+                    rank=len(out) + 1,
+                    bm25_score=h.bm25_score,
+                    dense_score=h.dense_score,
+                    hybrid_score=h.hybrid_score,
+                    reranker_score=h.reranker_score,
+                )
+            )
             if len(out) >= max_output_chunks:
                 break
         if len(out) >= max_output_chunks:

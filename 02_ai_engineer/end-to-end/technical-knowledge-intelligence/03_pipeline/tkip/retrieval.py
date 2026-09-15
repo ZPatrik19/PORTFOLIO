@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from collections import Counter, defaultdict
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 
@@ -12,10 +12,48 @@ from .models import Chunk, SearchHit
 from .utils import tokenize
 
 BM25_STOPWORDS = {
-    "the", "and", "for", "with", "from", "this", "that", "what", "how", "where",
-    "when", "why", "are", "its", "into", "does", "is", "a", "an", "of", "to", "in",
-    "on", "or", "be", "can", "do", "mit", "mi", "melyik", "hogyan", "hogy", "egy",
-    "az", "és", "vagy", "van", "hol", "mikor", "miért", "erre", "ezt",
+    "the",
+    "and",
+    "for",
+    "with",
+    "from",
+    "this",
+    "that",
+    "what",
+    "how",
+    "where",
+    "when",
+    "why",
+    "are",
+    "its",
+    "into",
+    "does",
+    "is",
+    "a",
+    "an",
+    "of",
+    "to",
+    "in",
+    "on",
+    "or",
+    "be",
+    "can",
+    "do",
+    "mit",
+    "mi",
+    "melyik",
+    "hogyan",
+    "hogy",
+    "egy",
+    "az",
+    "és",
+    "vagy",
+    "van",
+    "hol",
+    "mikor",
+    "miért",
+    "erre",
+    "ezt",
 }
 
 
@@ -44,8 +82,6 @@ class BM25Index:
         chapter = chunk.chapter or ""
         section = chunk.section or ""
         keywords = " ".join(chunk.keywords or [])
-        # A bounded title prior makes exact book/topic matches visible without a
-        # separate search engine while leaving the body text dominant overall.
         lexical_text = f"{title} {title} {title} {chapter} {section} {keywords} {chunk.text}"
         return tokenize(lexical_text)
 
@@ -74,7 +110,7 @@ class BM25Index:
         query_token_set = set(query_tokens(query))
         rows: list[tuple[Chunk, float]] = []
 
-        for chunk, document_tokens in zip(self.chunks, self.documents):
+        for chunk, document_tokens in zip(self.chunks, self.documents, strict=False):
             if not _matches_filters(chunk, filters):
                 continue
             score = self.score(query, document_tokens)
@@ -90,9 +126,7 @@ class BM25Index:
         if not self.document_count:
             return 0.0
         return math.log(
-            1
-            + (self.document_count - document_frequency + 0.5)
-            / (document_frequency + 0.5)
+            1 + (self.document_count - document_frequency + 0.5) / (document_frequency + 0.5)
         )
 
 
@@ -108,7 +142,7 @@ def dense_search(
     scores = vectors @ query_vector
     rows = [
         (chunk, float(score))
-        for chunk, score in zip(chunks, scores)
+        for chunk, score in zip(chunks, scores, strict=False)
         if _matches_filters(chunk, filters)
     ]
     rows.sort(key=lambda item: item[1], reverse=True)
@@ -137,7 +171,11 @@ def reciprocal_rank_fusion(
         fused_scores[chunk.chunk_id] += 1 / (k + rank)
         chunks_by_id[chunk.chunk_id] = chunk
 
-    ordered_ids = sorted(fused_scores, key=fused_scores.get, reverse=True)[:limit]
+    ordered_ids = sorted(
+        fused_scores,
+        key=lambda chunk_id: fused_scores[chunk_id],
+        reverse=True,
+    )[:limit]
     return [
         SearchHit(
             chunk=chunks_by_id[chunk_id],
@@ -186,8 +224,9 @@ class HybridRetriever:
 def _matches_filters(chunk: Chunk, filters: dict[str, object] | None) -> bool:
     if not filters:
         return True
-    return all(value is None or getattr(chunk, key, None) == value for key, value in filters.items())
+    return all(
+        value is None or getattr(chunk, key, None) == value for key, value in filters.items()
+    )
 
 
-# Backward-compatible internal alias.
 _query_tokens = query_tokens

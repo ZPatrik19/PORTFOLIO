@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 import plotly.graph_objects as go
 import streamlit as st
-
 from i18n import pick
 
 
@@ -23,43 +22,290 @@ class WorkflowNode:
 
 PHASES = [
     (0.0, 3.55, "1", "Indexelés", "Indexing", "Dokumentumok → kereshető tudásréteg"),
-    (3.55, 6.20, "2", "Kérdésértés és routing", "Query understanding & routing", "Kérdés → irányítás"),
+    (
+        3.55,
+        6.20,
+        "2",
+        "Kérdésértés és routing",
+        "Query understanding & routing",
+        "Kérdés → irányítás",
+    ),
     (6.20, 11.05, "3", "Párhuzamos retrieval", "Parallel retrieval", "BM25 + dense → fusion"),
-    (11.05, 14.15, "4", "Generálás és reflexió", "Generation & reflection", "Tools + model + validation"),
-    (14.15, 18.0, "5", "Értékelés és human loop", "Evaluation & human loop", "Review → feedback → improvement"),
+    (
+        11.05,
+        14.15,
+        "4",
+        "Generálás és reflexió",
+        "Generation & reflection",
+        "Tools + model + validation",
+    ),
+    (
+        14.15,
+        18.0,
+        "5",
+        "Értékelés és human loop",
+        "Evaluation & human loop",
+        "Review → feedback → improvement",
+    ),
 ]
 
 NODES = [
-    WorkflowNode("docs", 0.55, 3.00, "Dokumentumok", "Documents", "DocumentLoader", "PDF · DOCX · MD · HTML", "PDF · DOCX · MD · HTML", symbol="square"),
-    WorkflowNode("parse", 1.55, 3.00, "Parsing", "Parsing", "DocumentTransformer", "struktúra · metaadat · QA", "structure · metadata · QA", symbol="hexagon"),
-    WorkflowNode("chunk", 2.55, 3.00, "Chunking", "Chunking", "TextSplitter", "fixed · recursive · semantic", "fixed · recursive · semantic", symbol="diamond"),
-    WorkflowNode("embed", 3.20, 2.00, "Embedding", "Embeddings", "Embeddings", "cache · batching · provider", "cache · batching · provider", symbol="pentagon"),
-    WorkflowNode("index", 3.20, 4.05, "Indexek", "Indexes", "VectorStore + BM25", "primary · fixed · semantic", "primary · fixed · semantic", symbol="hexagon2"),
-    WorkflowNode("question", 4.00, 3.00, "Felhasználói kérdés", "User question", "RunnableInput", "HU/EN · filterek · preset", "HU/EN · filters · preset", symbol="circle"),
-    WorkflowNode("guard", 4.95, 3.00, "Guardrails", "Guardrails", "RunnableLambda", "injection · validáció", "injection · validation", symbol="triangle-up"),
-    WorkflowNode("prompt", 5.82, 3.00, "Prompttervezés", "Prompt engineering", "PromptTemplate", "16 profil · optimalizálás", "16 profiles · optimization", symbol="star-square"),
-    WorkflowNode("router", 6.55, 3.00, "Router", "Router", "RunnableBranch", "query type · filters · tools", "query type · filters · tools", symbol="diamond"),
-    WorkflowNode("bm25", 7.65, 4.15, "BM25", "BM25", "Retriever", "lexikális keresés", "lexical search", symbol="circle"),
-    WorkflowNode("dense", 7.65, 1.85, "Dense", "Dense", "Retriever", "szemantikus keresés", "semantic search", symbol="circle"),
-    WorkflowNode("fusion", 8.90, 3.00, "RRF / Fusion", "RRF / Fusion", "RunnableParallel", "rangsorok egyesítése", "merge ranked lists", symbol="bowtie"),
-    WorkflowNode("rerank", 9.95, 3.00, "Reranker", "Reranker", "Reranker", "jelöltek újrapontozása", "candidate rescoring", symbol="triangle-right"),
-    WorkflowNode("context", 10.75, 3.00, "Context Builder", "Context Builder", "ContextBuilder", "dedup · diversity · budget", "dedup · diversity · budget", symbol="hexagon"),
-    WorkflowNode("tools", 11.85, 4.10, "Tool Node", "Tool Node", "ToolNode", "allowlist · max steps", "allowlist · max steps", symbol="cross"),
-    WorkflowNode("model", 12.55, 2.75, "Gemini / Chat Model", "Gemini / Chat Model", "ChatModel", "grounded synthesis", "grounded synthesis", symbol="star"),
-    WorkflowNode("validate", 13.45, 2.75, "Structured Output", "Structured Output", "Pydantic", "JSON · citations · schema", "JSON · citations · schema", symbol="square"),
-    WorkflowNode("evaluate", 14.85, 3.00, "Evaluate", "Evaluate", "Evaluator", "quality · latency · cost", "quality · latency · cost", symbol="circle"),
-    WorkflowNode("review", 16.00, 3.00, "Review", "Review", "Human-in-the-loop", "emberi ellenőrzés", "human review", symbol="hexagon"),
-    WorkflowNode("send", 17.10, 4.15, "Válasz", "Send", "Response", "jóváhagyott válasz", "approved answer", symbol="triangle-right"),
-    WorkflowNode("feedback", 17.10, 1.85, "Feedback", "Feedback", "RegressionSuite", "failure → regression sample", "failure → regression sample", symbol="circle-open"),
+    WorkflowNode(
+        "docs",
+        0.55,
+        3.00,
+        "Dokumentumok",
+        "Documents",
+        "DocumentLoader",
+        "PDF · DOCX · MD · HTML",
+        "PDF · DOCX · MD · HTML",
+        symbol="square",
+    ),
+    WorkflowNode(
+        "parse",
+        1.55,
+        3.00,
+        "Parsing",
+        "Parsing",
+        "DocumentTransformer",
+        "struktúra · metaadat · QA",
+        "structure · metadata · QA",
+        symbol="hexagon",
+    ),
+    WorkflowNode(
+        "chunk",
+        2.55,
+        3.00,
+        "Chunking",
+        "Chunking",
+        "TextSplitter",
+        "fixed · recursive · semantic",
+        "fixed · recursive · semantic",
+        symbol="diamond",
+    ),
+    WorkflowNode(
+        "embed",
+        3.20,
+        2.00,
+        "Embedding",
+        "Embeddings",
+        "Embeddings",
+        "cache · batching · provider",
+        "cache · batching · provider",
+        symbol="pentagon",
+    ),
+    WorkflowNode(
+        "index",
+        3.20,
+        4.05,
+        "Indexek",
+        "Indexes",
+        "VectorStore + BM25",
+        "primary · fixed · semantic",
+        "primary · fixed · semantic",
+        symbol="hexagon2",
+    ),
+    WorkflowNode(
+        "question",
+        4.00,
+        3.00,
+        "Felhasználói kérdés",
+        "User question",
+        "RunnableInput",
+        "HU/EN · filterek · preset",
+        "HU/EN · filters · preset",
+        symbol="circle",
+    ),
+    WorkflowNode(
+        "guard",
+        4.95,
+        3.00,
+        "Guardrails",
+        "Guardrails",
+        "RunnableLambda",
+        "injection · validáció",
+        "injection · validation",
+        symbol="triangle-up",
+    ),
+    WorkflowNode(
+        "prompt",
+        5.82,
+        3.00,
+        "Prompttervezés",
+        "Prompt engineering",
+        "PromptTemplate",
+        "16 profil · optimalizálás",
+        "16 profiles · optimization",
+        symbol="star-square",
+    ),
+    WorkflowNode(
+        "router",
+        6.55,
+        3.00,
+        "Router",
+        "Router",
+        "RunnableBranch",
+        "query type · filters · tools",
+        "query type · filters · tools",
+        symbol="diamond",
+    ),
+    WorkflowNode(
+        "bm25",
+        7.65,
+        4.15,
+        "BM25",
+        "BM25",
+        "Retriever",
+        "lexikális keresés",
+        "lexical search",
+        symbol="circle",
+    ),
+    WorkflowNode(
+        "dense",
+        7.65,
+        1.85,
+        "Dense",
+        "Dense",
+        "Retriever",
+        "szemantikus keresés",
+        "semantic search",
+        symbol="circle",
+    ),
+    WorkflowNode(
+        "fusion",
+        8.90,
+        3.00,
+        "RRF / Fusion",
+        "RRF / Fusion",
+        "RunnableParallel",
+        "rangsorok egyesítése",
+        "merge ranked lists",
+        symbol="bowtie",
+    ),
+    WorkflowNode(
+        "rerank",
+        9.95,
+        3.00,
+        "Reranker",
+        "Reranker",
+        "Reranker",
+        "jelöltek újrapontozása",
+        "candidate rescoring",
+        symbol="triangle-right",
+    ),
+    WorkflowNode(
+        "context",
+        10.75,
+        3.00,
+        "Context Builder",
+        "Context Builder",
+        "ContextBuilder",
+        "dedup · diversity · budget",
+        "dedup · diversity · budget",
+        symbol="hexagon",
+    ),
+    WorkflowNode(
+        "tools",
+        11.85,
+        4.10,
+        "Tool Node",
+        "Tool Node",
+        "ToolNode",
+        "allowlist · max steps",
+        "allowlist · max steps",
+        symbol="cross",
+    ),
+    WorkflowNode(
+        "model",
+        12.55,
+        2.75,
+        "Gemini / Chat Model",
+        "Gemini / Chat Model",
+        "ChatModel",
+        "grounded synthesis",
+        "grounded synthesis",
+        symbol="star",
+    ),
+    WorkflowNode(
+        "validate",
+        13.45,
+        2.75,
+        "Structured Output",
+        "Structured Output",
+        "Pydantic",
+        "JSON · citations · schema",
+        "JSON · citations · schema",
+        symbol="square",
+    ),
+    WorkflowNode(
+        "evaluate",
+        14.85,
+        3.00,
+        "Evaluate",
+        "Evaluate",
+        "Evaluator",
+        "quality · latency · cost",
+        "quality · latency · cost",
+        symbol="circle",
+    ),
+    WorkflowNode(
+        "review",
+        16.00,
+        3.00,
+        "Review",
+        "Review",
+        "Human-in-the-loop",
+        "emberi ellenőrzés",
+        "human review",
+        symbol="hexagon",
+    ),
+    WorkflowNode(
+        "send",
+        17.10,
+        4.15,
+        "Válasz",
+        "Send",
+        "Response",
+        "jóváhagyott válasz",
+        "approved answer",
+        symbol="triangle-right",
+    ),
+    WorkflowNode(
+        "feedback",
+        17.10,
+        1.85,
+        "Feedback",
+        "Feedback",
+        "RegressionSuite",
+        "failure → regression sample",
+        "failure → regression sample",
+        symbol="circle-open",
+    ),
 ]
 
 EDGES = [
-    ("docs", "parse", ""), ("parse", "chunk", ""), ("chunk", "embed", ""), ("embed", "index", ""),
-    ("index", "question", "ready index"), ("question", "guard", ""), ("guard", "prompt", ""), ("prompt", "router", ""),
-    ("router", "bm25", "lexical"), ("router", "dense", "semantic"), ("bm25", "fusion", ""), ("dense", "fusion", ""),
-    ("fusion", "rerank", ""), ("rerank", "context", ""), ("context", "model", "context"),
-    ("context", "tools", "tools"), ("tools", "model", "result"), ("model", "validate", ""), ("validate", "evaluate", ""),
-    ("evaluate", "review", ""), ("review", "send", "approved"), ("review", "feedback", "rejected"),
+    ("docs", "parse", ""),
+    ("parse", "chunk", ""),
+    ("chunk", "embed", ""),
+    ("embed", "index", ""),
+    ("index", "question", "ready index"),
+    ("question", "guard", ""),
+    ("guard", "prompt", ""),
+    ("prompt", "router", ""),
+    ("router", "bm25", "lexical"),
+    ("router", "dense", "semantic"),
+    ("bm25", "fusion", ""),
+    ("dense", "fusion", ""),
+    ("fusion", "rerank", ""),
+    ("rerank", "context", ""),
+    ("context", "model", "context"),
+    ("context", "tools", "tools"),
+    ("tools", "model", "result"),
+    ("model", "validate", ""),
+    ("validate", "evaluate", ""),
+    ("evaluate", "review", ""),
+    ("review", "send", "approved"),
+    ("review", "feedback", "rejected"),
     ("feedback", "prompt", "feedback loop"),
 ]
 
@@ -77,7 +323,7 @@ def _add_phase_backgrounds(fig: go.Figure, ui_lang: str) -> None:
         "rgba(34,197,94,0.060)",
     ]
     phase_colors = ["#5eead4", "#93c5fd", "#a5b4fc", "#fbbf24", "#86efac"]
-    for idx, (x0, x1, number, hu, en, detail_hu) in enumerate(PHASES):
+    for idx, (x0, x1, number, hu, en, _detail_hu) in enumerate(PHASES):
         fig.add_shape(
             type="rect",
             x0=x0,
@@ -108,9 +354,9 @@ def _add_edges(fig: go.Figure, ui_lang: str) -> None:
         width = 1.7
         if source == "router" and target == "bm25":
             color = "#60a5fa"
-        elif source == "router" and target == "dense":
-            color = "#818cf8"
-        elif source in {"bm25", "dense"} and target == "fusion":
+        elif (source == "router" and target == "dense") or (
+            source in {"bm25", "dense"} and target == "fusion"
+        ):
             color = "#818cf8"
         elif source == "context" and target == "tools":
             color = "#f59e0b"
@@ -130,11 +376,57 @@ def _add_edges(fig: go.Figure, ui_lang: str) -> None:
         # Orthogonal-ish routing gives the graph a workflow-editor feel.
         if abs(a.y - b.y) > 0.2:
             mid_x = (a.x + b.x) / 2
-            fig.add_shape(type="line", x0=a.x, y0=a.y, x1=mid_x, y1=a.y, line=dict(color=color, width=width, dash=dash), layer="below")
-            fig.add_shape(type="line", x0=mid_x, y0=a.y, x1=mid_x, y1=b.y, line=dict(color=color, width=width, dash=dash), layer="below")
-            fig.add_annotation(x=b.x, y=b.y, ax=mid_x, ay=b.y, xref="x", yref="y", axref="x", ayref="y", text="", showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=width, arrowcolor=color)
+            fig.add_shape(
+                type="line",
+                x0=a.x,
+                y0=a.y,
+                x1=mid_x,
+                y1=a.y,
+                line=dict(color=color, width=width, dash=dash),
+                layer="below",
+            )
+            fig.add_shape(
+                type="line",
+                x0=mid_x,
+                y0=a.y,
+                x1=mid_x,
+                y1=b.y,
+                line=dict(color=color, width=width, dash=dash),
+                layer="below",
+            )
+            fig.add_annotation(
+                x=b.x,
+                y=b.y,
+                ax=mid_x,
+                ay=b.y,
+                xref="x",
+                yref="y",
+                axref="x",
+                ayref="y",
+                text="",
+                showarrow=True,
+                arrowhead=2,
+                arrowsize=1,
+                arrowwidth=width,
+                arrowcolor=color,
+            )
         else:
-            fig.add_annotation(x=b.x, y=b.y, ax=a.x, ay=a.y, xref="x", yref="y", axref="x", ayref="y", text="", showarrow=True, arrowhead=2, arrowsize=1, arrowwidth=width, arrowcolor=color)
+            fig.add_annotation(
+                x=b.x,
+                y=b.y,
+                ax=a.x,
+                ay=a.y,
+                xref="x",
+                yref="y",
+                axref="x",
+                ayref="y",
+                text="",
+                showarrow=True,
+                arrowhead=2,
+                arrowsize=1,
+                arrowwidth=width,
+                arrowcolor=color,
+            )
 
         if label:
             fig.add_annotation(
@@ -185,13 +477,11 @@ def _add_nodes(fig: go.Figure, ui_lang: str) -> None:
                     line=dict(color=border_color, width=2.0),
                 ),
                 text=[_node_label(node, ui_lang)],
-                textposition="bottom center" if node.key not in {"bm25", "dense", "tools", "send", "feedback"} else "middle right",
+                textposition="bottom center"
+                if node.key not in {"bm25", "dense", "tools", "send", "feedback"}
+                else "middle right",
                 textfont=dict(size=10, color="#e5e7eb"),
-                hovertemplate=(
-                    f"<b>{title}</b><br>"
-                    f"{node.type_name}<br>"
-                    f"{detail}<extra></extra>"
-                ),
+                hovertemplate=(f"<b>{title}</b><br>{node.type_name}<br>{detail}<extra></extra>"),
                 showlegend=False,
                 cliponaxis=False,
             )

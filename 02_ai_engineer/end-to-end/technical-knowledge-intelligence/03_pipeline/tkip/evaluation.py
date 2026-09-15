@@ -37,9 +37,8 @@ def retrieval_metrics(
     """Compute ranking metrics for multiple result/ground-truth pairs."""
 
     rows = [
-        _metric_row(str(index), "retrieval", result_ids, expected_ids, 0.0, ks)
-        | {"i": index}
-        for index, (result_ids, expected_ids) in enumerate(zip(results, expected))
+        _metric_row(str(index), "retrieval", result_ids, expected_ids, 0.0, ks) | {"i": index}
+        for index, (result_ids, expected_ids) in enumerate(zip(results, expected, strict=False))
     ]
     frame = pd.DataFrame(rows)
     if frame.empty:
@@ -235,7 +234,7 @@ def summarize_retrieval_frame(
     grouping = list(group_cols)
     for keys, group in raw.groupby(grouping):
         key_values = keys if isinstance(keys, tuple) else (keys,)
-        row = dict(zip(grouping, key_values))
+        row = dict(zip(grouping, key_values, strict=False))
         for metric in metric_columns:
             row[metric] = float(group[metric].mean())
         latencies = sorted(float(value) for value in group["latency_ms"].tolist())
@@ -359,18 +358,23 @@ def tool_call_metrics(records: list[dict[str, Any]]) -> dict[str, float]:
     total = len(records)
     selected_records = [record for record in records if record.get("selected_tool")]
     selected_count = len(selected_records)
-    selection_accuracy = sum(
-        record.get("selected_tool") == record.get("expected_tool") for record in records
-    ) / total
-    unnecessary_rate = sum(
-        bool(record.get("selected_tool")) and not record.get("expected_tool") for record in records
-    ) / total
-    execution_success = sum(bool(record.get("execution_success")) for record in selected_records) / max(
-        1, selected_count
+    selection_accuracy = (
+        sum(record.get("selected_tool") == record.get("expected_tool") for record in records)
+        / total
     )
-    argument_accuracy = sum(bool(record.get("arguments_valid")) for record in selected_records) / max(
-        1, selected_count
+    unnecessary_rate = (
+        sum(
+            bool(record.get("selected_tool")) and not record.get("expected_tool")
+            for record in records
+        )
+        / total
     )
+    execution_success = sum(
+        bool(record.get("execution_success")) for record in selected_records
+    ) / max(1, selected_count)
+    argument_accuracy = sum(
+        bool(record.get("arguments_valid")) for record in selected_records
+    ) / max(1, selected_count)
     average_calls = sum(int(record.get("tool_calls", 0)) for record in records) / total
 
     return {
@@ -398,7 +402,9 @@ def _build_eval_question(category: str, chunk: Any | None, index: int) -> tuple[
         "tool-required": f"Which indexed documents discuss {keyword}?",
         "ambiguous": f"How does this work for {keyword}?",
     }
-    return templates.get(category, f"Explain {keyword} using the indexed technical sources."), bool(chunk)
+    return templates.get(category, f"Explain {keyword} using the indexed technical sources."), bool(
+        chunk
+    )
 
 
 def _metric_row(
@@ -515,10 +521,14 @@ def _percentile_from_sorted(values: list[float], fraction: float) -> float:
 
 def _load_variant(variant, base_retriever, manager, embedder):
     if variant == "primary":
-        return base_retriever, getattr(base_retriever, "chunks", []), {
-            "name": "primary",
-            "strategy": "primary",
-        }
+        return (
+            base_retriever,
+            getattr(base_retriever, "chunks", []),
+            {
+                "name": "primary",
+                "strategy": "primary",
+            },
+        )
     chunks, _, retriever, metadata = manager.load(variant, embedder)
     return retriever, chunks, metadata
 

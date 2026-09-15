@@ -1,8 +1,7 @@
 from pathlib import Path
 
 import pytest
-
-from tkip.config import ConfigurationError, load_config, resolve_path
+from tkip.config import ConfigurationError, _discover_project_root, load_config, resolve_path
 
 
 def test_load_config_validates_default_configuration() -> None:
@@ -41,3 +40,13 @@ def test_default_library_paths_use_clear_collection_names() -> None:
 
     assert config["paths"]["user_library"] == "01_data/user_library"
     assert config["paths"]["reference_docs"] == "01_data/reference_docs"
+
+
+def test_project_root_discovery_prefers_runtime_working_directory(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    (tmp_path / "config.yaml").write_text("project: {}\n", encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("TKI_PROJECT_ROOT", raising=False)
+
+    assert _discover_project_root() == tmp_path.resolve()

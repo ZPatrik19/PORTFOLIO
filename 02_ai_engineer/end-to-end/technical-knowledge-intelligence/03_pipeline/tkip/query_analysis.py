@@ -4,17 +4,85 @@ import re
 from collections import Counter
 
 TECH_TOPICS = [
-    "rag", "retrieval", "embedding", "embeddings", "transformer", "attention", "llm", "prompt engineering",
-    "context engineering", "tool calling", "agent", "pytorch", "tensorflow", "machine learning", "deep learning",
-    "random forest", "xgboost", "pca", "clustering", "etl", "elt", "spark", "pyspark", "databricks",
-    "docker", "kubernetes", "fastapi", "langchain", "langgraph", "vector database", "qdrant", "bm25",
-    "reranking", "monitoring", "observability", "azure", "aws", "statistics", "data visualization", "security",
+    "rag",
+    "retrieval",
+    "embedding",
+    "embeddings",
+    "transformer",
+    "attention",
+    "llm",
+    "prompt engineering",
+    "context engineering",
+    "tool calling",
+    "agent",
+    "pytorch",
+    "tensorflow",
+    "machine learning",
+    "deep learning",
+    "random forest",
+    "xgboost",
+    "pca",
+    "clustering",
+    "etl",
+    "elt",
+    "spark",
+    "pyspark",
+    "databricks",
+    "docker",
+    "kubernetes",
+    "fastapi",
+    "langchain",
+    "langgraph",
+    "vector database",
+    "qdrant",
+    "bm25",
+    "reranking",
+    "monitoring",
+    "observability",
+    "azure",
+    "aws",
+    "statistics",
+    "data visualization",
+    "security",
 ]
 
 STOP = {
-    "the", "and", "what", "how", "why", "from", "with", "this", "that", "into", "about", "show", "explain",
-    "mi", "az", "egy", "hogyan", "miért", "hogy", "működik", "mutasd", "magyarázd", "könyveim", "alapján",
-    "please", "keress", "find", "using", "use", "my", "books", "book", "nekem", "is", "van", "vagy",
+    "the",
+    "and",
+    "what",
+    "how",
+    "why",
+    "from",
+    "with",
+    "this",
+    "that",
+    "into",
+    "about",
+    "show",
+    "explain",
+    "mi",
+    "az",
+    "egy",
+    "hogyan",
+    "miért",
+    "hogy",
+    "működik",
+    "mutasd",
+    "magyarázd",
+    "könyveim",
+    "alapján",
+    "please",
+    "keress",
+    "find",
+    "using",
+    "use",
+    "my",
+    "books",
+    "book",
+    "nekem",
+    "is",
+    "van",
+    "vagy",
 }
 
 
@@ -32,12 +100,36 @@ def analyze_query(question: str, intent: str, language: str) -> dict:
         counts = Counter(t for t in _terms(question) if t not in STOP and not t.isdigit())
         topics = [x for x, _ in counts.most_common(4)]
 
-    frameworks = [x for x in ["pytorch", "tensorflow", "fastapi", "langchain", "langgraph", "docker", "kubernetes", "databricks", "azure", "aws", "qdrant"] if x in low]
-    needs_comparison = intent == "COMPARISON" or any(x in low for x in ["compare", "hasonlíts", "versus", " vs "])
-    needs_code = intent == "CODE_SEARCH" or any(x in low for x in ["code", "kód", "implement", "api", "example", "példa"])
-    needs_math = any(x in low for x in ["math", "matemat", "derive", "képlet", "formula", "equation"])
+    frameworks = [
+        x
+        for x in [
+            "pytorch",
+            "tensorflow",
+            "fastapi",
+            "langchain",
+            "langgraph",
+            "docker",
+            "kubernetes",
+            "databricks",
+            "azure",
+            "aws",
+            "qdrant",
+        ]
+        if x in low
+    ]
+    needs_comparison = intent == "COMPARISON" or any(
+        x in low for x in ["compare", "hasonlíts", "versus", " vs "]
+    )
+    needs_code = intent == "CODE_SEARCH" or any(
+        x in low for x in ["code", "kód", "implement", "api", "example", "példa"]
+    )
+    needs_math = any(
+        x in low for x in ["math", "matemat", "derive", "képlet", "formula", "equation"]
+    )
     needs_public = intent == "PUBLIC_DOC_COMPARISON" or "official" in low or "hivatalos" in low
-    needs_learning = intent == "LEARNING" or any(x in low for x in ["teach", "taníts", "learn", "tanul"])
+    needs_learning = intent == "LEARNING" or any(
+        x in low for x in ["teach", "taníts", "learn", "tanul"]
+    )
 
     recommended_tools: list[str] = []
     if intent == "METADATA_SEARCH":
@@ -62,8 +154,20 @@ def analyze_query(question: str, intent: str, language: str) -> dict:
     else:
         context_strategy = "balanced grounded evidence"
 
-    complexity = "high" if sum([needs_comparison, needs_code, needs_math, needs_public]) >= 2 or len(question) > 220 else "medium" if len(question) > 90 else "low"
-    specificity = min(100, 45 + 10 * min(4, len(topics)) + (10 if frameworks else 0) + (10 if len(question.split()) >= 8 else 0))
+    complexity = (
+        "high"
+        if sum([needs_comparison, needs_code, needs_math, needs_public]) >= 2 or len(question) > 220
+        else "medium"
+        if len(question) > 90
+        else "low"
+    )
+    specificity = min(
+        100,
+        45
+        + 10 * min(4, len(topics))
+        + (10 if frameworks else 0)
+        + (10 if len(question.split()) >= 8 else 0),
+    )
 
     return {
         "language": language,
@@ -82,15 +186,23 @@ def analyze_query(question: str, intent: str, language: str) -> dict:
     }
 
 
-def evaluate_pipeline(*, analysis: dict, selected_hits: list, tool_results: list, ranking: list, citation_valid: bool) -> dict:
+def evaluate_pipeline(
+    *, analysis: dict, selected_hits: list, tool_results: list, ranking: list, citation_valid: bool
+) -> dict:
     doc_count = len({h.chunk.document_id for h in selected_hits}) if selected_hits else 0
     context_chars = sum(len(h.chunk.text) for h in selected_hits)
     avg_rerank = 0.0
-    vals = [float(r.get("reranker_score") or 0) for r in ranking[:8] if r.get("reranker_score") is not None]
+    vals = [
+        float(r.get("reranker_score") or 0)
+        for r in ranking[:8]
+        if r.get("reranker_score") is not None
+    ]
     if vals:
         avg_rerank = sum(vals) / len(vals)
 
-    topic_score = min(100, 55 + 10 * len(analysis.get("topics") or []) + (10 if analysis.get("frameworks") else 0))
+    topic_score = min(
+        100, 55 + 10 * len(analysis.get("topics") or []) + (10 if analysis.get("frameworks") else 0)
+    )
     context_score = 25
     if selected_hits:
         context_score += 35
@@ -108,7 +220,11 @@ def evaluate_pipeline(*, analysis: dict, selected_hits: list, tool_results: list
     context_score = min(100, context_score)
 
     expected = set(analysis.get("recommended_tools") or [])
-    actual = {x.get("tool") for x in tool_results if isinstance(x, dict) and x.get("tool") and x.get("status") == "success"}
+    actual = {
+        x.get("tool")
+        for x in tool_results
+        if isinstance(x, dict) and x.get("tool") and x.get("status") == "success"
+    }
     if not expected:
         tool_score = 100 if not actual else 75
     else:

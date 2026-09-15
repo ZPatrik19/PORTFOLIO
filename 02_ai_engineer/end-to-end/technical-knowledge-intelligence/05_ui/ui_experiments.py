@@ -4,7 +4,6 @@ import json
 
 import pandas as pd
 import streamlit as st
-
 from i18n import (
     benchmark_family_label,
     benchmark_term_label,
@@ -21,8 +20,8 @@ from tkip.config import PROJECT_ROOT
 from tkip.gemini_service import GeminiService
 from tkip.models import AskRequest
 from tkip.multi_index import MultiIndexManager
-from tkip.prompt_engineering import PROFILES, PROFILE_KEYS, local_optimize
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
+from tkip.prompt_engineering import PROFILE_KEYS, PROFILES, local_optimize
 from ui_charts import (
     ab_footprint_figure,
     ab_quality_figure,
@@ -64,7 +63,9 @@ def render_benchmarking(
     with tabs[0]:
         _render_section_header(
             ui_lang,
-            pick(ui_lang, "Visszakeresés és chunking benchmark", "Retrieval and chunking benchmark"),
+            pick(
+                ui_lang, "Visszakeresés és chunking benchmark", "Retrieval and chunking benchmark"
+            ),
             pick(
                 ui_lang,
                 "Az oldal előre betöltött offline benchmarkeredményeket is megmutat, így akkor is látszanak a fő metrikák, ha most nem futtatsz új mérést.",
@@ -76,14 +77,34 @@ def render_benchmarking(
             _render_retrieval_overview_cards(overview, ui_lang)
             chart_left, chart_right = st.columns(2)
             with chart_left:
-                st.plotly_chart(retrieval_quality_figure(overview, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="retrieval_overview_quality")
+                st.plotly_chart(
+                    retrieval_quality_figure(overview, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="retrieval_overview_quality",
+                )
             with chart_right:
-                st.plotly_chart(retrieval_latency_figure(overview, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="retrieval_overview_latency")
+                st.plotly_chart(
+                    retrieval_latency_figure(overview, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="retrieval_overview_latency",
+                )
             chart_left, chart_right = st.columns(2)
             with chart_left:
-                st.plotly_chart(quality_latency_scatter(overview, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="retrieval_overview_quality_latency")
+                st.plotly_chart(
+                    quality_latency_scatter(overview, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="retrieval_overview_quality_latency",
+                )
             with chart_right:
-                st.plotly_chart(retrieval_radar(overview, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="retrieval_overview_radar")
+                st.plotly_chart(
+                    retrieval_radar(overview, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="retrieval_overview_radar",
+                )
 
         with st.expander(tr(ui_lang, "metric_dictionary"), expanded=False):
             _render_metric_guide(_retrieval_metric_rows(ui_lang), ui_lang)
@@ -159,9 +180,19 @@ def render_benchmarking(
                 height=min(720, 130 + 34 * len(summary)),
             )
 
-            sort_columns = [column for column in ["recall@5", "mrr", "ndcg@5"] if column in summary.columns]
-            best = summary.sort_values(sort_columns, ascending=False).iloc[0] if sort_columns else summary.iloc[0]
-            fastest = summary.sort_values("p50_latency_ms").iloc[0] if "p50_latency_ms" in summary.columns else summary.iloc[0]
+            sort_columns = [
+                column for column in ["recall@5", "mrr", "ndcg@5"] if column in summary.columns
+            ]
+            best = (
+                summary.sort_values(sort_columns, ascending=False).iloc[0]
+                if sort_columns
+                else summary.iloc[0]
+            )
+            fastest = (
+                summary.sort_values("p50_latency_ms").iloc[0]
+                if "p50_latency_ms" in summary.columns
+                else summary.iloc[0]
+            )
             m1, m2, m3, m4 = st.columns(4)
             if "recall@5" in summary.columns:
                 m1.metric(tr(ui_lang, "best_recall"), f"{100 * float(best['recall@5']):.1f}%")
@@ -174,9 +205,19 @@ def render_benchmarking(
 
             left, right = st.columns(2)
             with left:
-                st.plotly_chart(retrieval_quality_figure(summary, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="retrieval_live_quality")
+                st.plotly_chart(
+                    retrieval_quality_figure(summary, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="retrieval_live_quality",
+                )
             with right:
-                st.plotly_chart(retrieval_latency_figure(summary, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="retrieval_live_latency")
+                st.plotly_chart(
+                    retrieval_latency_figure(summary, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="retrieval_live_latency",
+                )
 
             if variant_meta:
                 st.markdown(f"#### {tr(ui_lang, 'chunk_structural_profile')}")
@@ -205,9 +246,15 @@ def render_benchmarking(
         )
         pcols = st.columns(4)
         pcols[0].metric(tr(ui_lang, "prompt_profiles"), len(PROFILE_KEYS))
-        pcols[1].metric(pick(ui_lang, "Próbakérdések", "Question bank"), len(questions[normalize_language(ui_lang)]))
+        pcols[1].metric(
+            pick(ui_lang, "Próbakérdések", "Question bank"),
+            len(questions[normalize_language(ui_lang)]),
+        )
         pcols[2].metric(pick(ui_lang, "Alapértelmezett profilok", "Default profiles"), 4)
-        pcols[3].metric(pick(ui_lang, "Élő modellmérés", "Live model benchmark"), pick(ui_lang, "Gemini", "Gemini"))
+        pcols[3].metric(
+            pick(ui_lang, "Élő modellmérés", "Live model benchmark"),
+            pick(ui_lang, "Gemini", "Gemini"),
+        )
         with st.expander(tr(ui_lang, "metric_dictionary"), expanded=False):
             _render_metric_guide(_prompt_metric_rows(ui_lang), ui_lang)
         if not effective_key:
@@ -261,14 +308,33 @@ def render_benchmarking(
                 {
                     pick(ui_lang, "Profil", "Profile"): label,
                     pick(ui_lang, "Eredeti kérdés", "Original question"): preview_question,
-                    pick(ui_lang, "Átalakított prompt", "Transformed prompt"): transformed.get("optimized"),
+                    pick(ui_lang, "Átalakított prompt", "Transformed prompt"): transformed.get(
+                        "optimized"
+                    ),
                 }
             )
         if preview_rows:
-            st.markdown(pick(ui_lang, "#### Mintaprompt-átalakítások", "#### Sample transformed prompts"))
-            st.dataframe(pd.DataFrame(preview_rows), use_container_width=True, hide_index=True, height=250)
-            st.markdown(pick(ui_lang, "#### Példa prompt-transzformáció JSON", "#### Example prompt-transformation JSON"))
-            st.code(json.dumps(local_optimize(preview_question, profile_map[selected_profiles[0]], ui_lang), ensure_ascii=False, indent=2), language="json")
+            st.markdown(
+                pick(ui_lang, "#### Mintaprompt-átalakítások", "#### Sample transformed prompts")
+            )
+            st.dataframe(
+                pd.DataFrame(preview_rows), use_container_width=True, hide_index=True, height=250
+            )
+            st.markdown(
+                pick(
+                    ui_lang,
+                    "#### Példa prompt-transzformáció JSON",
+                    "#### Example prompt-transformation JSON",
+                )
+            )
+            st.code(
+                json.dumps(
+                    local_optimize(preview_question, profile_map[selected_profiles[0]], ui_lang),
+                    ensure_ascii=False,
+                    indent=2,
+                ),
+                language="json",
+            )
 
         can_run = bool(effective_key and selected_profiles and selected_questions)
         if st.button(
@@ -315,7 +381,12 @@ def render_benchmarking(
                 ]
                 if quality_columns:
                     st.markdown(f"#### {tr(ui_lang, 'quality_by_prompt')}")
-                    st.plotly_chart(prompt_heatmap(successful, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="prompt_benchmark_heatmap")
+                    st.plotly_chart(
+                        prompt_heatmap(successful, ui_lang),
+                        use_container_width=True,
+                        config={"displaylogo": False, "scrollZoom": True},
+                        key="prompt_benchmark_heatmap",
+                    )
                 footprint_columns = [
                     column
                     for column in ["input_tokens", "output_tokens", "latency_ms", "cost_usd"]
@@ -323,10 +394,22 @@ def render_benchmarking(
                 ]
                 if footprint_columns:
                     st.markdown(f"#### {tr(ui_lang, 'token_latency_cost')}")
-                    st.plotly_chart(prompt_footprint_figure(successful, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="prompt_benchmark_footprint")
-                    footprint = successful.groupby("profile")[footprint_columns].mean().reset_index()
-                    footprint = footprint.rename(columns=localize_columns(ui_lang, list(footprint.columns)))
-                    with st.expander(pick(ui_lang, "Nyers prompt footprint adatok", "Raw prompt footprint data"), expanded=False):
+                    st.plotly_chart(
+                        prompt_footprint_figure(successful, ui_lang),
+                        use_container_width=True,
+                        config={"displaylogo": False, "scrollZoom": True},
+                        key="prompt_benchmark_footprint",
+                    )
+                    footprint = (
+                        successful.groupby("profile")[footprint_columns].mean().reset_index()
+                    )
+                    footprint = footprint.rename(
+                        columns=localize_columns(ui_lang, list(footprint.columns))
+                    )
+                    with st.expander(
+                        pick(ui_lang, "Nyers prompt footprint adatok", "Raw prompt footprint data"),
+                        expanded=False,
+                    ):
                         st.dataframe(footprint, use_container_width=True, hide_index=True)
 
     with tabs[2]:
@@ -339,15 +422,31 @@ def render_benchmarking(
                 "Retrieval quality alone is not enough: this section combines grounded answer quality, citations, structured output and system footprint.",
             ),
         )
-        deterministic_path = PROJECT_ROOT / "07_results" / "evaluation" / "generation_deterministic_metrics.csv"
-        deterministic = pd.read_csv(deterministic_path) if deterministic_path.exists() else pd.DataFrame()
+        deterministic_path = (
+            PROJECT_ROOT / "07_results" / "evaluation" / "generation_deterministic_metrics.csv"
+        )
+        deterministic = (
+            pd.read_csv(deterministic_path) if deterministic_path.exists() else pd.DataFrame()
+        )
         if not deterministic.empty:
             means = deterministic.mean(numeric_only=True)
             rcols = st.columns(4)
-            rcols[0].metric(pick(ui_lang, "Hivatkozáshelyesség", "Citation correctness"), f"{100*float(means.get('citation_correctness',0)):.0f}%")
-            rcols[1].metric(pick(ui_lang, "Hivatkozáslefedettség", "Citation completeness"), f"{100*float(means.get('citation_completeness',0)):.0f}%")
-            rcols[2].metric(pick(ui_lang, "Nincs-válasz pontosság", "No-answer accuracy"), f"{100*float(means.get('no_answer_accuracy',0)):.0f}%")
-            rcols[3].metric(pick(ui_lang, "Strukturált kimenet", "Structured output"), f"{100*float(means.get('structured_output_validity',0)):.0f}%")
+            rcols[0].metric(
+                pick(ui_lang, "Hivatkozáshelyesség", "Citation correctness"),
+                f"{100 * float(means.get('citation_correctness', 0)):.0f}%",
+            )
+            rcols[1].metric(
+                pick(ui_lang, "Hivatkozáslefedettség", "Citation completeness"),
+                f"{100 * float(means.get('citation_completeness', 0)):.0f}%",
+            )
+            rcols[2].metric(
+                pick(ui_lang, "Nincs-válasz pontosság", "No-answer accuracy"),
+                f"{100 * float(means.get('no_answer_accuracy', 0)):.0f}%",
+            )
+            rcols[3].metric(
+                pick(ui_lang, "Strukturált kimenet", "Structured output"),
+                f"{100 * float(means.get('structured_output_validity', 0)):.0f}%",
+            )
         st.dataframe(_rag_metric_frame(ui_lang), use_container_width=True, hide_index=True)
         with st.expander(tr(ui_lang, "metric_dictionary"), expanded=False):
             _render_metric_guide(_rag_metric_rows(ui_lang), ui_lang)
@@ -356,7 +455,9 @@ def render_benchmarking(
             deterministic_display = deterministic.head(100).rename(
                 columns=localize_columns(ui_lang, list(deterministic.columns))
             )
-            st.dataframe(deterministic_display, use_container_width=True, hide_index=True, height=340)
+            st.dataframe(
+                deterministic_display, use_container_width=True, hide_index=True, height=340
+            )
             score_columns = [
                 column
                 for column in [
@@ -371,7 +472,12 @@ def render_benchmarking(
                 if column in deterministic.columns
             ]
             if score_columns:
-                st.plotly_chart(deterministic_rag_figure(deterministic, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="rag_deterministic_metrics")
+                st.plotly_chart(
+                    deterministic_rag_figure(deterministic, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="rag_deterministic_metrics",
+                )
         demo_answer = _load_json_example("ask_demo.json")
         if demo_answer:
             st.markdown(pick(ui_lang, "#### Példa válaszartifact", "#### Example answer artifact"))
@@ -396,9 +502,16 @@ def render_benchmarking(
         )
         tcols = st.columns(4)
         tcols[0].metric(pick(ui_lang, "Metrikacsalád", "Metric family"), 8)
-        tcols[1].metric(pick(ui_lang, "Sémavalidáció", "Schema validation"), pick(ui_lang, "aktív", "enabled"))
-        tcols[2].metric(pick(ui_lang, "Tool allowlist", "Tool allowlist"), pick(ui_lang, "aktív", "enabled"))
-        tcols[3].metric(pick(ui_lang, "Max. tool step", "Max tool steps"), int(kp.cfg.get("tools", {}).get("max_calls", 2) or 2))
+        tcols[1].metric(
+            pick(ui_lang, "Sémavalidáció", "Schema validation"), pick(ui_lang, "aktív", "enabled")
+        )
+        tcols[2].metric(
+            pick(ui_lang, "Tool allowlist", "Tool allowlist"), pick(ui_lang, "aktív", "enabled")
+        )
+        tcols[3].metric(
+            pick(ui_lang, "Max. tool step", "Max tool steps"),
+            int(kp.cfg.get("tools", {}).get("max_calls", 2) or 2),
+        )
         st.dataframe(_tool_metric_frame(ui_lang), use_container_width=True, hide_index=True)
         with st.expander(tr(ui_lang, "metric_dictionary"), expanded=False):
             _render_metric_guide(_tool_metric_rows(ui_lang), ui_lang)
@@ -419,7 +532,12 @@ def render_benchmarking(
         if tool_rows:
             st.markdown(f"#### {tr(ui_lang, 'recent_tool_telemetry')}")
             tool_frame = pd.DataFrame(tool_rows)
-            st.plotly_chart(tool_telemetry_figure(tool_frame, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="tool_telemetry_chart")
+            st.plotly_chart(
+                tool_telemetry_figure(tool_frame, ui_lang),
+                use_container_width=True,
+                config={"displaylogo": False, "scrollZoom": True},
+                key="tool_telemetry_chart",
+            )
             display_tool_frame = tool_frame.copy()
             if "query_type" in display_tool_frame.columns:
                 display_tool_frame["query_type"] = display_tool_frame["query_type"].map(
@@ -428,8 +546,13 @@ def render_benchmarking(
             display_tool_frame = display_tool_frame.rename(
                 columns=localize_columns(ui_lang, list(display_tool_frame.columns))
             )
-            with st.expander(pick(ui_lang, "Nyers eszközhívási telemetria", "Raw tool-calling telemetry"), expanded=False):
-                st.dataframe(display_tool_frame, use_container_width=True, hide_index=True, height=340)
+            with st.expander(
+                pick(ui_lang, "Nyers eszközhívási telemetria", "Raw tool-calling telemetry"),
+                expanded=False,
+            ):
+                st.dataframe(
+                    display_tool_frame, use_container_width=True, hide_index=True, height=340
+                )
         else:
             st.info(tr(ui_lang, "no_tool_telemetry"))
         st.markdown(pick(ui_lang, "#### Példa eszközhívási JSON", "#### Example tool-calling JSON"))
@@ -437,7 +560,11 @@ def render_benchmarking(
             json.dumps(
                 {
                     "tool_name": "search_library",
-                    "arguments": {"query": "BM25 vs dense retrieval", "top_k": 5, "source_type": "private"},
+                    "arguments": {
+                        "query": "BM25 vs dense retrieval",
+                        "top_k": 5,
+                        "source_type": "private",
+                    },
                     "expected_checks": ["schema_valid", "tool_allowed", "results_non_empty"],
                 },
                 ensure_ascii=False,
@@ -449,7 +576,11 @@ def render_benchmarking(
     with tabs[4]:
         _render_section_header(
             ui_lang,
-            pick(ui_lang, "Hallucináció, promptinjekció és regresszió", "Hallucination, prompt injection and regression"),
+            pick(
+                ui_lang,
+                "Hallucináció, promptinjekció és regresszió",
+                "Hallucination, prompt injection and regression",
+            ),
             pick(
                 ui_lang,
                 "Ezek a tesztek azt mutatják meg, mennyire biztonságos és stabil a rendszer, valamint hogy egy módosítás után romlott-e valami a korábbi működéshez képest.",
@@ -465,16 +596,31 @@ def render_benchmarking(
                 regression_artifact = None
         if isinstance(regression_artifact, dict):
             hcols = st.columns(4)
-            hcols[0].metric("Recall@5", f"{100*float(regression_artifact.get('recall@5',0)):.1f}%")
-            hcols[1].metric("MRR", f"{float(regression_artifact.get('mrr',0)):.3f}")
-            hcols[2].metric("Hit Rate", f"{100*float(regression_artifact.get('hit_rate',0)):.0f}%")
-            hcols[3].metric(pick(ui_lang, "Retrieval latency", "Retrieval latency"), f"{float(regression_artifact.get('latency_ms',0)):.2f} ms")
+            hcols[0].metric(
+                "Recall@5", f"{100 * float(regression_artifact.get('recall@5', 0)):.1f}%"
+            )
+            hcols[1].metric("MRR", f"{float(regression_artifact.get('mrr', 0)):.3f}")
+            hcols[2].metric(
+                "Hit Rate", f"{100 * float(regression_artifact.get('hit_rate', 0)):.0f}%"
+            )
+            hcols[3].metric(
+                pick(ui_lang, "Retrieval latency", "Retrieval latency"),
+                f"{float(regression_artifact.get('latency_ms', 0)):.2f} ms",
+            )
         st.dataframe(_robustness_frame(ui_lang), use_container_width=True, hide_index=True)
         with st.expander(tr(ui_lang, "metric_dictionary"), expanded=False):
             _render_metric_guide(_robustness_metric_rows(ui_lang), ui_lang)
         if isinstance(regression_artifact, dict):
-            st.plotly_chart(regression_figure(regression_artifact, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="regression_metrics_chart")
-            with st.expander(pick(ui_lang, "Regressziós artifact · JSON", "Regression artifact · JSON"), expanded=False):
+            st.plotly_chart(
+                regression_figure(regression_artifact, ui_lang),
+                use_container_width=True,
+                config={"displaylogo": False, "scrollZoom": True},
+                key="regression_metrics_chart",
+            )
+            with st.expander(
+                pick(ui_lang, "Regressziós artifact · JSON", "Regression artifact · JSON"),
+                expanded=False,
+            ):
                 st.json(regression_artifact)
 
     with tabs[5]:
@@ -495,28 +641,47 @@ def render_benchmarking(
                 lambda value: benchmark_family_label(ui_lang, value)
             )
         if "status" in catalog.columns:
-            catalog["status"] = catalog["status"].map(
-                lambda value: localize_value(ui_lang, value)
-            )
+            catalog["status"] = catalog["status"].map(lambda value: localize_value(ui_lang, value))
         for column in ("methods", "metrics"):
             if column in catalog.columns:
                 catalog[column] = catalog[column].map(
-                    lambda value: [benchmark_term_label(ui_lang, item.strip()) for item in str(value).split(" | ")]
+                    lambda value: [
+                        benchmark_term_label(ui_lang, item.strip())
+                        for item in str(value).split(" | ")
+                    ]
                 )
         families = catalog["benchmark_family"].tolist() if not catalog.empty else []
         if not catalog.empty:
             ccols = st.columns(4)
             ccols[0].metric(pick(ui_lang, "Mérési családok", "Benchmark families"), len(catalog))
-            ccols[1].metric(pick(ui_lang, "Összes módszer", "Total methods"), sum(len(items) for items in catalog["methods"]))
-            ccols[2].metric(pick(ui_lang, "Összes metrika", "Total metrics"), sum(len(items) for items in catalog["metrics"]))
-            ccols[3].metric(pick(ui_lang, "Implementált / részleges", "Implemented / partial"), int(catalog["status"].astype(str).str.contains("implement", case=False).sum()))
-            st.plotly_chart(catalog_status_figure(catalog, ui_lang), use_container_width=True, config={"displaylogo": False}, key="catalog_status_chart")
-        selected_family = st.selectbox(tr(ui_lang, "inspect_family"), families) if families else None
+            ccols[1].metric(
+                pick(ui_lang, "Összes módszer", "Total methods"),
+                sum(len(items) for items in catalog["methods"]),
+            )
+            ccols[2].metric(
+                pick(ui_lang, "Összes metrika", "Total metrics"),
+                sum(len(items) for items in catalog["metrics"]),
+            )
+            ccols[3].metric(
+                pick(ui_lang, "Implementált / részleges", "Implemented / partial"),
+                int(catalog["status"].astype(str).str.contains("implement", case=False).sum()),
+            )
+            st.plotly_chart(
+                catalog_status_figure(catalog, ui_lang),
+                use_container_width=True,
+                config={"displaylogo": False},
+                key="catalog_status_chart",
+            )
+        selected_family = (
+            st.selectbox(tr(ui_lang, "inspect_family"), families) if families else None
+        )
         if selected_family:
             row = catalog[catalog["benchmark_family"] == selected_family].iloc[0]
             left, right = st.columns(2)
             with left:
-                st.markdown(pick(ui_lang, "#### Módszerek és változatok", "#### Methods and variants"))
+                st.markdown(
+                    pick(ui_lang, "#### Módszerek és változatok", "#### Methods and variants")
+                )
                 for item in row.get("methods", []):
                     st.write(f"- {item}")
             with right:
@@ -526,15 +691,23 @@ def render_benchmarking(
             meta = pd.DataFrame(
                 [
                     {
-                        pick(ui_lang, "Mérési család", "Benchmark family"): row.get("benchmark_family"),
+                        pick(ui_lang, "Mérési család", "Benchmark family"): row.get(
+                            "benchmark_family"
+                        ),
                         pick(ui_lang, "Állapot", "Status"): row.get("status"),
-                        pick(ui_lang, "Módszerek száma", "Method count"): len(row.get("methods", [])),
-                        pick(ui_lang, "Metrikák száma", "Metric count"): len(row.get("metrics", [])),
+                        pick(ui_lang, "Módszerek száma", "Method count"): len(
+                            row.get("methods", [])
+                        ),
+                        pick(ui_lang, "Metrikák száma", "Metric count"): len(
+                            row.get("metrics", [])
+                        ),
                     }
                 ]
             )
             st.dataframe(meta, use_container_width=True, hide_index=True)
-        with st.expander(pick(ui_lang, "Teljes táblázat megnyitása", "Open full table"), expanded=False):
+        with st.expander(
+            pick(ui_lang, "Teljes táblázat megnyitása", "Open full table"), expanded=False
+        ):
             display = catalog.copy()
             display["methods"] = display["methods"].map(lambda items: " | ".join(items))
             display["metrics"] = display["metrics"].map(lambda items: " | ".join(items))
@@ -566,7 +739,9 @@ def render_benchmarking(
                     }
                 )
             trace_frame = pd.DataFrame(summary_rows)
-            trace_frame = trace_frame.rename(columns=localize_columns(ui_lang, list(trace_frame.columns)))
+            trace_frame = trace_frame.rename(
+                columns=localize_columns(ui_lang, list(trace_frame.columns))
+            )
             st.dataframe(trace_frame, use_container_width=True, hide_index=True, height=480)
             selected_id = st.selectbox(
                 tr(ui_lang, "open_experiment"),
@@ -630,7 +805,9 @@ def _run_prompt_benchmark(
                     "grounding_score": quality.get("grounding_score"),
                     "context_score": pipeline.get("context_analysis_score"),
                     "tool_score": pipeline.get("tool_calling_score"),
-                    "citation_valid": bool((diagnostics.get("citation_validation") or {}).get("valid")),
+                    "citation_valid": bool(
+                        (diagnostics.get("citation_validation") or {}).get("valid")
+                    ),
                     "structured_output_valid": True,
                     "latency_ms": answer.latency_ms,
                     "input_tokens": diagnostics.get("input_tokens") or 0,
@@ -646,7 +823,9 @@ def _run_prompt_benchmark(
                         "prompt_name": profile_key,
                         "prompt_version": "v1",
                         "user_prompt": question,
-                        "optimized_prompt": (diagnostics.get("prompt_optimization") or {}).get("optimized"),
+                        "optimized_prompt": (diagnostics.get("prompt_optimization") or {}).get(
+                            "optimized"
+                        ),
                         "system_prompt": diagnostics.get("system_prompt"),
                         "index_variant": diagnostics.get("index_variant"),
                         "retrieval": {
@@ -691,7 +870,7 @@ def _run_prompt_benchmark(
 
 def _render_section_header(ui_lang: str, title: str, description: str) -> None:
     st.markdown(
-        f'''<div style="margin:.2rem 0 .85rem"><div class="section-title" style="font-size:1.18rem">{title}</div><div class="small-muted">{description}</div></div>''',
+        f"""<div style="margin:.2rem 0 .85rem"><div class="section-title" style="font-size:1.18rem">{title}</div><div class="small-muted">{description}</div></div>""",
         unsafe_allow_html=True,
     )
 
@@ -707,42 +886,84 @@ def _render_metric_guide(rows: list[dict[str, str]], ui_lang: str) -> None:
         extra = values[2] if len(values) > 2 else ""
         extra_label = pick(ui_lang, "Értelmezés", "Interpretation")
         cols[idx % 2].markdown(
-            f'''<div class="evidence-card" style="min-height:142px;border-top:3px solid #60a5fa">
+            f"""<div class="evidence-card" style="min-height:142px;border-top:3px solid #60a5fa">
 <div class="evidence-title">{title}</div>
 <div class="evidence-text">{meaning}</div>
 <div class="small-muted" style="margin-top:.55rem"><b>{extra_label}:</b> {extra}</div>
-</div>''',
+</div>""",
             unsafe_allow_html=True,
         )
 
 
 def _render_benchmark_snapshot(ui_lang: str) -> None:
     retrieval = _default_retrieval_summary()
-    deterministic_path = PROJECT_ROOT / "07_results" / "evaluation" / "generation_deterministic_metrics.csv"
-    deterministic = pd.read_csv(deterministic_path) if deterministic_path.exists() else pd.DataFrame()
-    best = retrieval.sort_values("recall@5", ascending=False).iloc[0] if not retrieval.empty and "recall@5" in retrieval.columns else None
-    means = deterministic.mean(numeric_only=True) if not deterministic.empty else pd.Series(dtype=float)
+    deterministic_path = (
+        PROJECT_ROOT / "07_results" / "evaluation" / "generation_deterministic_metrics.csv"
+    )
+    deterministic = (
+        pd.read_csv(deterministic_path) if deterministic_path.exists() else pd.DataFrame()
+    )
+    best = (
+        retrieval.sort_values("recall@5", ascending=False).iloc[0]
+        if not retrieval.empty and "recall@5" in retrieval.columns
+        else None
+    )
+    means = (
+        deterministic.mean(numeric_only=True) if not deterministic.empty else pd.Series(dtype=float)
+    )
     st.markdown(
-        f'''<div style="margin:.2rem 0 .65rem"><div class="small-muted">{pick(ui_lang, "Előre betöltött offline baseline · új mérés nélkül is látható", "Preloaded offline baseline · visible without running a new benchmark")}</div></div>''',
+        f"""<div style="margin:.2rem 0 .65rem"><div class="small-muted">{pick(ui_lang, "Előre betöltött offline baseline · új mérés nélkül is látható", "Preloaded offline baseline · visible without running a new benchmark")}</div></div>""",
         unsafe_allow_html=True,
     )
     cols = st.columns(6)
-    cols[0].metric("Recall@5", f"{100*float(best.get('recall@5',0)):.1f}%" if best is not None else "—")
-    cols[1].metric("MRR", f"{float(best.get('mrr',0)):.3f}" if best is not None else "—")
-    cols[2].metric("nDCG@5", f"{float(best.get('ndcg@5',0)):.3f}" if best is not None else "—")
-    cols[3].metric(pick(ui_lang, "Hivatkozáshelyesség", "Citation correctness"), f"{100*float(means.get('citation_correctness', float('nan'))):.0f}%" if 'citation_correctness' in means else "—")
-    cols[4].metric(pick(ui_lang, "Nincs-válasz pontosság", "No-answer accuracy"), f"{100*float(means.get('no_answer_accuracy', float('nan'))):.0f}%" if 'no_answer_accuracy' in means else "—")
-    cols[5].metric(pick(ui_lang, "Strukturált kimenet", "Structured output"), f"{100*float(means.get('structured_output_validity', float('nan'))):.0f}%" if 'structured_output_validity' in means else "—")
+    cols[0].metric(
+        "Recall@5", f"{100 * float(best.get('recall@5', 0)):.1f}%" if best is not None else "—"
+    )
+    cols[1].metric("MRR", f"{float(best.get('mrr', 0)):.3f}" if best is not None else "—")
+    cols[2].metric("nDCG@5", f"{float(best.get('ndcg@5', 0)):.3f}" if best is not None else "—")
+    cols[3].metric(
+        pick(ui_lang, "Hivatkozáshelyesség", "Citation correctness"),
+        f"{100 * float(means.get('citation_correctness', float('nan'))):.0f}%"
+        if "citation_correctness" in means
+        else "—",
+    )
+    cols[4].metric(
+        pick(ui_lang, "Nincs-válasz pontosság", "No-answer accuracy"),
+        f"{100 * float(means.get('no_answer_accuracy', float('nan'))):.0f}%"
+        if "no_answer_accuracy" in means
+        else "—",
+    )
+    cols[5].metric(
+        pick(ui_lang, "Strukturált kimenet", "Structured output"),
+        f"{100 * float(means.get('structured_output_validity', float('nan'))):.0f}%"
+        if "structured_output_validity" in means
+        else "—",
+    )
 
     if not retrieval.empty:
-        left, right = st.columns([1.15, .85])
+        left, right = st.columns([1.15, 0.85])
         with left:
-            st.plotly_chart(retrieval_quality_figure(retrieval, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="benchmark_header_retrieval_quality")
+            st.plotly_chart(
+                retrieval_quality_figure(retrieval, ui_lang),
+                use_container_width=True,
+                config={"displaylogo": False, "scrollZoom": True},
+                key="benchmark_header_retrieval_quality",
+            )
         with right:
             if not deterministic.empty:
-                st.plotly_chart(deterministic_rag_figure(deterministic, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="benchmark_header_rag_validation")
+                st.plotly_chart(
+                    deterministic_rag_figure(deterministic, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="benchmark_header_rag_validation",
+                )
             else:
-                st.plotly_chart(quality_latency_scatter(retrieval, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="benchmark_header_quality_latency")
+                st.plotly_chart(
+                    quality_latency_scatter(retrieval, ui_lang),
+                    use_container_width=True,
+                    config={"displaylogo": False, "scrollZoom": True},
+                    key="benchmark_header_quality_latency",
+                )
 
 
 def _default_retrieval_summary() -> pd.DataFrame:
@@ -780,14 +1001,30 @@ def _default_retrieval_raw() -> pd.DataFrame:
 def _render_retrieval_overview_cards(frame: pd.DataFrame, ui_lang: str) -> None:
     if frame.empty:
         return
-    best_recall = frame.sort_values("recall@5", ascending=False).iloc[0] if "recall@5" in frame.columns else frame.iloc[0]
-    best_mrr = frame.sort_values("mrr", ascending=False).iloc[0] if "mrr" in frame.columns else frame.iloc[0]
-    fastest = frame.sort_values("p50_latency_ms", ascending=True).iloc[0] if "p50_latency_ms" in frame.columns else frame.iloc[0]
+    best_recall = (
+        frame.sort_values("recall@5", ascending=False).iloc[0]
+        if "recall@5" in frame.columns
+        else frame.iloc[0]
+    )
+    best_mrr = (
+        frame.sort_values("mrr", ascending=False).iloc[0]
+        if "mrr" in frame.columns
+        else frame.iloc[0]
+    )
+    fastest = (
+        frame.sort_values("p50_latency_ms", ascending=True).iloc[0]
+        if "p50_latency_ms" in frame.columns
+        else frame.iloc[0]
+    )
     cols = st.columns(4)
     cols[0].metric(pick(ui_lang, "Összes módszer", "Methods"), int(frame["method"].nunique()))
-    cols[1].metric(tr(ui_lang, "best_recall"), f"{100 * float(best_recall.get('recall@5', 0) or 0):.1f}%")
+    cols[1].metric(
+        tr(ui_lang, "best_recall"), f"{100 * float(best_recall.get('recall@5', 0) or 0):.1f}%"
+    )
     cols[2].metric(tr(ui_lang, "best_mrr"), f"{float(best_mrr.get('mrr', 0) or 0):.3f}")
-    cols[3].metric(tr(ui_lang, "fastest_p50"), f"{float(fastest.get('p50_latency_ms', 0) or 0):.1f} ms")
+    cols[3].metric(
+        tr(ui_lang, "fastest_p50"), f"{float(fastest.get('p50_latency_ms', 0) or 0):.1f} ms"
+    )
 
 
 def _load_json_example(name: str) -> dict | list | None:
@@ -803,80 +1040,251 @@ def _load_json_example(name: str) -> dict | list | None:
 def _retrieval_metric_rows(ui_lang: str) -> list[dict[str, str]]:
     if ui_lang == "hu":
         return [
-            {"Metrika": "Recall@K", "Mit mér?": "A releváns chunkok mekkora része kerül be a top-K találatok közé.", "Mikor jó?": "A lehető legtöbb releváns forrás már kis K mellett megjelenik."},
-            {"Metrika": "Precision@K", "Mit mér?": "A top-K találatok mekkora része valóban releváns.", "Mikor jó?": "Kevés a zajos, rossz vagy tévesen felhozott chunk."},
-            {"Metrika": "MRR", "Mit mér?": "Milyen korán jelenik meg az első releváns találat.", "Mikor jó?": "A legjobb találat már az első helyek egyikén van."},
-            {"Metrika": "nDCG@K", "Mit mér?": "A rangsor egészét, pozícióérzékenyen értékeli.", "Mikor jó?": "A releváns találatok nemcsak bent vannak, hanem jó sorrendben is."},
-            {"Metrika": "Hit Rate", "Mit mér?": "Volt-e legalább egy releváns találat.", "Mikor jó?": "A rendszer ritkán bukik teljesen üresen vagy rossz irányba."},
-            {"Metrika": "P50 / P95 latency", "Mit mér?": "Tipikus és szélső késleltetés.", "Mikor jó?": "A rendszer egyszerre gyors és stabil, nincsenek nagy tüskék."},
+            {
+                "Metrika": "Recall@K",
+                "Mit mér?": "A releváns chunkok mekkora része kerül be a top-K találatok közé.",
+                "Mikor jó?": "A lehető legtöbb releváns forrás már kis K mellett megjelenik.",
+            },
+            {
+                "Metrika": "Precision@K",
+                "Mit mér?": "A top-K találatok mekkora része valóban releváns.",
+                "Mikor jó?": "Kevés a zajos, rossz vagy tévesen felhozott chunk.",
+            },
+            {
+                "Metrika": "MRR",
+                "Mit mér?": "Milyen korán jelenik meg az első releváns találat.",
+                "Mikor jó?": "A legjobb találat már az első helyek egyikén van.",
+            },
+            {
+                "Metrika": "nDCG@K",
+                "Mit mér?": "A rangsor egészét, pozícióérzékenyen értékeli.",
+                "Mikor jó?": "A releváns találatok nemcsak bent vannak, hanem jó sorrendben is.",
+            },
+            {
+                "Metrika": "Hit Rate",
+                "Mit mér?": "Volt-e legalább egy releváns találat.",
+                "Mikor jó?": "A rendszer ritkán bukik teljesen üresen vagy rossz irányba.",
+            },
+            {
+                "Metrika": "P50 / P95 latency",
+                "Mit mér?": "Tipikus és szélső késleltetés.",
+                "Mikor jó?": "A rendszer egyszerre gyors és stabil, nincsenek nagy tüskék.",
+            },
         ]
     return [
-        {"Metric": "Recall@K", "What does it measure?": "How much of the relevant evidence is recovered in top-K.", "What is good?": "Most relevant evidence appears already at small K."},
-        {"Metric": "Precision@K", "What does it measure?": "How much of top-K is truly relevant.", "What is good?": "Little noisy or irrelevant evidence is returned."},
-        {"Metric": "MRR", "What does it measure?": "How early the first relevant result appears.", "What is good?": "The first relevant hit is near rank 1."},
-        {"Metric": "nDCG@K", "What does it measure?": "Position-aware ranking quality across the list.", "What is good?": "Relevant evidence is not only present but well ordered."},
-        {"Metric": "Hit Rate", "What does it measure?": "Whether at least one relevant hit is returned.", "What is good?": "The system rarely misses completely."},
-        {"Metric": "P50 / P95 latency", "What does it measure?": "Typical and tail latency.", "What is good?": "The system is both fast and stable."},
+        {
+            "Metric": "Recall@K",
+            "What does it measure?": "How much of the relevant evidence is recovered in top-K.",
+            "What is good?": "Most relevant evidence appears already at small K.",
+        },
+        {
+            "Metric": "Precision@K",
+            "What does it measure?": "How much of top-K is truly relevant.",
+            "What is good?": "Little noisy or irrelevant evidence is returned.",
+        },
+        {
+            "Metric": "MRR",
+            "What does it measure?": "How early the first relevant result appears.",
+            "What is good?": "The first relevant hit is near rank 1.",
+        },
+        {
+            "Metric": "nDCG@K",
+            "What does it measure?": "Position-aware ranking quality across the list.",
+            "What is good?": "Relevant evidence is not only present but well ordered.",
+        },
+        {
+            "Metric": "Hit Rate",
+            "What does it measure?": "Whether at least one relevant hit is returned.",
+            "What is good?": "The system rarely misses completely.",
+        },
+        {
+            "Metric": "P50 / P95 latency",
+            "What does it measure?": "Typical and tail latency.",
+            "What is good?": "The system is both fast and stable.",
+        },
     ]
 
 
 def _prompt_metric_rows(ui_lang: str) -> list[dict[str, str]]:
     if ui_lang == "hu":
         return [
-            {"Metrika": "Prompt score", "Mit mér?": "Mennyire tiszta, célzott és végrehajtható az átalakított prompt.", "Mikor hasznos?": "Összehasonlíthatóvá teszi a promptprofilokat."},
-            {"Metrika": "Output score", "Mit mér?": "A válasz szerkezetét, hasznosságát és teljességét.", "Mikor hasznos?": "Kiderül, melyik prompt ad jobb végső választ."},
-            {"Metrika": "Grounding score", "Mit mér?": "Mennyire támaszkodik a válasz valódi forrásokra.", "Mikor hasznos?": "Hallucinációk és laza állítások csökkentésére."},
-            {"Metrika": "Context score", "Mit mér?": "Mennyire volt jó a kiválasztott kontextus.", "Mikor hasznos?": "Megmutatja, hogy a prompt és a retrieval együtt mennyire működik."},
-            {"Metrika": "Tool score", "Mit mér?": "Hasznosak és helyesek voltak-e az eszközhívások.", "Mikor hasznos?": "Agentes vagy toolos feladatoknál kulcsfontosságú."},
-            {"Metrika": "Input / output tokens, latency, cost", "Mit mér?": "Erőforrás-lábnyom.", "Mikor hasznos?": "Minőség–költség–sebesség kompromisszumokhoz."},
+            {
+                "Metrika": "Prompt score",
+                "Mit mér?": "Mennyire tiszta, célzott és végrehajtható az átalakított prompt.",
+                "Mikor hasznos?": "Összehasonlíthatóvá teszi a promptprofilokat.",
+            },
+            {
+                "Metrika": "Output score",
+                "Mit mér?": "A válasz szerkezetét, hasznosságát és teljességét.",
+                "Mikor hasznos?": "Kiderül, melyik prompt ad jobb végső választ.",
+            },
+            {
+                "Metrika": "Grounding score",
+                "Mit mér?": "Mennyire támaszkodik a válasz valódi forrásokra.",
+                "Mikor hasznos?": "Hallucinációk és laza állítások csökkentésére.",
+            },
+            {
+                "Metrika": "Context score",
+                "Mit mér?": "Mennyire volt jó a kiválasztott kontextus.",
+                "Mikor hasznos?": "Megmutatja, hogy a prompt és a retrieval együtt mennyire működik.",
+            },
+            {
+                "Metrika": "Tool score",
+                "Mit mér?": "Hasznosak és helyesek voltak-e az eszközhívások.",
+                "Mikor hasznos?": "Agentes vagy toolos feladatoknál kulcsfontosságú.",
+            },
+            {
+                "Metrika": "Input / output tokens, latency, cost",
+                "Mit mér?": "Erőforrás-lábnyom.",
+                "Mikor hasznos?": "Minőség–költség–sebesség kompromisszumokhoz.",
+            },
         ]
     return [
-        {"Metric": "Prompt score", "What does it measure?": "How clear, targeted and executable the transformed prompt is.", "When useful?": "It helps compare prompt profiles."},
-        {"Metric": "Output score", "What does it measure?": "Answer structure, usefulness and completeness.", "When useful?": "Shows which prompt creates better final answers."},
-        {"Metric": "Grounding score", "What does it measure?": "How strongly the answer relies on real sources.", "When useful?": "Helpful for reducing hallucinations."},
-        {"Metric": "Context score", "What does it measure?": "How suitable the selected context was.", "When useful?": "Shows how prompt design and retrieval interact."},
-        {"Metric": "Tool score", "What does it measure?": "Whether tool usage was useful and correct.", "When useful?": "Important for agentic or tool-based tasks."},
-        {"Metric": "Input / output tokens, latency, cost", "What does it measure?": "Resource footprint.", "When useful?": "Useful for quality-cost-speed trade-offs."},
+        {
+            "Metric": "Prompt score",
+            "What does it measure?": "How clear, targeted and executable the transformed prompt is.",
+            "When useful?": "It helps compare prompt profiles.",
+        },
+        {
+            "Metric": "Output score",
+            "What does it measure?": "Answer structure, usefulness and completeness.",
+            "When useful?": "Shows which prompt creates better final answers.",
+        },
+        {
+            "Metric": "Grounding score",
+            "What does it measure?": "How strongly the answer relies on real sources.",
+            "When useful?": "Helpful for reducing hallucinations.",
+        },
+        {
+            "Metric": "Context score",
+            "What does it measure?": "How suitable the selected context was.",
+            "When useful?": "Shows how prompt design and retrieval interact.",
+        },
+        {
+            "Metric": "Tool score",
+            "What does it measure?": "Whether tool usage was useful and correct.",
+            "When useful?": "Important for agentic or tool-based tasks.",
+        },
+        {
+            "Metric": "Input / output tokens, latency, cost",
+            "What does it measure?": "Resource footprint.",
+            "When useful?": "Useful for quality-cost-speed trade-offs.",
+        },
     ]
 
 
 def _rag_metric_rows(ui_lang: str) -> list[dict[str, str]]:
     if ui_lang == "hu":
         return [
-            {"Réteg": "Retrieval", "Metrika": "Recall@K / MRR / nDCG@K", "Miért fontos?": "A generálás csak annyira jó, amennyire jó a felhozott bizonyíték."},
-            {"Réteg": "Generálás", "Metrika": "Answer correctness / faithfulness / relevance", "Miért fontos?": "A válasz legyen helyes, hasznos és forrásalapú."},
-            {"Réteg": "Kontextus", "Metrika": "Context precision / recall / utilization", "Miért fontos?": "A túl sok vagy túl zajos kontextus lerontja a választ."},
-            {"Réteg": "Hivatkozás", "Metrika": "Citation correctness / completeness", "Miért fontos?": "A felhasználó vissza tudjon menni a forráshoz."},
-            {"Réteg": "Structured output", "Metrika": "Valid JSON / schema compliance", "Miért fontos?": "Gépi feldolgozásnál a válasz legyen stabilan parse-olható."},
-            {"Réteg": "Rendszer", "Metrika": "Latency / tokens / cost / failure rate", "Miért fontos?": "Production kompromisszumok és skálázhatóság."},
+            {
+                "Réteg": "Retrieval",
+                "Metrika": "Recall@K / MRR / nDCG@K",
+                "Miért fontos?": "A generálás csak annyira jó, amennyire jó a felhozott bizonyíték.",
+            },
+            {
+                "Réteg": "Generálás",
+                "Metrika": "Answer correctness / faithfulness / relevance",
+                "Miért fontos?": "A válasz legyen helyes, hasznos és forrásalapú.",
+            },
+            {
+                "Réteg": "Kontextus",
+                "Metrika": "Context precision / recall / utilization",
+                "Miért fontos?": "A túl sok vagy túl zajos kontextus lerontja a választ.",
+            },
+            {
+                "Réteg": "Hivatkozás",
+                "Metrika": "Citation correctness / completeness",
+                "Miért fontos?": "A felhasználó vissza tudjon menni a forráshoz.",
+            },
+            {
+                "Réteg": "Structured output",
+                "Metrika": "Valid JSON / schema compliance",
+                "Miért fontos?": "Gépi feldolgozásnál a válasz legyen stabilan parse-olható.",
+            },
+            {
+                "Réteg": "Rendszer",
+                "Metrika": "Latency / tokens / cost / failure rate",
+                "Miért fontos?": "Production kompromisszumok és skálázhatóság.",
+            },
         ]
     return [
-        {"Layer": "Retrieval", "Metric": "Recall@K / MRR / nDCG@K", "Why it matters": "Generation quality depends on retrieved evidence."},
-        {"Layer": "Generation", "Metric": "Answer correctness / faithfulness / relevance", "Why it matters": "The answer must be useful, correct and source-grounded."},
-        {"Layer": "Context", "Metric": "Context precision / recall / utilization", "Why it matters": "Too much or too noisy context hurts answer quality."},
-        {"Layer": "Citation", "Metric": "Citation correctness / completeness", "Why it matters": "Users must be able to trace claims back to sources."},
-        {"Layer": "Structured output", "Metric": "Valid JSON / schema compliance", "Why it matters": "Machine consumption requires stable parseable outputs."},
-        {"Layer": "System", "Metric": "Latency / tokens / cost / failure rate", "Why it matters": "Production trade-offs and scalability."},
+        {
+            "Layer": "Retrieval",
+            "Metric": "Recall@K / MRR / nDCG@K",
+            "Why it matters": "Generation quality depends on retrieved evidence.",
+        },
+        {
+            "Layer": "Generation",
+            "Metric": "Answer correctness / faithfulness / relevance",
+            "Why it matters": "The answer must be useful, correct and source-grounded.",
+        },
+        {
+            "Layer": "Context",
+            "Metric": "Context precision / recall / utilization",
+            "Why it matters": "Too much or too noisy context hurts answer quality.",
+        },
+        {
+            "Layer": "Citation",
+            "Metric": "Citation correctness / completeness",
+            "Why it matters": "Users must be able to trace claims back to sources.",
+        },
+        {
+            "Layer": "Structured output",
+            "Metric": "Valid JSON / schema compliance",
+            "Why it matters": "Machine consumption requires stable parseable outputs.",
+        },
+        {
+            "Layer": "System",
+            "Metric": "Latency / tokens / cost / failure rate",
+            "Why it matters": "Production trade-offs and scalability.",
+        },
     ]
 
 
 def _rag_metric_frame(ui_lang: str) -> pd.DataFrame:
     if ui_lang == "hu":
         rows = [
-            {"Réteg": "Visszakeresés", "Metrikák": "Recall@K · Precision@K · MRR · nDCG@K · Hit Rate"},
-            {"Réteg": "Generálás", "Metrikák": "Válaszhelyesség · Relevancia · Hűség · Forrásalapúság"},
-            {"Réteg": "Kontextus", "Metrikák": "Kontextus-precision · Kontextus-recall · Kontextuskihasználás"},
-            {"Réteg": "Hivatkozás", "Metrikák": "Hivatkozási precision · recall · helyesség · téves hivatkozások aránya"},
-            {"Réteg": "Strukturált kimenet", "Metrikák": "Érvényes JSON · sémamegfelelés · feldolgozási hibaarány"},
+            {
+                "Réteg": "Visszakeresés",
+                "Metrikák": "Recall@K · Precision@K · MRR · nDCG@K · Hit Rate",
+            },
+            {
+                "Réteg": "Generálás",
+                "Metrikák": "Válaszhelyesség · Relevancia · Hűség · Forrásalapúság",
+            },
+            {
+                "Réteg": "Kontextus",
+                "Metrikák": "Kontextus-precision · Kontextus-recall · Kontextuskihasználás",
+            },
+            {
+                "Réteg": "Hivatkozás",
+                "Metrikák": "Hivatkozási precision · recall · helyesség · téves hivatkozások aránya",
+            },
+            {
+                "Réteg": "Strukturált kimenet",
+                "Metrikák": "Érvényes JSON · sémamegfelelés · feldolgozási hibaarány",
+            },
             {"Réteg": "Rendszer", "Metrikák": "Késleltetés · tokenek · költség · hibaarány"},
         ]
     else:
         rows = [
             {"Layer": "Retrieval", "Metrics": "Recall@K · Precision@K · MRR · nDCG@K · Hit Rate"},
-            {"Layer": "Generation", "Metrics": "Answer Correctness · Relevance · Faithfulness · Groundedness"},
-            {"Layer": "Context", "Metrics": "Context Precision · Context Recall · Context utilization"},
-            {"Layer": "Citation", "Metrics": "Citation Precision · Recall · Correctness · False Citation Rate"},
-            {"Layer": "Structured output", "Metrics": "Valid JSON · Schema Validation · Parse Failure Rate"},
+            {
+                "Layer": "Generation",
+                "Metrics": "Answer Correctness · Relevance · Faithfulness · Groundedness",
+            },
+            {
+                "Layer": "Context",
+                "Metrics": "Context Precision · Context Recall · Context utilization",
+            },
+            {
+                "Layer": "Citation",
+                "Metrics": "Citation Precision · Recall · Correctness · False Citation Rate",
+            },
+            {
+                "Layer": "Structured output",
+                "Metrics": "Valid JSON · Schema Validation · Parse Failure Rate",
+            },
             {"Layer": "System", "Metrics": "Latency · Tokens · Cost · Failure Rate"},
         ]
     return pd.DataFrame(rows)
@@ -885,20 +1293,68 @@ def _rag_metric_frame(ui_lang: str) -> pd.DataFrame:
 def _tool_metric_rows(ui_lang: str) -> list[dict[str, str]]:
     if ui_lang == "hu":
         return [
-            {"Metrika": "Eszközválasztási pontosság", "Mit mér?": "A modell a megfelelő eszközt választotta-e.", "Miért fontos?": "Rosszul választott eszközből rossz válasz lesz."},
-            {"Metrika": "Eszközhívási precision / recall", "Mit mér?": "A szükséges és felesleges hívások aránya.", "Miért fontos?": "Mutatja az agent hatékonyságát."},
-            {"Metrika": "Argumentumpontosság", "Mit mér?": "Helyesek-e az argumentumok.", "Miért fontos?": "Jó tool rossz paraméterekkel ugyanúgy hibás lehet."},
-            {"Metrika": "Sémamegfelelés", "Mit mér?": "A tool-argumentum JSON megfelel-e a sémának.", "Miért fontos?": "A backend stabil végrehajtásához kell."},
-            {"Metrika": "Feladatteljesítési arány", "Mit mér?": "A teljes user-cél végül megoldódott-e.", "Miért fontos?": "Ez a legközvetlenebb üzleti mérőszám."},
-            {"Metrika": "Eszközhallucinációs arány", "Mit mér?": "Nem létező vagy nem engedélyezett eszközök használata.", "Miért fontos?": "Biztonság és megbízhatóság."},
+            {
+                "Metrika": "Eszközválasztási pontosság",
+                "Mit mér?": "A modell a megfelelő eszközt választotta-e.",
+                "Miért fontos?": "Rosszul választott eszközből rossz válasz lesz.",
+            },
+            {
+                "Metrika": "Eszközhívási precision / recall",
+                "Mit mér?": "A szükséges és felesleges hívások aránya.",
+                "Miért fontos?": "Mutatja az agent hatékonyságát.",
+            },
+            {
+                "Metrika": "Argumentumpontosság",
+                "Mit mér?": "Helyesek-e az argumentumok.",
+                "Miért fontos?": "Jó tool rossz paraméterekkel ugyanúgy hibás lehet.",
+            },
+            {
+                "Metrika": "Sémamegfelelés",
+                "Mit mér?": "A tool-argumentum JSON megfelel-e a sémának.",
+                "Miért fontos?": "A backend stabil végrehajtásához kell.",
+            },
+            {
+                "Metrika": "Feladatteljesítési arány",
+                "Mit mér?": "A teljes user-cél végül megoldódott-e.",
+                "Miért fontos?": "Ez a legközvetlenebb üzleti mérőszám.",
+            },
+            {
+                "Metrika": "Eszközhallucinációs arány",
+                "Mit mér?": "Nem létező vagy nem engedélyezett eszközök használata.",
+                "Miért fontos?": "Biztonság és megbízhatóság.",
+            },
         ]
     return [
-        {"Metric": "Tool selection accuracy", "What does it measure?": "Whether the model chose the correct tool.", "Why important?": "A wrong tool often means a wrong answer."},
-        {"Metric": "Tool call precision / recall", "What does it measure?": "Needed versus unnecessary calls.", "Why important?": "Shows agent efficiency."},
-        {"Metric": "Argument accuracy", "What does it measure?": "Whether the arguments are correct.", "Why important?": "A good tool with bad parameters still fails."},
-        {"Metric": "Schema validity", "What does it measure?": "Whether tool-call JSON conforms to schema.", "Why important?": "Needed for stable backend execution."},
-        {"Metric": "Task completion rate", "What does it measure?": "Whether the full user goal was achieved.", "Why important?": "The most direct business metric."},
-        {"Metric": "Tool hallucination rate", "What does it measure?": "Use of non-existing or forbidden tools.", "Why important?": "Critical for safety and reliability."},
+        {
+            "Metric": "Tool selection accuracy",
+            "What does it measure?": "Whether the model chose the correct tool.",
+            "Why important?": "A wrong tool often means a wrong answer.",
+        },
+        {
+            "Metric": "Tool call precision / recall",
+            "What does it measure?": "Needed versus unnecessary calls.",
+            "Why important?": "Shows agent efficiency.",
+        },
+        {
+            "Metric": "Argument accuracy",
+            "What does it measure?": "Whether the arguments are correct.",
+            "Why important?": "A good tool with bad parameters still fails.",
+        },
+        {
+            "Metric": "Schema validity",
+            "What does it measure?": "Whether tool-call JSON conforms to schema.",
+            "Why important?": "Needed for stable backend execution.",
+        },
+        {
+            "Metric": "Task completion rate",
+            "What does it measure?": "Whether the full user goal was achieved.",
+            "Why important?": "The most direct business metric.",
+        },
+        {
+            "Metric": "Tool hallucination rate",
+            "What does it measure?": "Use of non-existing or forbidden tools.",
+            "Why important?": "Critical for safety and reliability.",
+        },
     ]
 
 
@@ -906,13 +1362,19 @@ def _tool_metric_frame(ui_lang: str) -> pd.DataFrame:
     if ui_lang == "hu":
         pairs = [
             ("Eszközválasztási pontosság", "A rendszer a megfelelő eszközt választotta-e."),
-            ("Eszközhívási pontosság / lefedettség", "A szükséges és felesleges eszközhívások aránya."),
+            (
+                "Eszközhívási pontosság / lefedettség",
+                "A szükséges és felesleges eszközhívások aránya.",
+            ),
             ("Argumentumpontosság", "Az eszköz helyes paramétereket kapott-e."),
             ("Sémamegfelelés", "Az eszközargumentumok megfelelnek-e az előírt sémának."),
             ("Végrehajtási sikeresség", "A kiszolgálóoldali eszközhívás sikeresen lefutott-e."),
             ("Feladatteljesítési arány", "A teljes felhasználói feladat sikeresen teljesült-e."),
             ("Felesleges eszközhívások aránya", "Mennyi szükségtelen eszközhívás történt."),
-            ("Eszközhallucinációs arány", "Nem létező vagy nem engedélyezett eszközhívások aránya."),
+            (
+                "Eszközhallucinációs arány",
+                "Nem létező vagy nem engedélyezett eszközhívások aránya.",
+            ),
         ]
     else:
         pairs = [
@@ -932,14 +1394,38 @@ def _tool_metric_frame(ui_lang: str) -> pd.DataFrame:
 def _robustness_metric_rows(ui_lang: str) -> list[dict[str, str]]:
     if ui_lang == "hu":
         return [
-            {"Család": "Hallucináció", "Mit néz?": "Helyes válasz vagy helyes tartózkodás történik-e különböző nehézségi helyzetekben.", "Kulcsmetrikák": "Correct answer · correct abstention · unsupported claims · false citations"},
-            {"Család": "Promptinjekció", "Mit néz?": "Ellenáll-e a rendszer az utasítás-felülírásnak és a kiszivárogtatási próbáknak.", "Kulcsmetrikák": "attack rejection · injection success · unauthorized tool · data leakage"},
-            {"Család": "Regresszió", "Mit néz?": "Egy változtatás után romlottak-e a fő metrikák.", "Kulcsmetrikák": "Recall@5 delta · MRR delta · citation delta · latency delta · cost delta"},
+            {
+                "Család": "Hallucináció",
+                "Mit néz?": "Helyes válasz vagy helyes tartózkodás történik-e különböző nehézségi helyzetekben.",
+                "Kulcsmetrikák": "Correct answer · correct abstention · unsupported claims · false citations",
+            },
+            {
+                "Család": "Promptinjekció",
+                "Mit néz?": "Ellenáll-e a rendszer az utasítás-felülírásnak és a kiszivárogtatási próbáknak.",
+                "Kulcsmetrikák": "attack rejection · injection success · unauthorized tool · data leakage",
+            },
+            {
+                "Család": "Regresszió",
+                "Mit néz?": "Egy változtatás után romlottak-e a fő metrikák.",
+                "Kulcsmetrikák": "Recall@5 delta · MRR delta · citation delta · latency delta · cost delta",
+            },
         ]
     return [
-        {"Family": "Hallucination", "What does it check?": "Whether the system answers correctly or abstains correctly across different situations.", "Key metrics": "correct answer · correct abstention · unsupported claims · false citations"},
-        {"Family": "Prompt injection", "What does it check?": "Whether the system resists instruction override and leakage attempts.", "Key metrics": "attack rejection · injection success · unauthorized tool · data leakage"},
-        {"Family": "Regression", "What does it check?": "Whether key metrics got worse after a change.", "Key metrics": "Recall@5 delta · MRR delta · citation delta · latency delta · cost delta"},
+        {
+            "Family": "Hallucination",
+            "What does it check?": "Whether the system answers correctly or abstains correctly across different situations.",
+            "Key metrics": "correct answer · correct abstention · unsupported claims · false citations",
+        },
+        {
+            "Family": "Prompt injection",
+            "What does it check?": "Whether the system resists instruction override and leakage attempts.",
+            "Key metrics": "attack rejection · injection success · unauthorized tool · data leakage",
+        },
+        {
+            "Family": "Regression",
+            "What does it check?": "Whether key metrics got worse after a change.",
+            "Key metrics": "Recall@5 delta · MRR delta · citation delta · latency delta · cost delta",
+        },
     ]
 
 
@@ -947,16 +1433,40 @@ def _robustness_frame(ui_lang: str) -> pd.DataFrame:
     if ui_lang == "hu":
         return pd.DataFrame(
             [
-                {"teszt": "Hallucináció", "esetek": "megválaszolható · nincs válasz · részleges · ellentmondó · elavult", "metrikák": "Helyes válasz · helyes tartózkodás · hallucináció · nem támogatott állítások · téves hivatkozások"},
-                {"teszt": "Promptinjekció", "esetek": "utasítás-felülírás · rendszerprompt · jogosulatlan eszköz · kontextuskiszivárogtatás", "metrikák": "Támadáselutasítás · injekciós sikeresség · jogosulatlan eszköz · promptkiszivárgás · adatszivárgás"},
-                {"teszt": "Regresszió", "esetek": "prompt · beágyazás · visszakereső · modellverzió", "metrikák": "Recall@5 változás · MRR változás · hivatkozásváltozás · késleltetésváltozás · költségváltozás"},
+                {
+                    "teszt": "Hallucináció",
+                    "esetek": "megválaszolható · nincs válasz · részleges · ellentmondó · elavult",
+                    "metrikák": "Helyes válasz · helyes tartózkodás · hallucináció · nem támogatott állítások · téves hivatkozások",
+                },
+                {
+                    "teszt": "Promptinjekció",
+                    "esetek": "utasítás-felülírás · rendszerprompt · jogosulatlan eszköz · kontextuskiszivárogtatás",
+                    "metrikák": "Támadáselutasítás · injekciós sikeresség · jogosulatlan eszköz · promptkiszivárgás · adatszivárgás",
+                },
+                {
+                    "teszt": "Regresszió",
+                    "esetek": "prompt · beágyazás · visszakereső · modellverzió",
+                    "metrikák": "Recall@5 változás · MRR változás · hivatkozásváltozás · késleltetésváltozás · költségváltozás",
+                },
             ]
         )
     return pd.DataFrame(
         [
-            {"suite": "Hallucination", "cases": "answerable · no-answer · partial · contradictory · outdated", "metrics": "Correct Answer · Correct Abstention · Hallucination · Unsupported Claims · False Citations"},
-            {"suite": "Prompt injection", "cases": "instruction override · system prompt · unauthorized tool · context exfiltration", "metrics": "Attack Rejection · Injection Success · Unauthorized Tool · Prompt Leakage · Data Leakage"},
-            {"suite": "Regression", "cases": "prompt · embedding · retriever · model version", "metrics": "Recall@5 delta · MRR delta · Citation delta · Latency delta · Cost delta"},
+            {
+                "suite": "Hallucination",
+                "cases": "answerable · no-answer · partial · contradictory · outdated",
+                "metrics": "Correct Answer · Correct Abstention · Hallucination · Unsupported Claims · False Citations",
+            },
+            {
+                "suite": "Prompt injection",
+                "cases": "instruction override · system prompt · unauthorized tool · context exfiltration",
+                "metrics": "Attack Rejection · Injection Success · Unauthorized Tool · Prompt Leakage · Data Leakage",
+            },
+            {
+                "suite": "Regression",
+                "cases": "prompt · embedding · retriever · model version",
+                "metrics": "Recall@5 delta · MRR delta · Citation delta · Latency delta · Cost delta",
+            },
         ]
     )
 
@@ -974,7 +1484,12 @@ def _mode_for_profile(profile: str) -> str:
 def _prompt_style_for_profile(profile: str) -> str:
     if profile in {"structured_tutor", "socratic_tutor", "mathematical_derivation"}:
         return "teacher"
-    if profile in {"comparison_matrix", "research_synthesis", "decision_tradeoff", "evidence_verification"}:
+    if profile in {
+        "comparison_matrix",
+        "research_synthesis",
+        "decision_tradeoff",
+        "evidence_verification",
+    }:
         return "comparison"
     if profile in {"code_first", "debug_root_cause"}:
         return "code_first"
@@ -1028,35 +1543,32 @@ def _request_from_settings(
         runtime_chunking=runtime_chunking,
         runtime_chunk_strategy=chunk["runtime_strategy"],
         runtime_chunk_size=int(runtime_chunk_size or chunk["chunk_size"]),
-        runtime_chunk_overlap=int(runtime_chunk_overlap if runtime_chunk_overlap is not None else chunk["overlap"]),
+        runtime_chunk_overlap=int(
+            runtime_chunk_overlap if runtime_chunk_overlap is not None else chunk["overlap"]
+        ),
         answer_preset=budget_key,
         context_max_chars=int(context_max_chars or budget["context_max_chars"]),
         retrieval_final_k=int(retrieval_final_k or budget["retrieval_final_k"]),
         max_output_tokens=int(max_output_tokens or budget["max_output_tokens"]),
-        max_tool_calls=int(max_tool_calls if max_tool_calls is not None else budget["max_tool_calls"]),
+        max_tool_calls=int(
+            max_tool_calls if max_tool_calls is not None else budget["max_tool_calls"]
+        ),
         include_source_visual=include_source_visual,
     )
 
 
 def _profile_options(ui_lang: str) -> dict[str, str]:
-    return {
-        profile_label(ui_lang, key, PROFILES[key]["label"]): key
-        for key in PROFILE_KEYS
-    }
+    return {profile_label(ui_lang, key, PROFILES[key]["label"]): key for key in PROFILE_KEYS}
 
 
 def _budget_label_map(ui_lang: str) -> dict[str, str]:
     return {
-        budget_label(ui_lang, key, value["label"]): key
-        for key, value in ANSWER_PRESETS.items()
+        budget_label(ui_lang, key, value["label"]): key for key, value in ANSWER_PRESETS.items()
     }
 
 
 def _chunk_label_map(ui_lang: str) -> dict[str, str]:
-    return {
-        chunk_label(ui_lang, key, value["label"]): key
-        for key, value in CHUNK_PRESETS.items()
-    }
+    return {chunk_label(ui_lang, key, value["label"]): key for key, value in CHUNK_PRESETS.items()}
 
 
 def render_prompt_preview(question: str, profile_key: str, ui_lang: str) -> None:
@@ -1129,14 +1641,23 @@ def render_ab_results(a_answer, b_answer, ui_lang: str) -> None:
     }
     table = pd.DataFrame(
         [
-            {pick(ui_lang, "Metrika", "Metric"): metric_labels.get(key, key), "A": metrics_a.get(key), "B": metrics_b.get(key)}
+            {
+                pick(ui_lang, "Metrika", "Metric"): metric_labels.get(key, key),
+                "A": metrics_a.get(key),
+                "B": metrics_b.get(key),
+            }
             for key in metrics_a
         ]
     )
     st.dataframe(table, use_container_width=True, hide_index=True)
 
     st.markdown(f"#### {tr(ui_lang, 'cost_latency')}")
-    st.plotly_chart(ab_footprint_figure(metrics_a, metrics_b, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="ab_footprint_chart")
+    st.plotly_chart(
+        ab_footprint_figure(metrics_a, metrics_b, ui_lang),
+        use_container_width=True,
+        config={"displaylogo": False, "scrollZoom": True},
+        key="ab_footprint_chart",
+    )
 
     left, right = st.columns(2)
     with left:
@@ -1157,7 +1678,12 @@ def render_ab_results(a_answer, b_answer, ui_lang: str) -> None:
         )
 
     st.markdown(f"#### {tr(ui_lang, 'quality_comparison')}")
-    st.plotly_chart(ab_quality_figure(metrics_a, metrics_b, ui_lang), use_container_width=True, config={"displaylogo": False, "scrollZoom": True}, key="ab_quality_chart")
+    st.plotly_chart(
+        ab_quality_figure(metrics_a, metrics_b, ui_lang),
+        use_container_width=True,
+        config={"displaylogo": False, "scrollZoom": True},
+        key="ab_quality_chart",
+    )
 
     st.markdown(f"#### {tr(ui_lang, 'retrieval_comparison')}")
     ranking_a = pd.DataFrame((a_answer.diagnostics or {}).get("ranking", [])[:8])
@@ -1166,17 +1692,31 @@ def render_ab_results(a_answer, b_answer, ui_lang: str) -> None:
     with left:
         if not ranking_a.empty:
             st.caption(tr(ui_lang, "top_evidence_a"))
-            columns = [column for column in ["final_rank", "document", "page", "reranker_score"] if column in ranking_a]
+            columns = [
+                column
+                for column in ["final_rank", "document", "page", "reranker_score"]
+                if column in ranking_a
+            ]
             ranking_display = ranking_a[columns].rename(columns=localize_columns(ui_lang, columns))
             st.dataframe(ranking_display, use_container_width=True, hide_index=True)
     with right:
         if not ranking_b.empty:
             st.caption(tr(ui_lang, "top_evidence_b"))
-            columns = [column for column in ["final_rank", "document", "page", "reranker_score"] if column in ranking_b]
+            columns = [
+                column
+                for column in ["final_rank", "document", "page", "reranker_score"]
+                if column in ranking_b
+            ]
             ranking_display = ranking_b[columns].rename(columns=localize_columns(ui_lang, columns))
             st.dataframe(ranking_display, use_container_width=True, hide_index=True)
 
     with st.expander(tr(ui_lang, "compare_prompts"), expanded=False):
         left, right = st.columns(2)
-        left.code((a_answer.diagnostics.get("prompt_optimization") or {}).get("optimized", ""), language="text")
-        right.code((b_answer.diagnostics.get("prompt_optimization") or {}).get("optimized", ""), language="text")
+        left.code(
+            (a_answer.diagnostics.get("prompt_optimization") or {}).get("optimized", ""),
+            language="text",
+        )
+        right.code(
+            (b_answer.diagnostics.get("prompt_optimization") or {}).get("optimized", ""),
+            language="text",
+        )

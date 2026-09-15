@@ -1,11 +1,11 @@
 """Unit tests for benchmark aggregation and chunk statistics."""
+
 from __future__ import annotations
 
 import pandas as pd
 import pytest
-
-from tkip.evaluation import chunk_statistics, summarize_retrieval_frame
 from test_support.factories import make_chunk
+from tkip.evaluation import chunk_statistics, summarize_retrieval_frame
 
 pytestmark = pytest.mark.unit
 
@@ -14,19 +14,39 @@ def test_retrieval_summary_aggregates_quality_and_latency_metrics() -> None:
     raw = pd.DataFrame(
         [
             {
-                "method": "BM25", "mrr": 1.0, "hit_rate": 1.0,
-                "recall@1": 1.0, "precision@1": 1.0, "ndcg@1": 1.0,
-                "recall@3": 1.0, "precision@3": 1 / 3, "ndcg@3": 1.0,
-                "recall@5": 1.0, "precision@5": 0.2, "ndcg@5": 1.0,
-                "recall@10": 1.0, "precision@10": 0.1, "ndcg@10": 1.0,
+                "method": "BM25",
+                "mrr": 1.0,
+                "hit_rate": 1.0,
+                "recall@1": 1.0,
+                "precision@1": 1.0,
+                "ndcg@1": 1.0,
+                "recall@3": 1.0,
+                "precision@3": 1 / 3,
+                "ndcg@3": 1.0,
+                "recall@5": 1.0,
+                "precision@5": 0.2,
+                "ndcg@5": 1.0,
+                "recall@10": 1.0,
+                "precision@10": 0.1,
+                "ndcg@10": 1.0,
                 "latency_ms": 10.0,
             },
             {
-                "method": "BM25", "mrr": 0.5, "hit_rate": 1.0,
-                "recall@1": 0.0, "precision@1": 0.0, "ndcg@1": 0.0,
-                "recall@3": 1.0, "precision@3": 1 / 3, "ndcg@3": 0.63,
-                "recall@5": 1.0, "precision@5": 0.2, "ndcg@5": 0.63,
-                "recall@10": 1.0, "precision@10": 0.1, "ndcg@10": 0.63,
+                "method": "BM25",
+                "mrr": 0.5,
+                "hit_rate": 1.0,
+                "recall@1": 0.0,
+                "precision@1": 0.0,
+                "ndcg@1": 0.0,
+                "recall@3": 1.0,
+                "precision@3": 1 / 3,
+                "ndcg@3": 0.63,
+                "recall@5": 1.0,
+                "precision@5": 0.2,
+                "ndcg@5": 0.63,
+                "recall@10": 1.0,
+                "precision@10": 0.1,
+                "ndcg@10": 0.63,
                 "latency_ms": 30.0,
             },
         ]

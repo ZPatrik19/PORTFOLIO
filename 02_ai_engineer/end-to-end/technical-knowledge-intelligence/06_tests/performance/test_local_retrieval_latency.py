@@ -3,14 +3,14 @@
 The threshold is intentionally generous: the goal is to catch accidental severe
 algorithmic regressions, not benchmark hardware performance in CI.
 """
+
 from __future__ import annotations
 
 import time
 
 import pytest
-
-from tkip.retrieval import BM25Index
 from test_support.factories import make_chunk
+from tkip.retrieval import BM25Index
 
 pytestmark = pytest.mark.performance
 

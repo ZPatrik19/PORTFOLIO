@@ -96,10 +96,14 @@ def save_basic_figures(
             out_dir / "source_type_distribution.png",
             ylabel="Chunks",
         )
-        topics = pd.Series(
-            [keyword for keywords in chunk_frame["keywords"] for keyword in (keywords or [])],
-            dtype="object",
-        ).value_counts().head(15)
+        topics = (
+            pd.Series(
+                [keyword for keywords in chunk_frame["keywords"] for keyword in (keywords or [])],
+                dtype="object",
+            )
+            .value_counts()
+            .head(15)
+        )
         if not topics.empty:
             _save_series_plot(
                 topics.sort_values(),
@@ -124,9 +128,13 @@ def save_basic_figures(
 
     if method_summary is not None and not method_summary.empty:
         summary = method_summary.set_index("Method")
-        _save_series_plot(summary["Recall@5"], "bar", out_dir / "recall_at_5_comparison.png", ylim=(0, 1))
+        _save_series_plot(
+            summary["Recall@5"], "bar", out_dir / "recall_at_5_comparison.png", ylim=(0, 1)
+        )
         _save_series_plot(summary["MRR"], "bar", out_dir / "mrr_comparison.png", ylim=(0, 1))
-        _save_series_plot(summary["P95 latency"], "bar", out_dir / "p95_latency_comparison.png", ylabel="ms")
+        _save_series_plot(
+            summary["P95 latency"], "bar", out_dir / "p95_latency_comparison.png", ylabel="ms"
+        )
         _save_latency_quality_scatter(summary, out_dir / "latency_vs_quality.png")
 
     if telemetry_df is None or telemetry_df.empty or "timestamp" not in telemetry_df:

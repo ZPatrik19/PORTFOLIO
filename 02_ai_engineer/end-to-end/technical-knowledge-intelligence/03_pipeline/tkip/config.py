@@ -11,7 +11,38 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 
 from .exceptions import ConfigurationError
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+def _discover_project_root() -> Path:
+    """Locate the runtime project root in source, editable and wheel installs.
+
+    A wheel install lives under site-packages, so deriving the repository root
+    from ``__file__`` alone is incorrect. Prefer an explicit environment
+    override, then the process working directory (Docker uses ``/app``), and
+    finally source-checkout ancestors containing ``config.yaml``.
+    """
+
+    explicit = os.getenv("TKI_PROJECT_ROOT", "").strip()
+    if explicit:
+        candidate = Path(explicit).expanduser().resolve()
+        if (candidate / "config.yaml").exists():
+            return candidate
+
+    search_roots = [Path.cwd().resolve(), Path(__file__).resolve().parent]
+    seen: set[Path] = set()
+    for start in search_roots:
+        for candidate in (start, *start.parents):
+            if candidate in seen:
+                continue
+            seen.add(candidate)
+            if (candidate / "config.yaml").exists():
+                return candidate
+
+    # Source-tree fallback kept for helpful error messages when config.yaml is
+    # missing. In an installed wheel this is intentionally only a fallback.
+    return Path(__file__).resolve().parents[2]
+
+
+PROJECT_ROOT = _discover_project_root()
 DEFAULT_CONFIG_PATH = PROJECT_ROOT / "config.yaml"
 DEFAULT_ENV_PATH = PROJECT_ROOT / ".env"
 
@@ -48,7 +79,7 @@ class ChunkingConfig(FlexibleModel):
     max_chunk_chars: int = Field(default=5000, ge=100)
 
     @model_validator(mode="after")
-    def validate_overlap(self) -> "ChunkingConfig":
+    def validate_overlap(self) -> ChunkingConfig:
         if self.overlap >= self.chunk_size:
             raise ValueError("chunking.overlap must be smaller than chunking.chunk_size")
         if self.min_chunk_chars > self.max_chunk_chars:
@@ -119,7 +150,9 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     required types and basic invariants.
     """
 
-    config_path = Path(path) if path else DEFAULT_CONFIG_PATH
+    configured = os.getenv("TKI_CONFIG_PATH", "").strip()
+    config_path = Path(path) if path else Path(configured) if configured else DEFAULT_CONFIG_PATH
+    config_path = config_path.expanduser().resolve()
     if not config_path.exists():
         raise ConfigurationError(f"Configuration file not found: {config_path}")
 

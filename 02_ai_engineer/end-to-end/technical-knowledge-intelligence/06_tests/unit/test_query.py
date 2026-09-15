@@ -1,8 +1,8 @@
 """Unit tests for deterministic query-intent classification."""
+
 from __future__ import annotations
 
 import pytest
-
 from tkip.query_understanding import classify_intent
 
 pytestmark = pytest.mark.unit

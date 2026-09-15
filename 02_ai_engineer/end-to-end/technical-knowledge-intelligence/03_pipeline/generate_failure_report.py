@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pandas as pd
-
 from tkip.config import load_config, resolve_path
 
 

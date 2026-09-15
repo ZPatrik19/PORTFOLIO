@@ -93,11 +93,7 @@ class Telemetry:
             for row in rows
             if row.get("estimated_cost_usd") is not None
         ]
-        tokens = [
-            int(row["total_tokens"])
-            for row in rows
-            if row.get("total_tokens") is not None
-        ]
+        tokens = [int(row["total_tokens"]) for row in rows if row.get("total_tokens") is not None]
         request_count = len(rows)
         return {
             "requests": request_count,
@@ -112,9 +108,7 @@ class Telemetry:
             "total_tokens": sum(tokens),
             "estimated_cost_usd": sum(costs) if costs else None,
             "feedback_score": (
-                sum(row[0] for row in feedback_rows) / len(feedback_rows)
-                if feedback_rows
-                else None
+                sum(row[0] for row in feedback_rows) / len(feedback_rows) if feedback_rows else None
             ),
         }
 

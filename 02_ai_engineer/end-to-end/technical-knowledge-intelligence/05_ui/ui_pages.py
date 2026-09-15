@@ -5,16 +5,13 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-
+from i18n import localize_columns, localize_value, pick, tr
 from tkip.config import resolve_path
 from tkip.ingestion import SUPPORTED_EXTENSIONS
 from tkip.monitoring import drift_report
 from tkip.multi_index import INDEX_STRATEGIES, MultiIndexManager
-from tkip.prompt_engineering import PROFILE_KEYS
-from tkip.presets import CHUNK_PRESETS
 from tkip.workflow_graph import workflow_rows
 from ui_workflow import render_orchestration_graph
-from i18n import localize_columns, localize_value, pick, tr
 
 
 def _safe_upload_name(name: str) -> str:
@@ -25,7 +22,9 @@ def _safe_upload_name(name: str) -> str:
     return stem[:180] or "document"
 
 
-def _save_uploaded_documents(uploaded_files, target_dir: Path, *, overwrite: bool) -> tuple[list[str], list[str]]:
+def _save_uploaded_documents(
+    uploaded_files, target_dir: Path, *, overwrite: bool
+) -> tuple[list[str], list[str]]:
     saved: list[str] = []
     skipped: list[str] = []
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -244,7 +243,9 @@ def render_library(kp, ui_lang: str) -> None:
     st.markdown(f"### {tr(ui_lang, 'chunking_indexes')}")
     manager = MultiIndexManager(kp.cfg)
     index_frame = pd.DataFrame(manager.available())
-    display_indexes = index_frame.rename(columns=localize_columns(ui_lang, list(index_frame.columns)))
+    display_indexes = index_frame.rename(
+        columns=localize_columns(ui_lang, list(index_frame.columns))
+    )
     st.dataframe(display_indexes, use_container_width=True, hide_index=True)
 
     with st.expander(tr(ui_lang, "build_indexes"), expanded=False):
@@ -267,7 +268,9 @@ def render_library(kp, ui_lang: str) -> None:
             min(int(kp.cfg["chunking"].get("overlap", 120)), size - 1),
             20,
         )
-        if st.button(tr(ui_lang, "build_selected_indexes"), type="secondary", disabled=not selected):
+        if st.button(
+            tr(ui_lang, "build_selected_indexes"), type="secondary", disabled=not selected
+        ):
             with st.status(tr(ui_lang, "building_indexes"), expanded=True) as status:
                 result = manager.build(selected, chunk_size=size, overlap=overlap, force=False)
                 st.json(result)
@@ -286,7 +289,9 @@ def render_monitoring(kp, ui_lang: str) -> None:
         col_1.metric(tr(ui_lang, "requests"), summary.get("requests", summary.get("count", 0)))
         col_2.metric(tr(ui_lang, "p50_latency"), f"{summary.get('p50_latency_ms', 0) or 0:.0f} ms")
         col_3.metric(tr(ui_lang, "p95_latency"), f"{summary.get('p95_latency_ms', 0) or 0:.0f} ms")
-        col_4.metric(tr(ui_lang, "success"), f"{100 * float(summary.get('success_rate', 0) or 0):.1f}%")
+        col_4.metric(
+            tr(ui_lang, "success"), f"{100 * float(summary.get('success_rate', 0) or 0):.1f}%"
+        )
 
         if rows:
             frame = pd.DataFrame(rows)
@@ -370,7 +375,7 @@ def _render_architecture_contracts(ui_lang: str) -> None:
         ),
     ]
     cols = st.columns(4)
-    for col, (title, body, accent) in zip(cols, cards):
+    for col, (title, body, accent) in zip(cols, cards, strict=False):
         col.markdown(
             f'<div class="evidence-card" style="min-height:184px;border-top:3px solid {accent};background:rgba(15,23,42,.08)"><div class="evidence-title">{title}</div><div class="evidence-text">{body}</div></div>',
             unsafe_allow_html=True,
@@ -379,28 +384,40 @@ def _render_architecture_contracts(ui_lang: str) -> None:
 
 def render_workflow_page(kp, ui_lang: str) -> None:
     st.markdown(
-        f'<div style="margin-bottom:.65rem"><div class="section-kicker">{pick(ui_lang,"RENDSZERTERVEZÉS","SYSTEM DESIGN")}</div><div class="section-title" style="font-size:1.55rem">{pick(ui_lang,"Munkafolyamat és architektúra","Workflow & architecture")}</div><div class="small-muted">{pick(ui_lang,"Interaktív orchestration graph: indexelés, routing, párhuzamos retrieval, generálás, review és visszacsatolás egyetlen nézetben.","Interactive orchestration graph: indexing, routing, parallel retrieval, generation, review and feedback in one view.")}</div></div>',
+        f'<div style="margin-bottom:.65rem"><div class="section-kicker">{pick(ui_lang, "RENDSZERTERVEZÉS", "SYSTEM DESIGN")}</div><div class="section-title" style="font-size:1.55rem">{pick(ui_lang, "Munkafolyamat és architektúra", "Workflow & architecture")}</div><div class="small-muted">{pick(ui_lang, "Interaktív orchestration graph: indexelés, routing, párhuzamos retrieval, generálás, review és visszacsatolás egyetlen nézetben.", "Interactive orchestration graph: indexing, routing, parallel retrieval, generation, review and feedback in one view.")}</div></div>',
         unsafe_allow_html=True,
     )
 
     render_orchestration_graph(kp, ui_lang)
     _render_architecture_contracts(ui_lang)
 
-    left, right = st.columns([1.15, .85])
-    with left:
-        with st.expander(pick(ui_lang, "Csomópontok részletes útvonala", "Detailed node route"), expanded=False):
-            rows = pd.DataFrame(workflow_rows("full", language=ui_lang))
-            rows = rows.rename(columns={
+    left, right = st.columns([1.15, 0.85])
+    with (
+        left,
+        st.expander(
+            pick(ui_lang, "Csomópontok részletes útvonala", "Detailed node route"),
+            expanded=False,
+        ),
+    ):
+        rows = pd.DataFrame(workflow_rows("full", language=ui_lang))
+        rows = rows.rename(
+            columns={
                 "number": "#",
                 "label": pick(ui_lang, "Lépés", "Step"),
                 "detail": pick(ui_lang, "Felelősség", "Responsibility"),
                 "group": pick(ui_lang, "Fázis", "Phase"),
-            })
-            st.dataframe(rows, use_container_width=True, hide_index=True, height=520)
-    with right:
-        with st.expander(pick(ui_lang, "Runtime konfiguráció · JSON", "Runtime configuration · JSON"), expanded=True):
-            st.code(
-                """{
+            }
+        )
+        st.dataframe(rows, use_container_width=True, hide_index=True, height=520)
+    with (
+        right,
+        st.expander(
+            pick(ui_lang, "Runtime konfiguráció · JSON", "Runtime configuration · JSON"),
+            expanded=True,
+        ),
+    ):
+        st.code(
+            """{
   \"orchestration\": \"native_tkip_core\",
   \"visual_model\": \"plotly_workflow_graph\",
   \"routing\": {\"type\": \"branch\", \"parallel_retrieval\": true},
@@ -414,5 +431,5 @@ def render_workflow_page(kp, ui_lang: str) -> None:
   \"generation\": {\"provider\": \"gemini\", \"structured_output\": \"pydantic\"},
   \"review\": {\"human_in_the_loop\": true, \"feedback_to_regression\": true}
 }""",
-                language="json",
-            )
+            language="json",
+        )

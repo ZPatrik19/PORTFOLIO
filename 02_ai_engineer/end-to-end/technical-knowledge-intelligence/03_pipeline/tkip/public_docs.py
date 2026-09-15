@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Mapping
 
 import requests
 from bs4 import BeautifulSoup
@@ -25,11 +25,7 @@ def _extract_readable_text(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style", "nav", "footer"]):
         tag.decompose()
-    return "\n".join(
-        line.strip()
-        for line in soup.get_text("\n").splitlines()
-        if line.strip()
-    )
+    return "\n".join(line.strip() for line in soup.get_text("\n").splitlines() if line.strip())
 
 
 def download_public_docs(
@@ -53,9 +49,7 @@ def download_public_docs(
             (out_dir / f"{name}_docs.md").write_text(header + text, encoding="utf-8")
             report.append({"name": name, "url": url, "status": "ok", "chars": len(text)})
         except requests.RequestException as exc:
-            report.append(
-                {"name": name, "url": url, "status": "error", "error": str(exc)}
-            )
+            report.append({"name": name, "url": url, "status": "error", "error": str(exc)})
 
     (out_dir / "download_report.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False),

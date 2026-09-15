@@ -6,18 +6,17 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse
-
 from tkip.config import load_config
 from tkip.exceptions import AuthenticationError, ExternalServiceError, QuotaExceededError
-from tkip.logging_config import configure_logging, get_logger
 from tkip.gemini_service import GeminiService
 from tkip.langchain_adapter import langchain_available
+from tkip.logging_config import configure_logging, get_logger
 from tkip.models import AskRequest, FeedbackRecord
 from tkip.monitoring import drift_report
 from tkip.multi_index import INDEX_STRATEGIES, MultiIndexManager
 from tkip.orchestration import KnowledgePlatform
-from tkip.prompt_engineering import PROFILES
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
+from tkip.prompt_engineering import PROFILES
 from tkip.workflow_graph import workflow_dot, workflow_rows
 
 configure_logging(load_config())
@@ -37,7 +36,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Technical Knowledge Intelligence Platform",
-    version="1.1.0",
+    version="1.1.1",
     description="Grounded technical-library RAG with hybrid retrieval, prompt experiments, tool calling, evaluation and observability.",
     lifespan=lifespan,
 )
@@ -45,20 +44,39 @@ app = FastAPI(
 
 @app.exception_handler(QuotaExceededError)
 async def quota_error_handler(request: Request, exc: QuotaExceededError) -> JSONResponse:
-    LOGGER.warning("Gemini quota exceeded for request %s: %s", getattr(request.state, "request_id", "unknown"), exc)
-    return JSONResponse(status_code=429, content={"detail": str(exc), "error_type": "quota_exceeded"})
+    LOGGER.warning(
+        "Gemini quota exceeded for request %s: %s",
+        getattr(request.state, "request_id", "unknown"),
+        exc,
+    )
+    return JSONResponse(
+        status_code=429, content={"detail": str(exc), "error_type": "quota_exceeded"}
+    )
 
 
 @app.exception_handler(AuthenticationError)
 async def authentication_error_handler(request: Request, exc: AuthenticationError) -> JSONResponse:
-    LOGGER.warning("Gemini authentication failed for request %s", getattr(request.state, "request_id", "unknown"))
-    return JSONResponse(status_code=401, content={"detail": str(exc), "error_type": "authentication"})
+    LOGGER.warning(
+        "Gemini authentication failed for request %s",
+        getattr(request.state, "request_id", "unknown"),
+    )
+    return JSONResponse(
+        status_code=401, content={"detail": str(exc), "error_type": "authentication"}
+    )
 
 
 @app.exception_handler(ExternalServiceError)
-async def external_service_error_handler(request: Request, exc: ExternalServiceError) -> JSONResponse:
-    LOGGER.error("External AI service failure for request %s: %s", getattr(request.state, "request_id", "unknown"), exc)
-    return JSONResponse(status_code=503, content={"detail": str(exc), "error_type": "external_service"})
+async def external_service_error_handler(
+    request: Request, exc: ExternalServiceError
+) -> JSONResponse:
+    LOGGER.error(
+        "External AI service failure for request %s: %s",
+        getattr(request.state, "request_id", "unknown"),
+        exc,
+    )
+    return JSONResponse(
+        status_code=503, content={"detail": str(exc), "error_type": "external_service"}
+    )
 
 
 @app.middleware("http")
@@ -106,14 +124,17 @@ def workflow(kind: str = "full"):
 def library(platform: PlatformDep):
     docs = {}
     for c in platform.chunks:
-        docs.setdefault(c.document_id, {
-            "document_id": c.document_id,
-            "title": c.title,
-            "source": c.source,
-            "source_type": c.source_type,
-            "language": c.language,
-            "chunks": 0,
-        })
+        docs.setdefault(
+            c.document_id,
+            {
+                "document_id": c.document_id,
+                "title": c.title,
+                "source": c.source,
+                "source_type": c.source_type,
+                "language": c.language,
+                "chunks": 0,
+            },
+        )
         docs[c.document_id]["chunks"] += 1
     return list(docs.values())
 
@@ -145,7 +166,9 @@ def build_index_variants(
     invalid = [x for x in selected if x not in INDEX_STRATEGIES]
     if invalid:
         raise HTTPException(400, detail=f"Unknown strategies: {invalid}")
-    return MultiIndexManager(platform.cfg).build(selected, chunk_size=chunk_size, overlap=overlap, force=force)
+    return MultiIndexManager(platform.cfg).build(
+        selected, chunk_size=chunk_size, overlap=overlap, force=force
+    )
 
 
 @app.post("/documents/index")
@@ -158,7 +181,9 @@ def search(req: AskRequest, platform: PlatformDep):
     if req.index_variant == "primary":
         retriever = platform.retriever
     else:
-        _, _, retriever, _ = MultiIndexManager(platform.cfg).load(req.index_variant, platform.embedder)
+        _, _, retriever, _ = MultiIndexManager(platform.cfg).load(
+            req.index_variant, platform.embedder
+        )
     hits = retriever.search(req.question)
     return [h.model_dump() for h in hits]
 
@@ -217,7 +242,9 @@ def compare(
     x_gemini_api_key: Annotated[str | None, Header()] = None,
 ):
     req.mode = "compare"
-    return platform.ask(req, request.state.request_id, request.state.trace_id, gemini_api_key=x_gemini_api_key)
+    return platform.ask(
+        req, request.state.request_id, request.state.trace_id, gemini_api_key=x_gemini_api_key
+    )
 
 
 @app.post("/learning")
@@ -228,7 +255,9 @@ def learning(
     x_gemini_api_key: Annotated[str | None, Header()] = None,
 ):
     req.mode = "learning"
-    return platform.ask(req, request.state.request_id, request.state.trace_id, gemini_api_key=x_gemini_api_key)
+    return platform.ask(
+        req, request.state.request_id, request.state.trace_id, gemini_api_key=x_gemini_api_key
+    )
 
 
 @app.post("/feedback")
@@ -244,7 +273,9 @@ def metrics(platform: PlatformDep):
 
 @app.get("/monitoring/drift")
 def drift(platform: PlatformDep):
-    return drift_report(platform.telemetry.recent(), platform.cfg["monitoring"].get("drift_window", 50))
+    return drift_report(
+        platform.telemetry.recent(), platform.cfg["monitoring"].get("drift_window", 50)
+    )
 
 
 @app.post("/evaluation/run")
