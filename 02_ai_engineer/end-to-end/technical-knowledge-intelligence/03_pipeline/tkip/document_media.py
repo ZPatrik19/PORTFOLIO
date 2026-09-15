@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from .config import PROJECT_ROOT
-from .models import SourceCitation, SourceVisual, Chunk
 from .logging_config import get_logger
+from .models import Chunk, SourceCitation, SourceVisual
 
 LOGGER = get_logger(__name__)
 

@@ -594,7 +594,6 @@ COLUMN_LABELS: Final[dict[str, tuple[str, str]]] = {
     "bm25_score": ("BM25-pontszám", "BM25 score"),
     "dense_score": ("Szemantikus pontszám", "Dense score"),
     "hybrid_score": ("Hibrid pontszám", "Hybrid score"),
-    "tool_score": ("Eszközhívási pontszám", "Tool score"),
     "cost": ("Költség", "Cost"),
 }
 

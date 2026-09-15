@@ -21,8 +21,8 @@ from tkip.config import PROJECT_ROOT
 from tkip.gemini_service import GeminiService
 from tkip.models import AskRequest
 from tkip.multi_index import MultiIndexManager
-from tkip.prompt_engineering import PROFILES, PROFILE_KEYS, local_optimize
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
+from tkip.prompt_engineering import PROFILE_KEYS, PROFILES, local_optimize
 from ui_charts import (
     ab_footprint_figure,
     ab_quality_figure,

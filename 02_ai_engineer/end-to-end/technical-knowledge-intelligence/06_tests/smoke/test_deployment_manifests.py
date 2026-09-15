@@ -17,6 +17,8 @@ def test_docker_files_exist_and_do_not_contain_secrets() -> None:
 
     assert "GEMINI_API_KEY=" not in dockerfile
     assert "GEMINI_API_KEY:" not in compose
+    assert "COPY pyproject.toml build_backend.py README.md LICENSE ./" in dockerfile
+    assert "COPY config.yaml .env.example ./" in dockerfile
     assert "USER appuser" in dockerfile
 
 

@@ -4,8 +4,8 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from tkip.evaluation import chunk_statistics, summarize_retrieval_frame
 from test_support.factories import make_chunk
+from tkip.evaluation import chunk_statistics, summarize_retrieval_frame
 
 pytestmark = pytest.mark.unit
 

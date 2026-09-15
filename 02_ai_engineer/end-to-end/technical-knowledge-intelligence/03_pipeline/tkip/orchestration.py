@@ -2,25 +2,25 @@ from __future__ import annotations
 
 import time
 
-from .config import load_config
-from .embeddings import create_embedding_provider
-from .index_service import IndexService
-from .exceptions import IndexNotReadyError
-from .reranking import rerank
-from .query_understanding import understand_query
-from .context import ContextBuilder
 from .citations import citations_from_hits, validate_citations
-from .guardrails import validate_request
-from .gemini_service import GeminiService
-from .tools import LibraryTools
-from .monitoring import Telemetry
-from .utils import ids
+from .config import load_config
+from .context import ContextBuilder
 from .costs import estimate_gemini_cost_usd
-from .runtime_chunking import rechunk_hits
+from .document_media import extract_source_visuals
+from .embeddings import create_embedding_provider
+from .exceptions import IndexNotReadyError
+from .gemini_service import GeminiService
+from .guardrails import validate_request
+from .index_service import IndexService
+from .logging_config import get_logger
+from .monitoring import Telemetry
 from .multi_index import MultiIndexManager
 from .query_analysis import analyze_query, evaluate_pipeline
-from .document_media import extract_source_visuals
-from .logging_config import get_logger
+from .query_understanding import understand_query
+from .reranking import rerank
+from .runtime_chunking import rechunk_hits
+from .tools import LibraryTools
+from .utils import ids
 
 LOGGER = get_logger(__name__)
 

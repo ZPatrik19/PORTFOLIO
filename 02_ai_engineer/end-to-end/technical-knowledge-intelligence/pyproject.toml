@@ -1,10 +1,11 @@
 [build-system]
-requires = ["setuptools>=80", "wheel>=0.45"]
-build-backend = "setuptools.build_meta"
+requires = []
+build-backend = "build_backend"
+backend-path = ["."]
 
 [project]
 name = "technical-knowledge-intelligence"
-version = "1.1.0"
+version = "1.1.1"
 description = "Production-oriented technical knowledge intelligence platform with hybrid RAG, Gemini, tool calling, evaluation, and observability"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -47,13 +48,6 @@ full = [
 
 [project.scripts]
 tki = "tkip.cli:main"
-
-[tool.setuptools]
-package-dir = {"" = "03_pipeline"}
-
-[tool.setuptools.packages.find]
-where = ["03_pipeline"]
-include = ["tkip*"]
 
 [tool.pytest.ini_options]
 testpaths = ["06_tests"]

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.1
+
+- Fixed clean-CI editable installs with a dependency-free local PEP 517/660 backend.
+- Fixed runtime project/config discovery for installed Docker/wheel deployments.
+- Cleaned Ruff violations without weakening lint rules or CI checks.
+
 ## v1.1.0
 
 - Fixed stale-language sessions (`Angol`/`Magyar`) so English A/B and benchmark plots no longer crash.

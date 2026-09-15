@@ -6,7 +6,7 @@ import pytest
 from tkip.config import load_config
 from tkip.multi_index import MultiIndexManager
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
-from tkip.prompt_engineering import PROFILES, PROFILE_KEYS, local_optimize
+from tkip.prompt_engineering import PROFILE_KEYS, PROFILES, local_optimize
 from tkip.workflow_graph import workflow_dot, workflow_rows
 
 pytestmark = pytest.mark.unit

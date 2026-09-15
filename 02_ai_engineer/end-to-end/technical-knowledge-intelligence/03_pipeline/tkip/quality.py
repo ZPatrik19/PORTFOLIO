@@ -1,8 +1,11 @@
 from __future__ import annotations
-from collections import Counter
+
 import hashlib
+from collections import Counter
+
 import pandas as pd
-from .models import DocumentRecord, Chunk
+
+from .models import Chunk, DocumentRecord
 
 def build_quality_report(documents: list[DocumentRecord], chunks: list[Chunk], parse_failures: list[dict] | None = None):
     parse_failures=parse_failures or []

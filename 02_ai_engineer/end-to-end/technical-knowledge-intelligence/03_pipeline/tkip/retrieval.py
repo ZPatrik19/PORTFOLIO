@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from collections import Counter, defaultdict
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 
@@ -74,7 +74,7 @@ class BM25Index:
         query_token_set = set(query_tokens(query))
         rows: list[tuple[Chunk, float]] = []
 
-        for chunk, document_tokens in zip(self.chunks, self.documents):
+        for chunk, document_tokens in zip(self.chunks, self.documents, strict=False):
             if not _matches_filters(chunk, filters):
                 continue
             score = self.score(query, document_tokens)
@@ -108,7 +108,7 @@ def dense_search(
     scores = vectors @ query_vector
     rows = [
         (chunk, float(score))
-        for chunk, score in zip(chunks, scores)
+        for chunk, score in zip(chunks, scores, strict=False)
         if _matches_filters(chunk, filters)
     ]
     rows.sort(key=lambda item: item[1], reverse=True)

@@ -19,14 +19,10 @@ ensure_python() {
 
 install_environment() {
   ensure_python
-  echo "[1/3] Build backend..."
-  "$PY" -m pip install 'setuptools>=80' 'wheel>=0.45'
-  "$PY" -c 'import setuptools.build_meta, wheel'
-
-  echo "[2/3] Project runtime dependencies..."
+  echo "[1/2] Project runtime dependencies..."
   "$PY" -m pip install -e . --no-build-isolation
 
-  echo "[3/3] Environment validation..."
+  echo "[2/2] Environment validation..."
   "$PY" 00_setup/01_check_environment.py
   "$PY" -c 'import tkip; print("[OK] tkip", tkip.__version__)'
 }

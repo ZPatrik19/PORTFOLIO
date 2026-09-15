@@ -34,10 +34,6 @@ def has_module(name: str) -> bool:
 def main() -> int:
     print("Python:", sys.version)
     print("Platform:", platform.platform())
-    if sys.version_info < (3, 10):
-        print("[ERROR] Python >= 3.10 is required.")
-        return 1
-
     missing: list[str] = []
     for module in REQUIRED_MODULES:
         available = has_module(module)

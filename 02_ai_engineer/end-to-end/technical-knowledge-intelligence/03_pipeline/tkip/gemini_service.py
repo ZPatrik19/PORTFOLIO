@@ -9,7 +9,7 @@ from .config import gemini_api_key
 from .exceptions import AuthenticationError, ExternalServiceError, QuotaExceededError
 from .logging_config import get_logger
 from .models import KnowledgeAnswer
-from .prompt_engineering import local_optimize, PROFILES
+from .prompt_engineering import PROFILES, local_optimize
 
 
 BASE_SYSTEM = """You are the grounded synthesis engine of a technical knowledge intelligence platform.

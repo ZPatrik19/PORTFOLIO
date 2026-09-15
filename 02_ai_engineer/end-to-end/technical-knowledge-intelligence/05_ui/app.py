@@ -5,20 +5,12 @@ import time
 
 import streamlit as st
 
+from i18n import budget_description, chunk_description, normalize_language, pick, stage_label, tr
 from tkip.config import PROJECT_ROOT, load_config
 from tkip.gemini_service import GeminiService
 from tkip.orchestration import KnowledgePlatform
-from tkip.prompt_engineering import local_optimize
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
-from i18n import (
-    budget_description,
-    chunk_description,
-    normalize_language,
-    pick,
-    profile_label,
-    stage_label,
-    tr,
-)
+from tkip.prompt_engineering import local_optimize
 from ui_experiments import (
     _budget_label_map,
     _chunk_label_map,

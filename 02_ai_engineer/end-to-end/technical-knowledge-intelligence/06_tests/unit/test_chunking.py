@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pytest
 
+from test_support.factories import make_document_record
 from tkip.chunking import chunk_document
 from tkip.models import ParsedBlock
-from test_support.factories import make_document_record
 
 pytestmark = pytest.mark.unit
 

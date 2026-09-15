@@ -39,7 +39,7 @@ def retrieval_metrics(
     rows = [
         _metric_row(str(index), "retrieval", result_ids, expected_ids, 0.0, ks)
         | {"i": index}
-        for index, (result_ids, expected_ids) in enumerate(zip(results, expected))
+        for index, (result_ids, expected_ids) in enumerate(zip(results, expected, strict=False))
     ]
     frame = pd.DataFrame(rows)
     if frame.empty:
@@ -235,7 +235,7 @@ def summarize_retrieval_frame(
     grouping = list(group_cols)
     for keys, group in raw.groupby(grouping):
         key_values = keys if isinstance(keys, tuple) else (keys,)
-        row = dict(zip(grouping, key_values))
+        row = dict(zip(grouping, key_values, strict=False))
         for metric in metric_columns:
             row[metric] = float(group[metric].mean())
         latencies = sorted(float(value) for value in group["latency_ms"].tolist())

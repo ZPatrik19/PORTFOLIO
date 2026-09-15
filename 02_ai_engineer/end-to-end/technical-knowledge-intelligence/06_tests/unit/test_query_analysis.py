@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import pytest
 
-from tkip.query_analysis import analyze_query, evaluate_pipeline
 from test_support.factories import make_chunk, make_search_hit
+from tkip.query_analysis import analyze_query, evaluate_pipeline
 
 pytestmark = pytest.mark.unit
 

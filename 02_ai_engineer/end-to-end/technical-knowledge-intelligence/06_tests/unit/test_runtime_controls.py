@@ -3,10 +3,10 @@ from __future__ import annotations
 
 import pytest
 
+from test_support.factories import make_chunk, make_search_hit
 from tkip.config import load_config
 from tkip.gemini_service import GeminiService
 from tkip.runtime_chunking import rechunk_hits
-from test_support.factories import make_chunk, make_search_hit
 
 pytestmark = pytest.mark.unit
 

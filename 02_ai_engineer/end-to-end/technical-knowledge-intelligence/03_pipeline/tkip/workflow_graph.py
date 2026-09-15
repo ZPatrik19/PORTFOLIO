@@ -201,7 +201,8 @@ def workflow_dot(kind: WorkflowKind = "full", pipeline_steps: list[dict] | None 
 
     if kind in {"full", "indexing"}:
         for a, b in [("sources","discovery"),("discovery","parse"),("parse","quality"),("quality","chunk")]:
-            if a in nodes and b in nodes: lines.append(f"{a} -> {b};")
+            if a in nodes and b in nodes:
+                lines.append(f"{a} -> {b};")
         if "chunk" in nodes:
             # Visual fan-out for the three user-facing chunking presets.
             lines += [
@@ -212,7 +213,8 @@ def workflow_dot(kind: WorkflowKind = "full", pipeline_steps: list[dict] | None 
             ]
             if "embed" in nodes:
                 lines += ['chunk_compact -> embed;', 'chunk_balanced -> embed;', 'chunk_semantic -> embed;']
-        if "embed" in nodes and "multi_index" in nodes: lines.append("embed -> multi_index;")
+        if "embed" in nodes and "multi_index" in nodes:
+            lines.append("embed -> multi_index;")
 
     if kind in {"full", "query"}:
         chain = [("fastapi","trace"),("trace","guard"),("guard","promptclean"),("promptclean","promptopt"),("promptopt","understand"),("understand","strategy")]
@@ -230,7 +232,8 @@ def workflow_dot(kind: WorkflowKind = "full", pipeline_steps: list[dict] | None 
             if "fusion" in nodes:
                 lines += ['bm25 -> fusion;', 'dense -> fusion;']
         for a,b in [("fusion","rerank"),("rerank","context"),("context","tools")]:
-            if a in nodes and b in nodes: lines.append(f"{a} -> {b};")
+            if a in nodes and b in nodes:
+                lines.append(f"{a} -> {b};")
         if "tools" in nodes:
             lines += [
                 f'tool_library [label="{tool_search_label}", fillcolor="#EEE7FF", color="#6E51D8", fontsize=8.5];',
@@ -242,14 +245,16 @@ def workflow_dot(kind: WorkflowKind = "full", pipeline_steps: list[dict] | None 
             if "gemini" in nodes:
                 lines += ['tool_library -> gemini [style=dashed];','tool_code -> gemini [style=dashed];','tool_meta -> gemini [style=dashed];','tool_compare -> gemini [style=dashed];','tools -> gemini;']
         for a,b in [("gemini","citation"),("citation","response")]:
-            if a in nodes and b in nodes: lines.append(f"{a} -> {b};")
+            if a in nodes and b in nodes:
+                lines.append(f"{a} -> {b};")
 
     if kind == "full":
         if "multi_index" in nodes and "ui" in nodes:
             corpus_label = "kész korpusz" if language == "hu" else "ready corpus"
             lines.append(f'multi_index -> ui [color="#A3A3A3", label="{corpus_label}", fontsize=8];')
         for a,b in [("response","telemetry"),("telemetry","feedback"),("feedback","eval"),("eval","improve")]:
-            if a in nodes and b in nodes: lines.append(f"{a} -> {b};")
+            if a in nodes and b in nodes:
+                lines.append(f"{a} -> {b};")
         if "improve" in nodes and "chunk" in nodes:
             version_label = "új verzió" if language == "hu" else "new version"
             lines.append(f'improve -> chunk [style=dashed, color="#35A46F", label="{version_label}", fontsize=8];')

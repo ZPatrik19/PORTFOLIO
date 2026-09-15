@@ -3,20 +3,24 @@ from __future__ import annotations
 import json
 import shutil
 import time
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 
 from .cache import EmbeddingCache, ParseCache
 from .chunking import chunk_document
 from .config import PROJECT_ROOT, resolve_path
-from .embeddings import LocalHashingEmbeddingProvider, GeminiEmbeddingProvider, create_embedding_provider
+from .embeddings import (
+    GeminiEmbeddingProvider,
+    LocalHashingEmbeddingProvider,
+    create_embedding_provider,
+)
 from .indexing import NumpyVectorStore
 from .ingestion import build_manifest
+from .logging_config import get_logger
 from .multimodal import enrich_figure_blocks
 from .parsing import parse_document
 from .retrieval import HybridRetriever
-from .logging_config import get_logger
 
 LOGGER = get_logger(__name__)
 
@@ -147,7 +151,7 @@ class MultiIndexManager:
             missing = [c for c in chunks if c.chunk_id not in cached]
             if missing:
                 new_vecs = embedder.embed_documents([c.text for c in missing])
-                cached.update({c.chunk_id: v for c, v in zip(missing, new_vecs)})
+                cached.update({c.chunk_id: v for c, v in zip(missing, new_vecs, strict=False)})
                 ecache.save(cached)
             vectors = np.vstack([cached[c.chunk_id] for c in chunks]) if chunks else np.empty((0, provider_meta["output_dimensionality"]), dtype=np.float32)
             NumpyVectorStore(base / "numpy").build(chunks, vectors)

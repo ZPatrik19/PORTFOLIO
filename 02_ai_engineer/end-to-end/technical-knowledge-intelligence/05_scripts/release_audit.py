@@ -8,9 +8,9 @@ import json
 import re
 import shutil
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable
 
 import yaml
 
@@ -106,7 +106,18 @@ def audit_secrets_and_paths(report: AuditReport) -> None:
 
 def audit_git_hygiene(report: AuditReport) -> None:
     gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
-    required = [".venv/", ".env", "__pycache__", ".pytest_cache", "01_data/user_library"]
+    required = [
+        ".venv/",
+        ".env",
+        "__pycache__",
+        ".pytest_cache",
+        "01_data/user_library",
+        "01_data/interim/",
+        "01_data/processed/",
+        "01_data/indexes/",
+        "08_logs/",
+        ".streamlit/secrets.toml",
+    ]
     missing = [entry for entry in required if entry not in gitignore]
     if missing:
         report.errors.append(f".gitignore missing required entries: {missing}")
@@ -158,6 +169,7 @@ def audit_required_release_files(report: AuditReport) -> None:
         "09_docs/06_TESTING.md",
         "FINAL_VALIDATION_REPORT.md",
         "pyproject.toml",
+        "build_backend.py",
         "requirements.txt",
         ".env.example",
         ".gitignore",

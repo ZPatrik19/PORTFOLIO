@@ -9,8 +9,8 @@ import time
 
 import pytest
 
-from tkip.retrieval import BM25Index
 from test_support.factories import make_chunk
+from tkip.retrieval import BM25Index
 
 pytestmark = pytest.mark.performance
 

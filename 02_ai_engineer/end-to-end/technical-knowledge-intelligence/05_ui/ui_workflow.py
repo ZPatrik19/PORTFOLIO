@@ -77,7 +77,7 @@ def _add_phase_backgrounds(fig: go.Figure, ui_lang: str) -> None:
         "rgba(34,197,94,0.060)",
     ]
     phase_colors = ["#5eead4", "#93c5fd", "#a5b4fc", "#fbbf24", "#86efac"]
-    for idx, (x0, x1, number, hu, en, detail_hu) in enumerate(PHASES):
+    for idx, (x0, x1, number, hu, en, _detail_hu) in enumerate(PHASES):
         fig.add_shape(
             type="rect",
             x0=x0,
@@ -108,9 +108,9 @@ def _add_edges(fig: go.Figure, ui_lang: str) -> None:
         width = 1.7
         if source == "router" and target == "bm25":
             color = "#60a5fa"
-        elif source == "router" and target == "dense":
-            color = "#818cf8"
-        elif source in {"bm25", "dense"} and target == "fusion":
+        elif (source == "router" and target == "dense") or (
+            source in {"bm25", "dense"} and target == "fusion"
+        ):
             color = "#818cf8"
         elif source == "context" and target == "tools":
             color = "#f59e0b"

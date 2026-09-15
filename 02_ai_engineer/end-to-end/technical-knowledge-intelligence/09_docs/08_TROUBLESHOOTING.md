@@ -1,58 +1,33 @@
 # Troubleshooting
 
-## `BackendUnavailable: Cannot import 'setuptools.build_meta'`
+## Editable install / build-backend errors
 
 ### Symptom
 
-A first Windows setup can fail during:
+A clean Python 3.12+ environment may fail before dependency installation if a
+project relies on a build backend that is not already installed. Earlier TKI
+releases could surface:
 
 ```text
-pip install -e .
 BackendUnavailable: Cannot import 'setuptools.build_meta'
 ```
 
-### Cause
+### Current behavior
 
-Python 3.12+ virtual environments are not guaranteed to contain `setuptools`.
-The project uses the `setuptools.build_meta` PEP 517/660 backend, and a
-`--no-build-isolation` editable install therefore requires the backend to
-already be installed inside `.venv`.
+Since v1.1.1 the repository ships a small dependency-free PEP 517/660 backend
+(`build_backend.py`). Therefore this works in a clean environment without
+preinstalling setuptools or wheel:
 
-### Fixed setup path
-
-v1.0.3 bootstraps the build backend before installing the local package:
-
-```bat
-run_project.bat setup-run
+```bash
+python -m pip install -e . --no-build-isolation
 ```
 
-The relevant order is:
+The build backend reads project metadata from `pyproject.toml`, creates normal
+wheels for deployment, and creates an editable `.pth` wheel for development.
+This keeps `pyproject.toml` as the dependency contract while removing hidden
+CI assumptions about preinstalled packaging tools.
 
-```text
-create/reuse .venv
-    ↓
-verify pip
-    ↓
-install `setuptools` + `wheel` from the `build-system` contract
-    ↓
-verify setuptools.build_meta + wheel
-    ↓
-install runtime/dev dependencies
-    ↓
-pip install -e . --no-deps --no-build-isolation
-```
-
-### Repairing an existing `.venv`
-
-You do **not** need to delete the environment first. From the repository root:
-
-```bat
-.venv\Scripts\python.exe -m pip install "setuptools>=80" "wheel>=0.45"
-.venv\Scripts\python.exe -c "import setuptools.build_meta, wheel; print('build backend OK')"
-.venv\Scripts\python.exe -m pip install -e ".[dev]" --no-build-isolation
-```
-
-If the environment is corrupted rather than merely missing the backend:
+If an extracted environment is corrupted, recreate only the virtual environment:
 
 ```bat
 rmdir /s /q .venv

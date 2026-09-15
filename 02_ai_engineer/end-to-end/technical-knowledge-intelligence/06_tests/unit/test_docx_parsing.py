@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 from docx import Document
 
-from tkip.parsing import parse_document
 from test_support.factories import make_document_record
+from tkip.parsing import parse_document
 
 pytestmark = pytest.mark.unit
 

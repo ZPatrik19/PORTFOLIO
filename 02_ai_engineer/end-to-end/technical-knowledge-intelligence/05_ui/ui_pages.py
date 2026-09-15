@@ -6,15 +6,13 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+from i18n import localize_columns, localize_value, pick, tr
 from tkip.config import resolve_path
 from tkip.ingestion import SUPPORTED_EXTENSIONS
 from tkip.monitoring import drift_report
 from tkip.multi_index import INDEX_STRATEGIES, MultiIndexManager
-from tkip.prompt_engineering import PROFILE_KEYS
-from tkip.presets import CHUNK_PRESETS
 from tkip.workflow_graph import workflow_rows
 from ui_workflow import render_orchestration_graph
-from i18n import localize_columns, localize_value, pick, tr
 
 
 def _safe_upload_name(name: str) -> str:
@@ -370,7 +368,7 @@ def _render_architecture_contracts(ui_lang: str) -> None:
         ),
     ]
     cols = st.columns(4)
-    for col, (title, body, accent) in zip(cols, cards):
+    for col, (title, body, accent) in zip(cols, cards, strict=False):
         col.markdown(
             f'<div class="evidence-card" style="min-height:184px;border-top:3px solid {accent};background:rgba(15,23,42,.08)"><div class="evidence-title">{title}</div><div class="evidence-text">{body}</div></div>',
             unsafe_allow_html=True,
@@ -387,19 +385,23 @@ def render_workflow_page(kp, ui_lang: str) -> None:
     _render_architecture_contracts(ui_lang)
 
     left, right = st.columns([1.15, .85])
-    with left:
-        with st.expander(pick(ui_lang, "Csomópontok részletes útvonala", "Detailed node route"), expanded=False):
-            rows = pd.DataFrame(workflow_rows("full", language=ui_lang))
-            rows = rows.rename(columns={
-                "number": "#",
-                "label": pick(ui_lang, "Lépés", "Step"),
-                "detail": pick(ui_lang, "Felelősség", "Responsibility"),
-                "group": pick(ui_lang, "Fázis", "Phase"),
-            })
-            st.dataframe(rows, use_container_width=True, hide_index=True, height=520)
-    with right:
-        with st.expander(pick(ui_lang, "Runtime konfiguráció · JSON", "Runtime configuration · JSON"), expanded=True):
-            st.code(
+    with left, st.expander(
+        pick(ui_lang, "Csomópontok részletes útvonala", "Detailed node route"),
+        expanded=False,
+    ):
+        rows = pd.DataFrame(workflow_rows("full", language=ui_lang))
+        rows = rows.rename(columns={
+            "number": "#",
+            "label": pick(ui_lang, "Lépés", "Step"),
+            "detail": pick(ui_lang, "Felelősség", "Responsibility"),
+            "group": pick(ui_lang, "Fázis", "Phase"),
+        })
+        st.dataframe(rows, use_container_width=True, hide_index=True, height=520)
+    with right, st.expander(
+        pick(ui_lang, "Runtime konfiguráció · JSON", "Runtime configuration · JSON"),
+        expanded=True,
+    ):
+        st.code(
                 """{
   \"orchestration\": \"native_tkip_core\",
   \"visual_model\": \"plotly_workflow_graph\",

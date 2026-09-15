@@ -9,15 +9,15 @@ from fastapi.responses import JSONResponse
 
 from tkip.config import load_config
 from tkip.exceptions import AuthenticationError, ExternalServiceError, QuotaExceededError
-from tkip.logging_config import configure_logging, get_logger
 from tkip.gemini_service import GeminiService
 from tkip.langchain_adapter import langchain_available
+from tkip.logging_config import configure_logging, get_logger
 from tkip.models import AskRequest, FeedbackRecord
 from tkip.monitoring import drift_report
 from tkip.multi_index import INDEX_STRATEGIES, MultiIndexManager
 from tkip.orchestration import KnowledgePlatform
-from tkip.prompt_engineering import PROFILES
 from tkip.presets import ANSWER_PRESETS, CHUNK_PRESETS
+from tkip.prompt_engineering import PROFILES
 from tkip.workflow_graph import workflow_dot, workflow_rows
 
 configure_logging(load_config())
@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Technical Knowledge Intelligence Platform",
-    version="1.1.0",
+    version="1.1.1",
     description="Grounded technical-library RAG with hybrid retrieval, prompt experiments, tool calling, evaluation and observability.",
     lifespan=lifespan,
 )

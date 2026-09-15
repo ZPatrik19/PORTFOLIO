@@ -160,7 +160,7 @@ class IndexService:
         if missing_chunks:
             new_vectors = self.embedder.embed_documents([chunk.text for chunk in missing_chunks])
             cached_vectors.update(
-                {chunk.chunk_id: vector for chunk, vector in zip(missing_chunks, new_vectors)}
+                {chunk.chunk_id: vector for chunk, vector in zip(missing_chunks, new_vectors, strict=False)}
             )
             cache.save(cached_vectors)
 
