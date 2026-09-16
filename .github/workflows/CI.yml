@@ -1,0 +1,1031 @@
+name: "CI · Quality, Tests, Security, Bootstrap & Build"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Always resolve a current stable Python newer than 3.12.
+  # For reproducible production builds, pin this later to e.g. "3.14".
+  PYTHON_VERSION: ">=3.13"
+  MIN_COVERAGE: "80"
+  APP_PORT: "8000"
+  HEALTH_PATH: "/health"
+  DOCKER_IMAGE: "portfolio-ci"
+  IMPORT_TARGET: ""
+
+jobs:
+  preflight:
+    name: "00 · Pre-flight"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up current Python
+        id: python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Show CI environment
+        shell: bash
+        run: |
+          echo "Resolved Python: ${{ steps.python.outputs.python-version }}"
+          python --version
+          python -m pip --version
+          git --version
+          docker --version
+
+      - name: Enforce Python newer than 3.12
+        shell: bash
+        run: |
+          python - <<'PY'
+          import sys
+          if sys.version_info < (3, 13):
+              raise SystemExit(f"Python >= 3.13 required, got {sys.version}")
+          print(f"Python version accepted: {sys.version.split()[0]}")
+          PY
+
+      - name: Check project manifest
+        shell: bash
+        run: |
+          if [[ ! -f requirements.txt && ! -f pyproject.toml && ! -f setup.py ]]; then
+            echo "::error::No requirements.txt, pyproject.toml or setup.py found."
+            exit 1
+          fi
+
+      - name: Repository inventory
+        shell: bash
+        run: |
+          echo "Root files:"
+          find . -maxdepth 1 -type f -printf '  %f\n' | sort
+          echo
+          echo "Root directories:"
+          find . -maxdepth 1 -mindepth 1 -type d -printf '  %f/\n' | sort
+
+  project-quality:
+    name: "01 · Project & Repository Quality"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install config validator
+        run: python -m pip install --disable-pip-version-check PyYAML
+
+      - name: Required files and platform scripts
+        shell: bash
+        run: |
+          test -f README.md || { echo "::error::README.md is missing"; exit 1; }
+          test -f .gitignore || { echo "::error::.gitignore is missing"; exit 1; }
+
+          [[ -d tests ]] \
+            && echo "✓ tests/ exists" \
+            || echo "::warning::tests/ directory is missing"
+
+          [[ -f Dockerfile ]] \
+            && echo "✓ Dockerfile exists" \
+            || echo "::notice::Dockerfile not present; Docker validation will be skipped."
+
+          if [[ -f setup.sh || -f setup.bat ]]; then
+            [[ -f setup.sh ]] || { echo "::error::setup.bat exists but setup.sh is missing"; exit 1; }
+            [[ -f setup.bat ]] || { echo "::error::setup.sh exists but setup.bat is missing"; exit 1; }
+            echo "✓ setup.sh + setup.bat platform pair exists"
+          else
+            echo "::notice::No setup.sh/setup.bat pair found."
+          fi
+
+          if [[ -f run.sh || -f run.bat ]]; then
+            [[ -f run.sh ]] || { echo "::error::run.bat exists but run.sh is missing"; exit 1; }
+            [[ -f run.bat ]] || { echo "::error::run.sh exists but run.bat is missing"; exit 1; }
+            echo "✓ run.sh + run.bat platform pair exists"
+          else
+            echo "::notice::No run.sh/run.bat pair found."
+          fi
+
+      - name: Validate .gitignore hygiene
+        shell: bash
+        run: |
+          failed=0
+
+          require_ignored() {
+            sample="$1"
+            label="$2"
+            if git check-ignore --no-index -q "$sample"; then
+              echo "✓ ignored: $label"
+            else
+              echo "::error::.gitignore does not ignore $label ($sample)"
+              failed=1
+            fi
+          }
+
+          require_ignored ".env" ".env secrets"
+          require_ignored ".venv/pyvenv.cfg" ".venv/"
+          require_ignored "__pycache__/module.pyc" "__pycache__/"
+          require_ignored ".pytest_cache/state" ".pytest_cache/"
+          require_ignored ".mypy_cache/state" ".mypy_cache/"
+          require_ignored "module.pyc" "*.pyc"
+
+          # Non-sensitive generated artifacts are warnings rather than hard failures.
+          for sample in ".coverage" "coverage.xml" "htmlcov/index.html" "dist/package.whl" "build/temp.txt"; do
+            if git check-ignore --no-index -q "$sample"; then
+              echo "✓ ignored generated artifact: $sample"
+            else
+              echo "::warning::Consider ignoring generated artifact: $sample"
+            fi
+          done
+
+          exit "$failed"
+
+      - name: Reject tracked sensitive files
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib
+          import subprocess
+          import sys
+
+          tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          allowed_names = {
+              ".env.example", ".env.sample", ".env.template",
+              "credentials.example.json", "secrets.example.json",
+          }
+          forbidden_exact = {
+              ".env", ".env.local", ".env.production", ".env.development",
+              "credentials.json", "secrets.json", "service-account.json",
+              "id_rsa", "id_ed25519",
+          }
+          private_suffixes = {".pem", ".key", ".p12", ".pfx"}
+          errors = []
+
+          for item in tracked:
+              p = pathlib.PurePosixPath(item)
+              name = p.name.lower()
+              if name in allowed_names:
+                  continue
+              if name in forbidden_exact:
+                  errors.append(item)
+                  continue
+              if p.suffix.lower() in private_suffixes:
+                  errors.append(item)
+                  continue
+              if "service-account" in name and name.endswith(".json"):
+                  errors.append(item)
+
+          if errors:
+              print("Potentially sensitive files are tracked by Git:")
+              for item in errors:
+                  print(f"  - {item}")
+              sys.exit(1)
+
+          print("No obviously sensitive filenames are tracked.")
+          PY
+
+      - name: Check tracked file sizes
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          import subprocess
+          import sys
+
+          tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          hard_limit = 100 * 1024 * 1024
+          warning_limit = 25 * 1024 * 1024
+          failed = False
+
+          for path in tracked:
+              if not os.path.isfile(path):
+                  continue
+              size = os.path.getsize(path)
+              if size >= hard_limit:
+                  print(f"::error file={path}::Tracked file is {size / 1024 / 1024:.1f} MB (>=100 MB)")
+                  failed = True
+              elif size >= warning_limit:
+                  print(f"::warning file={path}::Large tracked file: {size / 1024 / 1024:.1f} MB; consider Git LFS/artifacts")
+
+          if failed:
+              sys.exit(1)
+          PY
+
+      - name: Validate YAML / JSON / TOML
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import pathlib
+          import sys
+          import tomllib
+          import yaml
+
+          ignored = {
+              ".git", ".venv", "venv", "node_modules", ".pytest_cache",
+              ".mypy_cache", ".ruff_cache", "build", "dist"
+          }
+          errors = []
+
+          for path in pathlib.Path(".").rglob("*"):
+              if not path.is_file() or any(part in ignored for part in path.parts):
+                  continue
+              try:
+                  if path.suffix in {".yml", ".yaml"}:
+                      list(yaml.safe_load_all(path.read_text(encoding="utf-8")))
+                  elif path.suffix == ".json":
+                      json.loads(path.read_text(encoding="utf-8"))
+                  elif path.suffix == ".toml":
+                      tomllib.loads(path.read_text(encoding="utf-8"))
+              except Exception as exc:
+                  errors.append(f"{path}: {exc}")
+
+          if errors:
+              print("\n".join(errors))
+              sys.exit(1)
+
+          print("Configuration files are syntactically valid.")
+          PY
+
+      - name: Documentation check
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib
+          import re
+          import sys
+          import urllib.parse
+
+          root = pathlib.Path(".")
+          errors = []
+          ignored = {".git", ".venv", "venv", "node_modules"}
+
+          markdown_files = [
+              p for p in root.rglob("*.md")
+              if not any(x in p.parts for x in ignored)
+          ]
+
+          for md in markdown_files:
+              text = md.read_text(encoding="utf-8")
+              if not text.strip():
+                  errors.append(f"{md}: empty Markdown file")
+                  continue
+
+              for target in re.findall(r"\[[^\]]+\]\(([^)]+)\)", text):
+                  target = target.strip().split("#", 1)[0]
+                  if not target or target.startswith(("http://", "https://", "mailto:", "#")):
+                      continue
+                  target = urllib.parse.unquote(target)
+                  local = (md.parent / target).resolve()
+                  if not local.exists():
+                      errors.append(f"{md}: broken local link -> {target}")
+
+          if errors:
+              print("\n".join(errors))
+              sys.exit(1)
+
+          print(f"Documentation check passed ({len(markdown_files)} Markdown files).")
+          PY
+
+  code-quality:
+    name: "02 · Code Quality"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install project and quality tools
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          if [[ -f requirements.txt ]]; then
+            pip install -r requirements.txt
+          elif [[ -f pyproject.toml || -f setup.py ]]; then
+            pip install -e .
+          fi
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt || true
+          pip install ruff mypy
+          python -m pip check
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ruff format
+        run: ruff format --check .
+
+      - name: Type checking
+        shell: bash
+        run: |
+          if [[ -d src ]]; then
+            mypy src --ignore-missing-imports
+          elif [[ -d app ]]; then
+            mypy app --ignore-missing-imports
+          elif [[ -d backend ]]; then
+            mypy backend --ignore-missing-imports
+          else
+            echo "::notice::No src/, app/ or backend/ directory; explicit mypy target not detected."
+          fi
+
+      - name: Import smoke
+        shell: bash
+        run: |
+          if [[ -n "${IMPORT_TARGET}" ]]; then
+            python -c "import ${IMPORT_TARGET}; print('Imported ${IMPORT_TARGET} successfully')"
+          else
+            echo "::notice::IMPORT_TARGET is empty; explicit import smoke test skipped."
+          fi
+
+      - name: Compile all Python modules
+        shell: bash
+        run: |
+          python -m compileall -q \
+            -x '/(\.venv|venv|\.git|build|dist|node_modules)/' \
+            .
+
+  unit-tests:
+    name: "03 · Unit Tests & Coverage"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install project and test tools
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          if [[ -f requirements.txt ]]; then
+            pip install -r requirements.txt
+          elif [[ -f pyproject.toml || -f setup.py ]]; then
+            pip install -e .
+          fi
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt || true
+          pip install pytest pytest-cov
+          python -m pip check
+
+      - name: Run unit tests with coverage gate
+        shell: bash
+        run: |
+          if [[ -d src ]]; then
+            COVERAGE_TARGET="src"
+          elif [[ -d app ]]; then
+            COVERAGE_TARGET="app"
+          elif [[ -d backend ]]; then
+            COVERAGE_TARGET="backend"
+          else
+            COVERAGE_TARGET="."
+          fi
+
+          if [[ -d tests/unit ]]; then
+            TEST_TARGET="tests/unit"
+          elif [[ -d tests ]]; then
+            TEST_TARGET="tests"
+          else
+            echo "::error::No tests directory found."
+            exit 1
+          fi
+
+          pytest "$TEST_TARGET" \
+            -ra \
+            --strict-markers \
+            --cov="$COVERAGE_TARGET" \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --junitxml=junit-unit.xml \
+            --cov-fail-under="${MIN_COVERAGE}"
+
+      - name: Upload unit and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-and-coverage-results
+          path: |
+            coverage.xml
+            junit-unit.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+  integration-tests:
+    name: "04 · Integration Tests"
+    needs: [code-quality, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install project
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          if [[ -f requirements.txt ]]; then
+            pip install -r requirements.txt
+          else
+            pip install -e .
+          fi
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt || true
+          pip install pytest
+          python -m pip check
+
+      - name: Integration tests
+        shell: bash
+        run: |
+          if [[ -d tests/integration ]]; then
+            pytest tests/integration -ra --junitxml=junit-integration.xml
+          else
+            echo "::notice::tests/integration not present; integration tests skipped."
+          fi
+
+      - name: Upload integration results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: integration-results
+          path: junit-integration.xml
+          if-no-files-found: ignore
+          retention-days: 14
+
+  api-contract:
+    name: "05 · API Contract Tests"
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install project
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          if [[ -f requirements.txt ]]; then
+            pip install -r requirements.txt
+          else
+            pip install -e .
+          fi
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt || true
+          pip install pytest
+
+      - name: API contract tests
+        shell: bash
+        run: |
+          if [[ -d tests/api ]]; then
+            pytest tests/api -ra --junitxml=junit-api.xml
+          else
+            echo "::notice::tests/api not present; API contract tests skipped."
+          fi
+
+      - name: Upload API results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-contract-results
+          path: junit-api.xml
+          if-no-files-found: ignore
+          retention-days: 14
+
+  e2e:
+    name: "06 · E2E Smoke Tests"
+    needs: [integration-tests, api-contract]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install project
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          if [[ -f requirements.txt ]]; then
+            pip install -r requirements.txt
+          else
+            pip install -e .
+          fi
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt || true
+          pip install pytest
+
+      - name: E2E smoke tests
+        shell: bash
+        run: |
+          if [[ -d tests/e2e ]]; then
+            pytest tests/e2e -ra --junitxml=junit-e2e.xml
+          else
+            echo "::notice::tests/e2e not present; E2E tests skipped."
+          fi
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-results
+          path: junit-e2e.xml
+          if-no-files-found: ignore
+          retention-days: 14
+
+  bootstrap-linux:
+    name: "07 · setup.sh Bootstrap Smoke"
+    needs: project-quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Validate shell scripts
+        shell: bash
+        run: |
+          if [[ -f setup.sh ]]; then
+            bash -n setup.sh
+            command -v shellcheck >/dev/null 2>&1 && shellcheck setup.sh || true
+          fi
+
+          if [[ -f run.sh ]]; then
+            bash -n run.sh
+            command -v shellcheck >/dev/null 2>&1 && shellcheck run.sh || true
+          fi
+
+      - name: Execute setup.sh
+        shell: bash
+        env:
+          CI: "true"
+          NO_BROWSER: "1"
+        run: |
+          if [[ -f setup.sh ]]; then
+            chmod +x setup.sh
+            timeout 12m bash setup.sh
+          else
+            echo "::notice::setup.sh not present; Linux bootstrap skipped."
+          fi
+
+      - name: Validate created virtual environment
+        shell: bash
+        run: |
+          if [[ -x .venv/bin/python ]]; then
+            .venv/bin/python --version
+            .venv/bin/python -m pip check
+          else
+            echo "::notice::.venv/bin/python not found; setup may use another environment strategy."
+          fi
+
+  bootstrap-windows:
+    name: "08 · setup.bat Bootstrap Smoke"
+    needs: project-quality
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Execute setup.bat
+        shell: pwsh
+        env:
+          CI: "true"
+          NO_BROWSER: "1"
+        run: |
+          if (Test-Path "setup.bat") {
+            cmd /d /s /c "call setup.bat"
+            if ($LASTEXITCODE -ne 0) {
+              throw "setup.bat failed with exit code $LASTEXITCODE"
+            }
+          } else {
+            Write-Host "::notice::setup.bat not present; Windows bootstrap skipped."
+          }
+
+      - name: Validate created virtual environment
+        shell: pwsh
+        run: |
+          if (Test-Path ".venv\Scripts\python.exe") {
+            & ".venv\Scripts\python.exe" --version
+            & ".venv\Scripts\python.exe" -m pip check
+            if ($LASTEXITCODE -ne 0) {
+              throw "pip check failed inside .venv"
+            }
+          } else {
+            Write-Host "::notice::.venv\Scripts\python.exe not found; setup may use another environment strategy."
+          }
+
+  dependency-audit:
+    name: "09 · Dependency & Python Security"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install security tools
+        run: python -m pip install --upgrade pip pip-audit bandit
+
+      - name: pip-audit
+        shell: bash
+        run: |
+          if [[ -f requirements.txt ]]; then
+            pip-audit -r requirements.txt
+          else
+            pip install -e .
+            pip-audit
+          fi
+
+      - name: Bandit SAST
+        shell: bash
+        run: |
+          bandit -q -r . \
+            -x "./tests,./.venv,./venv,./build,./dist,./node_modules"
+
+  secret-scan:
+    name: "10 · Secret Scan"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependency-review:
+    name: "11 · Dependency Review"
+    if: github.event_name == 'pull_request'
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+
+  codeql:
+    name: "12 · CodeQL"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: python
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:python"
+
+  package-build:
+    name: "13 · Python Package Build"
+    needs: [code-quality, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Build and validate package
+        id: build
+        shell: bash
+        run: |
+          if [[ -f pyproject.toml || -f setup.py ]]; then
+            python -m pip install --upgrade pip build twine
+            python -m build
+            twine check dist/*
+            echo "built=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No package metadata; Python package build skipped."
+            echo "built=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload package artifacts
+        if: steps.build.outputs.built == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: python-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
+
+  model-smoke:
+    name: "14 · Model Build Smoke"
+    needs: [code-quality, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Install project
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          if [[ -f requirements.txt ]]; then
+            pip install -r requirements.txt
+          else
+            pip install -e .
+          fi
+          [[ -f requirements-dev.txt ]] && pip install -r requirements-dev.txt || true
+          python -m pip check
+
+      - name: Build model once on CI-sized data
+        id: model
+        shell: bash
+        env:
+          MODEL_BUILD_COMMAND: ${{ vars.MODEL_BUILD_COMMAND }}
+          CI: "true"
+        run: |
+          if [[ -n "${MODEL_BUILD_COMMAND}" ]]; then
+            echo "Running repository MODEL_BUILD_COMMAND"
+            eval "${MODEL_BUILD_COMMAND}"
+            echo "built=true" >> "$GITHUB_OUTPUT"
+          elif [[ -f scripts/ci_model_smoke.py ]]; then
+            python scripts/ci_model_smoke.py
+            echo "built=true" >> "$GITHUB_OUTPUT"
+          elif [[ -d tests/model ]]; then
+            python -m pip install pytest
+            pytest tests/model -ra
+            echo "built=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::No CI model smoke target found. Add scripts/ci_model_smoke.py or repository variable MODEL_BUILD_COMMAND."
+            echo "built=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload model smoke artifacts
+        if: steps.model.outputs.built == 'true' && always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: model-smoke-artifacts
+          path: |
+            artifacts/
+            models/ci/
+            reports/
+            benchmark_results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  docker:
+    name: "15 · Docker Build & Container Smoke"
+    needs: [integration-tests, api-contract, model-smoke]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build Docker image
+        id: docker-build
+        shell: bash
+        run: |
+          if [[ ! -f Dockerfile ]]; then
+            echo "::notice::Dockerfile not present; Docker validation skipped."
+            echo "built=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          docker build \
+            --tag "${DOCKER_IMAGE}:${GITHUB_SHA}" \
+            .
+          echo "built=true" >> "$GITHUB_OUTPUT"
+
+      - name: Start container
+        if: steps.docker-build.outputs.built == 'true'
+        shell: bash
+        run: |
+          docker run -d \
+            --name ci-app \
+            --env CI=true \
+            -p "${APP_PORT}:${APP_PORT}" \
+            "${DOCKER_IMAGE}:${GITHUB_SHA}"
+
+      - name: Container health smoke test
+        if: steps.docker-build.outputs.built == 'true'
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            running="$(docker inspect -f '{{.State.Running}}' ci-app 2>/dev/null || echo false)"
+            if [[ "$running" != "true" ]]; then
+              echo "::error::Container exited before becoming ready."
+              docker logs ci-app || true
+              exit 1
+            fi
+
+            health="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' ci-app 2>/dev/null || echo none)"
+
+            if [[ "$health" == "healthy" ]]; then
+              echo "Container Docker HEALTHCHECK passed."
+              exit 0
+            elif [[ "$health" == "unhealthy" ]]; then
+              echo "::error::Docker HEALTHCHECK reports unhealthy."
+              docker logs ci-app || true
+              exit 1
+            fi
+
+            if curl --silent --show-error --fail \
+              "http://127.0.0.1:${APP_PORT}${HEALTH_PATH}" > /dev/null 2>&1; then
+              echo "HTTP health endpoint passed."
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          echo "::error::Container did not become healthy within the allowed window."
+          docker logs ci-app || true
+          exit 1
+
+      - name: Container logs on failure
+        if: failure()
+        run: docker logs ci-app || true
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f ci-app 2>/dev/null || true
+
+  final-gate:
+    name: "✅ Core CI Gate"
+    if: always()
+    needs:
+      - project-quality
+      - code-quality
+      - unit-tests
+      - integration-tests
+      - api-contract
+      - e2e
+      - bootstrap-linux
+      - bootstrap-windows
+      - dependency-audit
+      - secret-scan
+      - dependency-review
+      - codeql
+      - package-build
+      - model-smoke
+      - docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Evaluate all quality gates
+        env:
+          PROJECT_QUALITY: ${{ needs.project-quality.result }}
+          CODE_QUALITY: ${{ needs.code-quality.result }}
+          UNIT_TESTS: ${{ needs.unit-tests.result }}
+          INTEGRATION_TESTS: ${{ needs.integration-tests.result }}
+          API_CONTRACT: ${{ needs.api-contract.result }}
+          E2E: ${{ needs.e2e.result }}
+          BOOTSTRAP_LINUX: ${{ needs.bootstrap-linux.result }}
+          BOOTSTRAP_WINDOWS: ${{ needs.bootstrap-windows.result }}
+          DEP_AUDIT: ${{ needs.dependency-audit.result }}
+          SECRET_SCAN: ${{ needs.secret-scan.result }}
+          DEP_REVIEW: ${{ needs.dependency-review.result }}
+          CODEQL: ${{ needs.codeql.result }}
+          PACKAGE_BUILD: ${{ needs.package-build.result }}
+          MODEL_SMOKE: ${{ needs.model-smoke.result }}
+          DOCKER: ${{ needs.docker.result }}
+        shell: bash
+        run: |
+          failed=0
+
+          check() {
+            name="$1"
+            result="$2"
+
+            if [[ "$result" == "success" || "$result" == "skipped" ]]; then
+              echo "✓ $name: $result"
+            else
+              echo "✗ $name: $result"
+              failed=1
+            fi
+          }
+
+          check "Project Quality" "$PROJECT_QUALITY"
+          check "Code Quality" "$CODE_QUALITY"
+          check "Unit Tests" "$UNIT_TESTS"
+          check "Integration Tests" "$INTEGRATION_TESTS"
+          check "API Contract" "$API_CONTRACT"
+          check "E2E" "$E2E"
+          check "setup.sh Bootstrap" "$BOOTSTRAP_LINUX"
+          check "setup.bat Bootstrap" "$BOOTSTRAP_WINDOWS"
+          check "Dependency Audit" "$DEP_AUDIT"
+          check "Secret Scan" "$SECRET_SCAN"
+          check "Dependency Review" "$DEP_REVIEW"
+          check "CodeQL" "$CODEQL"
+          check "Package Build" "$PACKAGE_BUILD"
+          check "Model Smoke" "$MODEL_SMOKE"
+          check "Docker" "$DOCKER"
+
+          exit "$failed"
