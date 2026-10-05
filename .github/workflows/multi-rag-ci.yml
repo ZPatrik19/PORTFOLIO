@@ -36,7 +36,7 @@ env:
 jobs:
   preflight:
     name: "00 · Pre-flight & Repository Contract"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:
       - name: Checkout
@@ -92,7 +92,7 @@ jobs:
   repository-quality:
     name: "01 · Repository, Config & Docs"
     needs: preflight
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v7
@@ -157,7 +157,7 @@ jobs:
   code-quality:
     name: "02 · Ruff, Types & Compile"
     needs: preflight
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 18
     steps:
       - uses: actions/checkout@v7
@@ -203,7 +203,7 @@ jobs:
   unit-tests:
     name: "03 · Unit Tests & Coverage"
     needs: preflight
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
@@ -239,7 +239,7 @@ jobs:
   rag-integration:
     name: "04 · RAG Integration & Performance"
     needs: [code-quality, unit-tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -273,7 +273,7 @@ jobs:
   faiss-cpu:
     name: "05 · FAISS CPU Persistence Smoke"
     needs: unit-tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -320,7 +320,7 @@ jobs:
   streamlit-ui:
     name: "06 · Streamlit UI & Arrow Smoke"
     needs: [code-quality, unit-tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -372,7 +372,7 @@ jobs:
   measurement:
     name: "07 · Measurement & Robustness Smoke"
     needs: [unit-tests, faiss-cpu]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -434,7 +434,7 @@ jobs:
   security:
     name: "09 · Dependency Audit & Bandit"
     needs: preflight
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -458,7 +458,7 @@ jobs:
   secret-scan:
     name: "10 · Gitleaks"
     needs: preflight
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v7
@@ -471,7 +471,7 @@ jobs:
   codeql:
     name: "11 · CodeQL"
     needs: preflight
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
       contents: read
@@ -489,7 +489,7 @@ jobs:
   package-build:
     name: "12 · Python Package Build"
     needs: [code-quality, unit-tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -513,7 +513,7 @@ jobs:
   docker-build:
     name: "13 · Docker Build, Health & Trivy"
     needs: [rag-integration, streamlit-ui, measurement]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 35
     permissions:
       contents: read
@@ -573,7 +573,7 @@ jobs:
       - codeql
       - package-build
       - docker-build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Evaluate gates
         shell: bash
