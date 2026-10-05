@@ -27,6 +27,7 @@ from ui.components.charts import (
 )
 from ui.components.common import ROOT
 from ui.components.education import info_cards, kpi_cards, live_run_card, note_box, page_intro, section_intro, status_cards
+from ui.components.exports import render_dataframe_exports
 from ui.components.tables import safe_dataframe
 
 
