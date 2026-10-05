@@ -1,0 +1,814 @@
+{
+  "corpus_id": "hungarian_medical",
+  "display_name": "Egészségvonal magyar orvosi korpusz",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "requested_documents": 100,
+  "available_documents": 100,
+  "downloaded_now": 31,
+  "reused_existing": 69,
+  "failures": [],
+  "license_note": "A források az eredeti szolgáltató feltételei szerint használhatók; a projekt csak oktatási és mérnöki demonstráció.",
+  "disclaimer": "A rendszer nem helyettesít orvosi vizsgálatot vagy diagnózist.",
+  "documents": [
+    {
+      "source_id": "medical-c8316fdacf868f",
+      "title": "1-es típusú cukorbetegség",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/1-9/1-es-tipusu-cukorbetegseg.html",
+      "group": "1-9",
+      "filename": "1-9__1-es-tipusu-cukorbetegseg.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-aac68b9215f5fd",
+      "title": "Asztma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/asztma.html",
+      "group": "a-a",
+      "filename": "a-a__asztma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-f6698ce7c5505b",
+      "title": "17-OH-progeszteronszint mérése",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/1-9/17-oh-progeszteronszint-merese.html",
+      "group": "1-9",
+      "filename": "1-9__17-oh-progeszteronszint-merese.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-7122d93f270450",
+      "title": "A-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/a-vitamin.html",
+      "group": "a-a",
+      "filename": "a-a__a-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-6f8771f05ba9dc",
+      "title": "B-vitaminok",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b-vitaminok.html",
+      "group": "b",
+      "filename": "b__b-vitaminok.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-5af7cb6d160d1d",
+      "title": "C-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/c-vitamin.html",
+      "group": "c-cs",
+      "filename": "c-cs__c-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-9d0aafafb762a0",
+      "title": "2-es típusú cukorbetegség",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/1-9/2-es-tipusu-cukorbetegseg.html",
+      "group": "1-9",
+      "filename": "1-9__2-es-tipusu-cukorbetegseg.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-5f237e1cdee185",
+      "title": "AB0-vércsoport-összeférhetetlenség újszülötteknél",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/ab0-vercsoport-osszeferhetetlenseg-ujszulotteknel.html",
+      "group": "a-a",
+      "filename": "a-a__ab0-vercsoport-osszeferhetetlenseg-ujszulotteknel.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-ab3168154b630e",
+      "title": "B1-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b1-vitamin.html",
+      "group": "b",
+      "filename": "b__b1-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-efdfbe7109fb9e",
+      "title": "Cachexia",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cachexia.html",
+      "group": "c-cs",
+      "filename": "c-cs__cachexia.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-d646eb909258ef",
+      "title": "Patau-szindróma (13-as triszómia)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/1-9/patau-szindroma-13-as-triszomia.html",
+      "group": "1-9",
+      "filename": "1-9__patau-szindroma-13-as-triszomia.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-ffde6acdc7d732",
+      "title": "Ablációs technikák",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/ablacios-technikak.html",
+      "group": "a-a",
+      "filename": "a-a__ablacios-technikak.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-8e0ce7c21ecfd9",
+      "title": "B12-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b12-vitamin.html",
+      "group": "b",
+      "filename": "b__b12-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-5f6d65a1288327",
+      "title": "Campylobacter-fertőzés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/campylobacter-fertozes.html",
+      "group": "c-cs",
+      "filename": "c-cs__campylobacter-fertozes.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-4ab1df0fac33b0",
+      "title": "Acanthamoebiasis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/acanthamoebiasis.html",
+      "group": "a-a",
+      "filename": "a-a__acanthamoebiasis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-a45d86cbb9bbfb",
+      "title": "B2-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b2-vitamin.html",
+      "group": "b",
+      "filename": "b__b2-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-5c05e2fe886fce",
+      "title": "Candidiasis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/candidiasis.html",
+      "group": "c-cs",
+      "filename": "c-cs__candidiasis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-991e15d5db9c8c",
+      "title": "ACE-sztóma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/ace-sztoma.html",
+      "group": "a-a",
+      "filename": "a-a__ace-sztoma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-729910e2d3fba1",
+      "title": "B3-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b3-vitamin.html",
+      "group": "b",
+      "filename": "b__b3-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-276ebe43ae3316",
+      "title": "Cauda equina szindróma (Lófarok-betegség)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cauda-equina-szindroma-lofarok-betegseg.html",
+      "group": "c-cs",
+      "filename": "c-cs__cauda-equina-szindroma-lofarok-betegseg.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-a1b380317f2c38",
+      "title": "Acetilszalicilsav",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/acetilszalicilsav.html",
+      "group": "a-a",
+      "filename": "a-a__acetilszalicilsav.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-345218dd705372",
+      "title": "B5-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b5-vitamin.html",
+      "group": "b",
+      "filename": "b__b5-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-f922b7600ce359",
+      "title": "CBD",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cbd.html",
+      "group": "c-cs",
+      "filename": "c-cs__cbd.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-2041bf06e1397e",
+      "title": "Achilles-ín sérülései",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/az-achilles-in-serulesei.html",
+      "group": "a-a",
+      "filename": "a-a__az-achilles-in-serulesei.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-f6007f557de190",
+      "title": "B6-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b6-vitamin.html",
+      "group": "b",
+      "filename": "b__b6-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-3dbb7dc74f1781",
+      "title": "Cellulitis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cellulitis.html",
+      "group": "c-cs",
+      "filename": "c-cs__cellulitis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-f3e3857f6b8f5a",
+      "title": "Actinomycosis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/actinomycosis.html",
+      "group": "a-a",
+      "filename": "a-a__actinomycosis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-00058f77bcd036",
+      "title": "B7-vitamin",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b7-vitamin.html",
+      "group": "b",
+      "filename": "b__b7-vitamin.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-d03981155fc1d3",
+      "title": "Cerebralis paresis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cerebralis-paresis.html",
+      "group": "c-cs",
+      "filename": "c-cs__cerebralis-paresis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-ad5a8134d03bcf",
+      "title": "Addison-kór",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/addison-kor.html",
+      "group": "a-a",
+      "filename": "a-a__addison-kor.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-6fe1ec30f69d0d",
+      "title": "B9-vitamin (Folsav)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/b9-vitamin-folsav.html",
+      "group": "b",
+      "filename": "b__b9-vitamin-folsav.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-1818bf3464b0f3",
+      "title": "Chagas-kór",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chagas-kor.html",
+      "group": "c-cs",
+      "filename": "c-cs__chagas-kor.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-a6d268c2f7f552",
+      "title": "Adenomiózis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/adenomiozis.html",
+      "group": "a-a",
+      "filename": "a-a__adenomiozis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-57a3aa3bdfde02",
+      "title": "Babamentő inkubátorok",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/babamento-inkubatorok.html",
+      "group": "b",
+      "filename": "b__babamento-inkubatorok.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-1d42ed857bf2a6",
+      "title": "Charcot–Marie–Tooth-szindróma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/charcot-marie-tooth-szindroma.html",
+      "group": "c-cs",
+      "filename": "c-cs__charcot-marie-tooth-szindroma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-9fba7ddbd14297",
+      "title": "Adenovírus-fertőzés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/adenovirus-fertozes.html",
+      "group": "a-a",
+      "filename": "a-a__adenovirus-fertozes.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-ba7752a62ea2aa",
+      "title": "Babesiosis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/babesiosis.html",
+      "group": "b",
+      "filename": "b__babesiosis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-39f1a29212cd4d",
+      "title": "Charles Bonnet-szindróma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/charles-bonnet-szindroma.html",
+      "group": "c-cs",
+      "filename": "c-cs__charles-bonnet-szindroma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-03ff246d6cdedc",
+      "title": "ADHD (Figyelemhiányos hiperaktivitás-zavar)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/adhd-figyelemhianyos-hiperaktivitas-zavar.html",
+      "group": "a-a",
+      "filename": "a-a__adhd-figyelemhianyos-hiperaktivitas-zavar.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-ba16ee7189b06d",
+      "title": "Baker-ciszta",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/baker-ciszta.html",
+      "group": "b",
+      "filename": "b__baker-ciszta.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-e90f28ed20f59d",
+      "title": "Chemsex",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chemsex.html",
+      "group": "c-cs",
+      "filename": "c-cs__chemsex.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-8fd270fffd3241",
+      "title": "Adrenalin autoinjektor használata",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/adrenalin-autoinjektor-hasznalata.html",
+      "group": "a-a",
+      "filename": "a-a__adrenalin-autoinjektor-hasznalata.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-b89e5012bef9ad",
+      "title": "Bakteriális fertőzések",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bakterialis-fertozesek.html",
+      "group": "b",
+      "filename": "b__bakterialis-fertozesek.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-51bd18781b0abb",
+      "title": "Chlamydia psittaci fertőzés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chlamydia-psittaci-fertozes.html",
+      "group": "c-cs",
+      "filename": "c-cs__chlamydia-psittaci-fertozes.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-62c0bbb8c3caad",
+      "title": "Agnózia",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agnozia.html",
+      "group": "a-a",
+      "filename": "a-a__agnozia.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-1e12c0245fa0ab",
+      "title": "Bakteriális tüdőgyulladás",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bakterialis-tudogyulladas.html",
+      "group": "b",
+      "filename": "b__bakterialis-tudogyulladas.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-775aab9927b02f",
+      "title": "Chlamydia trachomatis fertőzés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chlamydia.html",
+      "group": "c-cs",
+      "filename": "c-cs__chlamydia.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-b1d9f1f5b3a821",
+      "title": "Agorafóbia",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agorafobia.html",
+      "group": "a-a",
+      "filename": "a-a__agorafobia.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-c17b489761a3cf",
+      "title": "Bakteriális vaginózis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bakterialis-huvelyfertozes-vaginozis.html",
+      "group": "b",
+      "filename": "b__bakterialis-huvelyfertozes-vaginozis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-062df1931368ed",
+      "title": "Chlamydia-fertőzések",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chlamydia-fertozesek.html",
+      "group": "c-cs",
+      "filename": "c-cs__chlamydia-fertozesek.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-d691033294a939",
+      "title": "Agranulocytosis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agranulocytosis.html",
+      "group": "a-a",
+      "filename": "a-a__agranulocytosis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-b97078cd1bdcb7",
+      "title": "Balantidiasis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/balantidiasis.html",
+      "group": "b",
+      "filename": "b__balantidiasis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-b4351fa2469331",
+      "title": "Cholelithiasis (Epekövesség)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cholelithiasis-epekovesseg.html",
+      "group": "c-cs",
+      "filename": "c-cs__cholelithiasis-epekovesseg.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-7995a076a1665f",
+      "title": "Agyalapi mirigy daganata",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyalapi-mirigy-daganata.html",
+      "group": "a-a",
+      "filename": "a-a__agyalapi-mirigy-daganata.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-b30ed3c25c4c18",
+      "title": "Barotrauma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/barotrauma.html",
+      "group": "b",
+      "filename": "b__barotrauma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-8da1642811e1b3",
+      "title": "Chorionboholy-mintavétel",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chorionboholy-mintavetel.html",
+      "group": "c-cs",
+      "filename": "c-cs__chorionboholy-mintavetel.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-afe8753aba8a4c",
+      "title": "Agydaganatok",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agytumorok.html",
+      "group": "a-a",
+      "filename": "a-a__agytumorok.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-6aae0ef75a41a2",
+      "title": "Bartholin-ciszta",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bartholin-ciszta.html",
+      "group": "b",
+      "filename": "b__bartholin-ciszta.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-3639e8cfc1fe2d",
+      "title": "Chromomycosis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chromomycosis.html",
+      "group": "c-cs",
+      "filename": "c-cs__chromomycosis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-829c466114c052",
+      "title": "Agydaganatok gyermekkorban",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/gyermekkori-agydaganatok.html",
+      "group": "a-a",
+      "filename": "a-a__gyermekkori-agydaganatok.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-6b72abb8c926a0",
+      "title": "Bartonella-fertőzés (Macskakarmolási betegség)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bartonella-fertozes-macskakarmolasi-betegseg.html",
+      "group": "b",
+      "filename": "b__bartonella-fertozes-macskakarmolasi-betegseg.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-7a3766251c0873",
+      "title": "Ciklotímia",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/ciklotimia.html",
+      "group": "c-cs",
+      "filename": "c-cs__ciklotimia.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-0ec4486c79855c",
+      "title": "Agyhártyagyulladás (Meningitis)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyhartyagyulladas-meningitis.html",
+      "group": "a-a",
+      "filename": "a-a__agyhartyagyulladas-meningitis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-20d76a6f88f0a2",
+      "title": "Barázdazárás",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/barazdazaras.html",
+      "group": "b",
+      "filename": "b__barazdazaras.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-9f16903332fc37",
+      "title": "Cikluskövetés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cikluskovetes.html",
+      "group": "c-cs",
+      "filename": "c-cs__cikluskovetes.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-7505281c4ff1da",
+      "title": "Agyhártyák betegségei",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyhartyak-betegsegei.html",
+      "group": "a-a",
+      "filename": "a-a__agyhartyak-betegsegei.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-a837c5fb970e9a",
+      "title": "Bazálsejtes karcinóma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bazalsejtes-karcinoma.html",
+      "group": "b",
+      "filename": "b__bazalsejtes-karcinoma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-91054c01c58a52",
+      "title": "Cink",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cink.html",
+      "group": "c-cs",
+      "filename": "c-cs__cink.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-95b2c7debed560",
+      "title": "Agyi aneurizma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyi-aneurizma.html",
+      "group": "a-a",
+      "filename": "a-a__agyi-aneurizma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-565561ae05564b",
+      "title": "Bechterew-kór",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bechterew-kor.html",
+      "group": "b",
+      "filename": "b__bechterew-kor.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-ef774c7265f7c2",
+      "title": "Cinkanyagcsere rendellenességei",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cinkanyagcsere-rendellenessegei.html",
+      "group": "c-cs",
+      "filename": "c-cs__cinkanyagcsere-rendellenessegei.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-4d1aaa2baa5908",
+      "title": "Agyi ciszták",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyi-cisztak.html",
+      "group": "a-a",
+      "filename": "a-a__agyi-cisztak.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-7fcdd0a1048009",
+      "title": "Befagyott váll szindróma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/befagyott-vall-szindroma.html",
+      "group": "b",
+      "filename": "b__befagyott-vall-szindroma.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-cec65ec4e7f3b1",
+      "title": "Cirkadián ritmus",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cirkadian-ritmus.html",
+      "group": "c-cs",
+      "filename": "c-cs__cirkadian-ritmus.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-92c9a7c1041c47",
+      "title": "Agyi infarktus",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyi-infarktus.html",
+      "group": "a-a",
+      "filename": "a-a__agyi-infarktus.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-71581af18e4fc3",
+      "title": "Belek veleszületett eltérései",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/belek-veleszuletett-elteresei.html",
+      "group": "b",
+      "filename": "b__belek-veleszuletett-elteresei.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-c9bb74505b0902",
+      "title": "Ciszták",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cisztak.html",
+      "group": "c-cs",
+      "filename": "c-cs__cisztak.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-248015f8d0908c",
+      "title": "Agyidegek rendellenességei",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyidegek-rendellenessegei.html",
+      "group": "a-a",
+      "filename": "a-a__agyidegek-rendellenessegei.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-17eede0543385f",
+      "title": "Bell-féle bénulás",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bell-benulas.html",
+      "group": "b",
+      "filename": "b__bell-benulas.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-88758807393834",
+      "title": "Cisztás fibrózis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cisztas-fibrozis.html",
+      "group": "c-cs",
+      "filename": "c-cs__cisztas-fibrozis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-f192b1798bad40",
+      "title": "Agyrázkódás",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyrazkodas.html",
+      "group": "a-a",
+      "filename": "a-a__agyrazkodas.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-c1c3ceb08d2cc5",
+      "title": "Belső elválasztású mirigyek (Endokrin mirigyek)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/belso-elvalasztasu-mirigyek-endokrin-mirigyek.html",
+      "group": "b",
+      "filename": "b__belso-elvalasztasu-mirigyek-endokrin-mirigyek.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-39ff2d29d986f6",
+      "title": "Civilizációs betegségek",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/civilizacios-betegsegek.html",
+      "group": "c-cs",
+      "filename": "c-cs__civilizacios-betegsegek.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-9779bc2e06ed72",
+      "title": "Agyrázkódás sportolásból kifolyólag",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyrazkodas-sportolasbol-kifolyolag.html",
+      "group": "a-a",
+      "filename": "a-a__agyrazkodas-sportolasbol-kifolyolag.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-60564cb7dc1ee6",
+      "title": "Belsőfül-gyulladás (Otitis interna)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/belsoful-gyulladas-otitis-interna.html",
+      "group": "b",
+      "filename": "b__belsoful-gyulladas-otitis-interna.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-02c0763bb1658c",
+      "title": "Clostridium difficile fertőzés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/clostridium-difficile-fertozes.html",
+      "group": "c-cs",
+      "filename": "c-cs__clostridium-difficile-fertozes.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-41fb1a3c35c426",
+      "title": "Agyvelőgyulladás (Encephalitis)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyvelogyulladas-encephalitis.html",
+      "group": "a-a",
+      "filename": "a-a__agyvelogyulladas-encephalitis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-b9698a95b1eddf",
+      "title": "Benzodiazepinfüggőség",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/benzodiazepinfuggoseg.html",
+      "group": "b",
+      "filename": "b__benzodiazepinfuggoseg.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-1d5ad00b96ec75",
+      "title": "Cluster fejfájás",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cluster-fejfajas.html",
+      "group": "c-cs",
+      "filename": "c-cs__cluster-fejfajas.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-dc14cab7d11678",
+      "title": "Agyvérzés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyverzes.html",
+      "group": "a-a",
+      "filename": "a-a__agyverzes.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-0fe4766de66ab5",
+      "title": "Benzodiazepinfüggőség terápiája",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/benzodiazepinfuggoseg-terapiaja.html",
+      "group": "b",
+      "filename": "b__benzodiazepinfuggoseg-terapiaja.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-9942ded23a2507",
+      "title": "Coarctatio aortae",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/coarctatio-aortae.html",
+      "group": "c-cs",
+      "filename": "c-cs__coarctatio-aortae.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-e719e5ba206573",
+      "title": "Agyödéma",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyodema.html",
+      "group": "a-a",
+      "filename": "a-a__agyodema.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-c04801cbd66b2b",
+      "title": "Benőtt köröm",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/benott-korom.html",
+      "group": "b",
+      "filename": "b__benott-korom.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-153a7c8fcd3a0d",
+      "title": "Coccidioidomycosis",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/coccidioidomycosis.html",
+      "group": "c-cs",
+      "filename": "c-cs__coccidioidomycosis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-0819fbbbc115c2",
+      "title": "AIDS: tények és tévhitek",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/aids-tenyek-es-tevhitek.html",
+      "group": "a-a",
+      "filename": "a-a__aids-tenyek-es-tevhitek.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-3bd9dd5362845a",
+      "title": "Beszédfejlődés",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/beszedfejlodes.html",
+      "group": "b",
+      "filename": "b__beszedfejlodes.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-0e14274ebfecef",
+      "title": "Colitis ulcerosa (Fekélyes vastagbélgyulladás)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/colitis-ulcerosa-fekelyes-vastagbelgyulladas.html",
+      "group": "c-cs",
+      "filename": "c-cs__colitis-ulcerosa-fekelyes-vastagbelgyulladas.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-8189dbf6a898aa",
+      "title": "Ajakgyulladás (Cheilitis)",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/ajakgyulladas-cheilitis.html",
+      "group": "a-a",
+      "filename": "a-a__ajakgyulladas-cheilitis.html",
+      "exists": true
+    },
+    {
+      "source_id": "medical-b99fa992e6ded6",
+      "title": "Beszédzavarok",
+      "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/beszedzavarok.html",
+      "group": "b",
+      "filename": "b__beszedzavarok.html",
+      "exists": true
+    }
+  ]
+}

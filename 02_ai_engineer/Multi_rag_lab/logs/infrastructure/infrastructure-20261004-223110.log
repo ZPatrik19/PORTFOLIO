@@ -1,0 +1,9 @@
+22:31:10 | INFO | Infrastructure CLI indul. command=cuda profile=balanced
+22:31:10 | INFO | Log file: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-223110.log
+22:31:13 | INFO | cuda-python: nincs
+22:31:13 | INFO | PyTorch: 2.14.1+cu126
+22:31:13 | INFO | PyTorch CUDA runtime: 12.6
+22:31:13 | INFO | torch.cuda.is_available(): True
+22:31:13 | INFO | GPU: NVIDIA GeForce GTX 1650 with Max-Q Design
+22:31:13 | INFO | nvidia-smi: NVIDIA GeForce GTX 1650 with Max-Q Design, 566.36, 4096 MiB
+22:31:13 | INFO | [OK] PyTorch CUDA aktiv; kulon CUDA setup nem szukseges.

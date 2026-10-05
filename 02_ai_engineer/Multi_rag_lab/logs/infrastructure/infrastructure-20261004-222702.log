@@ -1,0 +1,37 @@
+22:27:02 | INFO | Infrastructure CLI indul. command=menu profile=balanced
+22:27:02 | INFO | Log file: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-222702.log
+22:27:05 | INFO | ============================================================================
+22:27:05 | INFO | MULTI-RAG INFRASTRUCTURE SETUP
+22:27:05 | INFO | ============================================================================
+22:27:05 | INFO | Log: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-222702.log
+22:27:05 | INFO | [1/5] CUDA / PyTorch
+22:27:07 | INFO | cuda-python: nincs
+22:27:07 | INFO | PyTorch: 2.14.1+cu126
+22:27:07 | INFO | PyTorch CUDA runtime: 12.6
+22:27:07 | INFO | torch.cuda.is_available(): True
+22:27:07 | INFO | GPU: NVIDIA GeForce GTX 1650 with Max-Q Design
+22:27:07 | INFO | nvidia-smi: NVIDIA GeForce GTX 1650 with Max-Q Design, 566.36, 4096 MiB
+22:27:07 | INFO | [OK] PyTorch CUDA aktiv; kulon CUDA setup nem szukseges.
+22:27:07 | INFO | [2/5] FAISS vector backend
+22:27:07 | INFO | [OK] FAISS 1.15.1 CPU backend OK; GPU API=nem (Windows CPU buildnel normalis)
+22:27:07 | INFO | [3/5] Hugging Face embedding + reranker model cache
+22:27:07 | INFO | ============================================================================
+22:27:07 | INFO | HUGGING FACE RUNTIME MODEL CACHE
+22:27:07 | INFO | ============================================================================
+22:27:07 | INFO | Parancs: "E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.venv\Scripts\python.exe" "E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\scripts\prepare_runtime_assets.py" --retries 5 --verify
+22:27:08 | INFO | [INFO] HF_TOKEN nincs beállítva. A modellek publikusak, ezért a letöltés működik, de kisebb Hub rate limit mellett.
+22:27:08 | INFO |        Opcionális: add meg a HF_TOKEN értékét a .env fájlban.
+22:27:08 | INFO | [HF] sentence-transformers/all-MiniLM-L6-v2 · próbálkozás 1/5
+22:27:09 | INFO | Fetching 30 files:   0%|          | 0/30 [00:00<?, ?it/s]
+22:27:09 | INFO | Fetching 30 files:   3%|▎         | 1/30 [00:00<00:04,  6.18it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+22:27:09 | INFO | Fetching 30 files:   7%|▋         | 2/30 [00:00<00:04,  6.30it/s]
+22:27:09 | INFO | Fetching 30 files:  10%|█         | 3/30 [00:00<00:04,  5.72it/s]
+22:27:09 | INFO | Fetching 30 files:  13%|█▎        | 4/30 [00:00<00:04,  5.81it/s]
+22:27:09 | INFO | Fetching 30 files:  17%|█▋        | 5/30 [00:00<00:04,  5.88it/s]
+22:27:12 | INFO | Fetching 30 files:  20%|██        | 6/30 [00:01<00:04,  5.84it/s]
+22:27:12 | INFO | Fetching 30 files:  23%|██▎       | 7/30 [00:03<00:20,  1.15it/s]
+22:27:14 | INFO | Fetching 30 files:  27%|██▋       | 8/30 [00:03<00:14,  1.55it/s]
+22:27:16 | INFO | Fetching 30 files:  30%|███       | 9/30 [00:05<00:24,  1.17s/it]
+22:27:18 | INFO | Fetching 30 files:  33%|███▎      | 10/30 [00:07<00:26,  1.30s/it]
+22:27:20 | INFO | Fetching 30 files:  37%|███▋      | 11/30 [00:09<00:27,  1.44s/it]
+22:27:21 | INFO | Fetching 30 files:  40%|████      | 12/30 [00:11<00:28,  1.58s/it]

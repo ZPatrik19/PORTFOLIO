@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cluster-fejfajas.html",
+  "sha256": "a98b84d4fda04987f3699f747a2a02a7014125f51b5a5ba9b23061e2b67af7ea",
+  "size_bytes": 539217,
+  "content_type": "text/html",
+  "source_id": "medical-1d5ad00b96ec75",
+  "title": "Cluster fejfájás",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

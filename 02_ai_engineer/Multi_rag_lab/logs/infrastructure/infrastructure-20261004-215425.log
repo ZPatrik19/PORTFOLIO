@@ -1,0 +1,18 @@
+21:54:25 | INFO | Infrastructure CLI indul. command=run profile=balanced
+21:54:25 | INFO | Log file: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-215425.log
+21:54:25 | INFO | ============================================================================
+21:54:25 | INFO | MULTI-RAG INFRASTRUCTURE RUNTIME
+21:54:25 | INFO | ============================================================================
+21:54:25 | INFO | Log: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-215425.log
+21:54:28 | INFO | cuda-python: nincs
+21:54:28 | INFO | PyTorch: 2.14.1+cu126
+21:54:28 | INFO | PyTorch CUDA runtime: 12.6
+21:54:28 | INFO | torch.cuda.is_available(): True
+21:54:28 | INFO | GPU: NVIDIA GeForce GTX 1650 with Max-Q Design
+21:54:28 | INFO | nvidia-smi: NVIDIA GeForce GTX 1650 with Max-Q Design, 566.36, 4096 MiB
+21:54:28 | INFO | [OK] FAISS 1.15.1 CPU backend OK; GPU API=nem (Windows CPU buildnel normalis)
+21:54:28 | WARNING | Medical corpus/index meg nincs letoltve. Ez nem FAISS telepitesi hiba. A Dokumentumok oldalon vagy a python scripts/infrastructure_cli.py reindex paranccsal keszitheto el.
+21:54:28 | INFO | A rag-qwen-balanced modellprofil modositva lett; alias automatikus frissitese...
+21:54:28 | INFO | [OK] Ollama alias frissitve az aktualis magyar grounded profilra: rag-qwen-balanced
+21:54:28 | INFO | [OK] Ollama 0.34.2; modellalias: rag-qwen-balanced
+21:54:28 | INFO | [OK] Infrastruktur runtime kesz.

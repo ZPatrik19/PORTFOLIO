@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyi-infarktus.html",
+  "sha256": "62b6fc09fc9c26df477b97de9482a6a32d15e5db7d98d5d07529b6d87643b83c",
+  "size_bytes": 545803,
+  "content_type": "text/html",
+  "source_id": "medical-92c9a7c1041c47",
+  "title": "Agyi infarktus",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

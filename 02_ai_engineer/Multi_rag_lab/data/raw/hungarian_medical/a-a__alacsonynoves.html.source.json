@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/alacsonynoves.html",
+  "sha256": "561002fc3346d0ae4218dbbce37bdc2f1939fc78a2b7533888ec7729b80c519d",
+  "size_bytes": 549869,
+  "content_type": "text/html",
+  "source_id": "medical-8692f168d7bf5f",
+  "title": "Alacsonynövés",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

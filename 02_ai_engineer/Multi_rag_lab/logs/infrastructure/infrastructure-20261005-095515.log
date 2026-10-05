@@ -1,0 +1,21 @@
+09:55:15 | INFO | Infrastructure CLI indul. command=run profile=balanced
+09:55:15 | INFO | Log file: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261005-095515.log
+09:55:15 | INFO | ============================================================================
+09:55:15 | INFO | MULTI-RAG INFRASTRUCTURE RUNTIME
+09:55:15 | INFO | ============================================================================
+09:55:15 | INFO | Log: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261005-095515.log
+09:55:24 | INFO | cuda-python: nincs
+09:55:24 | INFO | PyTorch: 2.14.1+cu126
+09:55:24 | INFO | PyTorch CUDA runtime: 12.6
+09:55:24 | INFO | torch.cuda.is_available(): True
+09:55:24 | INFO | GPU: NVIDIA GeForce GTX 1650 with Max-Q Design
+09:55:24 | INFO | nvidia-smi: NVIDIA GeForce GTX 1650 with Max-Q Design, 566.36, 4096 MiB
+09:55:25 | INFO | [OK] FAISS 1.15.1 CPU backend OK; GPU API=nem (Windows CPU buildnel normalis)
+09:55:25 | INFO | [OK] Medical vector index state: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\artifacts\indexes\hungarian_medical\index_state.json
+09:55:25 | INFO |     documents = 131
+09:55:25 | INFO |     chunks = 1938
+09:55:25 | INFO |     embedding_model = intfloat/multilingual-e5-small
+09:55:25 | INFO |     vector_device = cpu
+09:55:25 | INFO |     fingerprint = 324a66329409f03d14c69ade65d19ca5fbbf9b0b11328d933ba3cd318ded8952
+09:55:25 | INFO | [OK] Ollama 0.35.1; modellalias: rag-qwen-balanced
+09:55:25 | INFO | [OK] Infrastruktur runtime kesz; model-cache és perzisztens index rendelkezésre áll.

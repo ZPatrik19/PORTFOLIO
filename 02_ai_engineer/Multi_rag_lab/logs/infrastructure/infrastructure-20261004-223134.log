@@ -1,0 +1,887 @@
+22:31:34 | INFO | Infrastructure CLI indul. command=menu profile=balanced
+22:31:34 | INFO | Log file: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-223134.log
+22:31:45 | INFO | ============================================================================
+22:31:45 | INFO | MULTI-RAG INFRASTRUCTURE SETUP
+22:31:45 | INFO | ============================================================================
+22:31:45 | INFO | Log: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-223134.log
+22:31:45 | INFO | [1/5] CUDA / PyTorch
+22:31:52 | INFO | cuda-python: nincs
+22:31:52 | INFO | PyTorch: 2.14.1+cu126
+22:31:52 | INFO | PyTorch CUDA runtime: 12.6
+22:31:52 | INFO | torch.cuda.is_available(): True
+22:31:52 | INFO | GPU: NVIDIA GeForce GTX 1650 with Max-Q Design
+22:31:52 | INFO | nvidia-smi: NVIDIA GeForce GTX 1650 with Max-Q Design, 566.36, 4096 MiB
+22:31:52 | INFO | [OK] PyTorch CUDA aktiv; kulon CUDA setup nem szukseges.
+22:31:52 | INFO | [2/5] FAISS vector backend
+22:31:52 | INFO | [OK] FAISS 1.15.1 CPU backend OK; GPU API=nem (Windows CPU buildnel normalis)
+22:31:52 | INFO | [3/5] Hugging Face embedding + reranker model cache
+22:31:52 | INFO | ============================================================================
+22:31:52 | INFO | HUGGING FACE RUNTIME MODEL CACHE
+22:31:52 | INFO | ============================================================================
+22:31:52 | INFO | Parancs: "E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.venv\Scripts\python.exe" "E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\scripts\prepare_runtime_assets.py" --retries 5 --verify
+22:31:54 | INFO | [INFO] HF_TOKEN nincs beállítva. A modellek publikusak, ezért a letöltés működik, de kisebb Hub rate limit mellett.
+22:31:54 | INFO |        Opcionális: add meg a HF_TOKEN értékét a .env fájlban.
+22:31:54 | INFO | [HF] sentence-transformers/all-MiniLM-L6-v2 · próbálkozás 1/5
+22:31:54 | INFO | Fetching 30 files:   0%|          | 0/30 [00:00<?, ?it/s]
+22:31:54 | INFO | Fetching 30 files: 100%|██████████| 30/30 [00:00<00:00, 358.36it/s]
+22:31:55 | INFO | [OK] sentence-transformers/all-MiniLM-L6-v2 → E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.cache\huggingface\hub\models--sentence-transformers--all-MiniLM-L6-v2\snapshots\1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+22:31:55 | INFO | [HF] sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 · próbálkozás 1/5
+22:31:55 | INFO | Fetching 28 files:   0%|          | 0/28 [00:00<?, ?it/s]
+22:31:55 | INFO | Fetching 28 files: 100%|██████████| 28/28 [00:00<00:00, 406.72it/s]
+22:31:55 | INFO | [OK] sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 → E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.cache\huggingface\hub\models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2\snapshots\e8f8c211226b894fcb81acc59f3b34ba3efd5f42
+22:31:55 | INFO | [HF] intfloat/multilingual-e5-small · próbálkozás 1/5
+22:31:55 | INFO | Fetching 43 files:   0%|          | 0/43 [00:00<?, ?it/s]
+22:31:55 | INFO | Fetching 43 files: 100%|██████████| 43/43 [00:00<00:00, 541.86it/s]
+22:31:55 | INFO | [OK] intfloat/multilingual-e5-small → E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.cache\huggingface\hub\models--intfloat--multilingual-e5-small\snapshots\614241f622f53c4eeff9890bdc4f31cfecc418b3
+22:31:55 | INFO | [HF] cross-encoder/ms-marco-MiniLM-L-6-v2 · próbálkozás 1/5
+22:31:56 | INFO | Fetching 23 files:   0%|          | 0/23 [00:00<?, ?it/s]
+22:31:56 | INFO | Fetching 23 files: 100%|██████████| 23/23 [00:00<00:00, 578.94it/s]
+22:32:26 | INFO | [OK] cross-encoder/ms-marco-MiniLM-L-6-v2 → E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.cache\huggingface\hub\models--cross-encoder--ms-marco-MiniLM-L-6-v2\snapshots\233902d25c440f23af6f7d6e94d2946bac0bee0a
+22:32:26 | INFO | [OK] Modell cache state: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\artifacts\models\runtime_models.json
+22:32:26 | INFO | [VERIFY] embedding_default: sentence-transformers/all-MiniLM-L6-v2
+22:32:26 | INFO | Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+22:32:26 | INFO | Loading weights:  93%|█████████▎| 96/103 [00:00<00:00, 959.45it/s]
+22:32:26 | INFO | Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1010.84it/s]
+22:32:26 | INFO | E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\scripts\prepare_runtime_assets.py:86: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+22:32:26 | INFO |   _ = model.get_sentence_embedding_dimension()
+22:32:27 | INFO |          betöltés cache-ből: OK
+22:32:27 | INFO | [VERIFY] embedding_multilingual: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+22:32:27 | INFO | Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+22:32:27 | INFO | Loading weights:  24%|██▎       | 47/199 [00:00<00:00, 469.77it/s]
+22:32:27 | INFO | Loading weights:  94%|█████████▍| 188/199 [00:00<00:00, 1022.28it/s]
+22:32:27 | INFO | Loading weights: 100%|██████████| 199/199 [00:00<00:00, 988.12it/s]
+22:32:32 | INFO | E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\scripts\prepare_runtime_assets.py:86: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+22:32:32 | INFO |   _ = model.get_sentence_embedding_dimension()
+22:32:33 | INFO |          betöltés cache-ből: OK
+22:32:33 | INFO | [VERIFY] embedding_e5: intfloat/multilingual-e5-small
+22:32:33 | INFO | Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+22:32:33 | INFO | Loading weights: 100%|██████████| 199/199 [00:00<00:00, 3702.27it/s]
+22:32:37 | INFO | E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\scripts\prepare_runtime_assets.py:86: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+22:32:37 | INFO |   _ = model.get_sentence_embedding_dimension()
+22:32:37 | INFO | The Transformer `cache_dir` argument is deprecated. Please pass `cache_dir` via `model_kwargs`, `processor_kwargs`, and/or `config_kwargs` instead.
+22:32:37 | INFO |          betöltés cache-ből: OK
+22:32:37 | INFO | [VERIFY] reranker: cross-encoder/ms-marco-MiniLM-L-6-v2
+22:32:38 | INFO | Loading weights:   0%|          | 0/105 [00:00<?, ?it/s]
+22:32:38 | INFO | Loading weights: 100%|██████████| 105/105 [00:00<00:00, 1370.40it/s]
+22:32:38 | INFO |          betöltés cache-ből: OK
+22:32:39 | INFO | [OK] HF model cache: 4/4 modell kész.
+22:32:39 | INFO | [4/5] Ollama / Qwen (balanced)
+22:32:39 | INFO | [OK] Ollama 0.34.2; modellalias: rag-qwen-balanced
+22:32:39 | INFO | [5/5] Magyar orvosi korpusz + perzisztens FAISS index
+22:32:39 | INFO | ============================================================================
+22:32:39 | INFO | MEDICAL CORPUS + FAISS INDEX
+22:32:39 | INFO | ============================================================================
+22:32:39 | INFO | Parancs: "E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.venv\Scripts\python.exe" "E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\scripts\prepare_medical_corpus.py"
+22:33:28 | INFO | ==============================================================================
+22:33:28 | INFO | Magyar orvosi RAG korpusz előkészítése
+22:33:28 | INFO | ==============================================================================
+22:33:28 | INFO | Forrás       : Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)
+22:33:28 | INFO | Cél          : 100 magyar egészségügyi cikk
+22:33:28 | INFO | Nyers adatok : E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\data\raw\hungarian_medical
+22:33:28 | INFO | Index        : E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\artifacts\indexes\hungarian_medical
+22:33:28 | INFO | [LETÖLTÉS 001/100] 1-es típusú cukorbetegség
+22:33:28 | INFO | [LETÖLTÉS 002/100] Asztma
+22:33:28 | INFO | [LETÖLTÉS 003/100] 17-OH-progeszteronszint mérése
+22:33:28 | INFO | [LETÖLTÉS 004/100] A-vitamin
+22:33:28 | INFO | [LETÖLTÉS 005/100] B-vitaminok
+22:33:28 | INFO | [LETÖLTÉS 006/100] C-vitamin
+22:33:28 | INFO | [LETÖLTÉS 007/100] 2-es típusú cukorbetegség
+22:33:28 | INFO | [LETÖLTÉS 008/100] AB0-vércsoport-összeférhetetlenség újszülötteknél
+22:33:28 | INFO | [LETÖLTÉS 009/100] B1-vitamin
+22:33:28 | INFO | [LETÖLTÉS 010/100] Cachexia
+22:33:28 | INFO | [LETÖLTÉS 011/100] Patau-szindróma (13-as triszómia)
+22:33:28 | INFO | [LETÖLTÉS 012/100] Ablációs technikák
+22:33:28 | INFO | [LETÖLTÉS 013/100] B12-vitamin
+22:33:28 | INFO | [LETÖLTÉS 014/100] Campylobacter-fertőzés
+22:33:28 | INFO | [LETÖLTÉS 015/100] Acanthamoebiasis
+22:33:28 | INFO | [LETÖLTÉS 016/100] B2-vitamin
+22:33:28 | INFO | [LETÖLTÉS 017/100] Candidiasis
+22:33:28 | INFO | [LETÖLTÉS 018/100] ACE-sztóma
+22:33:28 | INFO | [LETÖLTÉS 019/100] B3-vitamin
+22:33:28 | INFO | [LETÖLTÉS 020/100] Cauda equina szindróma (Lófarok-betegség)
+22:33:28 | INFO | [LETÖLTÉS 021/100] Acetilszalicilsav
+22:33:28 | INFO | [LETÖLTÉS 022/100] B5-vitamin
+22:33:28 | INFO | [LETÖLTÉS 023/100] CBD
+22:33:28 | INFO | [LETÖLTÉS 024/100] Achilles-ín sérülései
+22:33:28 | INFO | [LETÖLTÉS 025/100] B6-vitamin
+22:33:28 | INFO | [LETÖLTÉS 026/100] Cellulitis
+22:33:28 | INFO | [LETÖLTÉS 027/100] Actinomycosis
+22:33:28 | INFO | [LETÖLTÉS 028/100] B7-vitamin
+22:33:28 | INFO | [LETÖLTÉS 029/100] Cerebralis paresis
+22:33:28 | INFO | [LETÖLTÉS 030/100] Addison-kór
+22:33:28 | INFO | [LETÖLTÉS 031/100] B9-vitamin (Folsav)
+22:33:28 | INFO | [LETÖLTÉS 032/100] Chagas-kór
+22:33:28 | INFO | [LETÖLTÉS 033/100] Adenomiózis
+22:33:28 | INFO | [LETÖLTÉS 034/100] Babamentő inkubátorok
+22:33:28 | INFO | [LETÖLTÉS 035/100] Charcot–Marie–Tooth-szindróma
+22:33:28 | INFO | [LETÖLTÉS 036/100] Adenovírus-fertőzés
+22:33:28 | INFO | [LETÖLTÉS 037/100] Babesiosis
+22:33:28 | INFO | [LETÖLTÉS 038/100] Charles Bonnet-szindróma
+22:33:28 | INFO | [LETÖLTÉS 039/100] ADHD (Figyelemhiányos hiperaktivitás-zavar)
+22:33:28 | INFO | [LETÖLTÉS 040/100] Baker-ciszta
+22:33:28 | INFO | [LETÖLTÉS 041/100] Chemsex
+22:33:28 | INFO | [LETÖLTÉS 042/100] Adrenalin autoinjektor használata
+22:33:28 | INFO | [LETÖLTÉS 043/100] Bakteriális fertőzések
+22:33:28 | INFO | [LETÖLTÉS 044/100] Chlamydia psittaci fertőzés
+22:33:28 | INFO | [LETÖLTÉS 045/100] Agnózia
+22:33:28 | INFO | [LETÖLTÉS 046/100] Bakteriális tüdőgyulladás
+22:33:29 | INFO | [LETÖLTÉS 047/100] Chlamydia trachomatis fertőzés
+22:33:29 | INFO | [LETÖLTÉS 048/100] Agorafóbia
+22:33:29 | INFO | [LETÖLTÉS 049/100] Bakteriális vaginózis
+22:33:29 | INFO | [LETÖLTÉS 050/100] Chlamydia-fertőzések
+22:33:29 | INFO | [LETÖLTÉS 051/100] Agranulocytosis
+22:33:29 | INFO | [LETÖLTÉS 052/100] Balantidiasis
+22:33:29 | INFO | [LETÖLTÉS 053/100] Cholelithiasis (Epekövesség)
+22:33:29 | INFO | [LETÖLTÉS 054/100] Agyalapi mirigy daganata
+22:33:29 | INFO | [LETÖLTÉS 055/100] Barotrauma
+22:33:29 | INFO | [LETÖLTÉS 056/100] Chorionboholy-mintavétel
+22:33:29 | INFO | [LETÖLTÉS 057/100] Agydaganatok
+22:33:29 | INFO | [LETÖLTÉS 058/100] Bartholin-ciszta
+22:33:29 | INFO | [LETÖLTÉS 059/100] Chromomycosis
+22:33:29 | INFO | [LETÖLTÉS 060/100] Agydaganatok gyermekkorban
+22:33:29 | INFO | [LETÖLTÉS 061/100] Bartonella-fertőzés (Macskakarmolási betegség)
+22:33:29 | INFO | [LETÖLTÉS 062/100] Ciklotímia
+22:33:29 | INFO | [LETÖLTÉS 063/100] Agyhártyagyulladás (Meningitis)
+22:33:29 | INFO | [LETÖLTÉS 064/100] Barázdazárás
+22:33:29 | INFO | [LETÖLTÉS 065/100] Cikluskövetés
+22:33:29 | INFO | [LETÖLTÉS 066/100] Agyhártyák betegségei
+22:33:29 | INFO | [LETÖLTÉS 067/100] Bazálsejtes karcinóma
+22:33:29 | INFO | [LETÖLTÉS 068/100] Cink
+22:33:29 | INFO | [LETÖLTÉS 069/100] Agyi aneurizma
+22:33:29 | INFO | [LETÖLTÉS 070/100] Bechterew-kór
+22:33:29 | INFO | [LETÖLTÉS 071/100] Cinkanyagcsere rendellenességei
+22:33:29 | INFO | [LETÖLTÉS 072/100] Agyi ciszták
+22:33:29 | INFO | [LETÖLTÉS 073/100] Befagyott váll szindróma
+22:33:29 | INFO | [LETÖLTÉS 074/100] Cirkadián ritmus
+22:33:29 | INFO | [LETÖLTÉS 075/100] Agyi infarktus
+22:33:29 | INFO | [LETÖLTÉS 076/100] Belek veleszületett eltérései
+22:33:29 | INFO | [LETÖLTÉS 077/100] Ciszták
+22:33:29 | INFO | [LETÖLTÉS 078/100] Agyidegek rendellenességei
+22:33:29 | INFO | [LETÖLTÉS 079/100] Bell-féle bénulás
+22:33:29 | INFO | [LETÖLTÉS 080/100] Cisztás fibrózis
+22:33:29 | INFO | [LETÖLTÉS 081/100] Agyrázkódás
+22:33:29 | INFO | [LETÖLTÉS 082/100] Belső elválasztású mirigyek (Endokrin mirigyek)
+22:33:29 | INFO | [LETÖLTÉS 083/100] Civilizációs betegségek
+22:33:29 | INFO | [LETÖLTÉS 084/100] Agyrázkódás sportolásból kifolyólag
+22:33:29 | INFO | [LETÖLTÉS 085/100] Belsőfül-gyulladás (Otitis interna)
+22:33:29 | INFO | [LETÖLTÉS 086/100] Clostridium difficile fertőzés
+22:33:29 | INFO | [LETÖLTÉS 087/100] Agyvelőgyulladás (Encephalitis)
+22:33:29 | INFO | [LETÖLTÉS 088/100] Benzodiazepinfüggőség
+22:33:29 | INFO | [LETÖLTÉS 089/100] Cluster fejfájás
+22:33:29 | INFO | [LETÖLTÉS 090/100] Agyvérzés
+22:33:29 | INFO | [LETÖLTÉS 091/100] Benzodiazepinfüggőség terápiája
+22:33:29 | INFO | [LETÖLTÉS 092/100] Coarctatio aortae
+22:33:29 | INFO | [LETÖLTÉS 093/100] Agyödéma
+22:33:29 | INFO | [LETÖLTÉS 094/100] Benőtt köröm
+22:33:29 | INFO | [LETÖLTÉS 095/100] Coccidioidomycosis
+22:33:29 | INFO | [LETÖLTÉS 096/100] AIDS: tények és tévhitek
+22:33:29 | INFO | [LETÖLTÉS 097/100] Beszédfejlődés
+22:33:29 | INFO | [LETÖLTÉS 098/100] Colitis ulcerosa (Fekélyes vastagbélgyulladás)
+22:33:29 | INFO | [LETÖLTÉS 099/100] Ajakgyulladás (Cheilitis)
+22:33:29 | INFO | [LETÖLTÉS 100/100] Beszédzavarok
+22:33:29 | INFO | Dokumentumok: 100 elérhető · 31 új · 69 újrahasznált
+22:33:29 | INFO | [EVAL] Forrásolt magyar orvosi evaluation dataset építése...
+22:33:29 | INFO |        80 kérdés · 80 forráscikk
+22:33:29 | INFO |        Dataset: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\artifacts\evaluations\medical_dataset.json
+22:33:29 | INFO | [INGEST] Parsing → cleaning → chunking...
+22:33:29 | INFO |          131 fájl → 1938 indexelendő chunk
+22:33:29 | INFO | [EMBED] Magyar multilingual embeddingek előállítása...
+22:33:29 | INFO | Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]
+22:33:29 | INFO | Loading weights:  10%|▉         | 19/199 [00:00<00:01, 170.86it/s]
+22:33:29 | INFO | Loading weights:  19%|█▊        | 37/199 [00:00<00:00, 172.90it/s]
+22:33:29 | INFO | Loading weights:  91%|█████████▏| 182/199 [00:00<00:00, 735.94it/s]
+22:33:29 | INFO | Loading weights: 100%|██████████| 199/199 [00:00<00:00, 628.14it/s]
+22:33:47 | INFO |         Modell: intfloat/multilingual-e5-small
+22:33:47 | INFO |         Device: cuda
+22:33:47 | INFO | [INDEX] FAISS / vector backend építése és mentése...
+22:33:47 | INFO | ==============================================================================
+22:33:47 | INFO | ORVOSI KORPUSZ KÉSZ
+22:33:47 | INFO | ==============================================================================
+22:33:47 | INFO | {
+22:33:47 | INFO |   "fingerprint": "324a66329409f03d14c69ade65d19ca5fbbf9b0b11328d933ba3cd318ded8952",
+22:33:47 | INFO |   "documents": 131,
+22:33:47 | INFO |   "chunks": 1938,
+22:33:47 | INFO |   "embedding_model": "intfloat/multilingual-e5-small",
+22:33:47 | INFO |   "embedding_device": "cuda",
+22:33:47 | INFO |   "vector_backend": "faiss",
+22:33:47 | INFO |   "vector_device": "cpu",
+22:33:47 | INFO |   "source_files": [
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "1-9__1-es-tipusu-cukorbetegseg.html",
+22:33:47 | INFO |       "size": 540061,
+22:33:47 | INFO |       "mtime_ns": 1791144034401199300
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "1-9__17-oh-progeszteronszint-merese.html",
+22:33:47 | INFO |       "size": 536004,
+22:33:47 | INFO |       "mtime_ns": 1791144035056212000
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "1-9__2-es-tipusu-cukorbetegseg.html",
+22:33:47 | INFO |       "size": 538249,
+22:33:47 | INFO |       "mtime_ns": 1791144036086151100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "1-9__patau-szindroma-13-as-triszomia.html",
+22:33:47 | INFO |       "size": 536753,
+22:33:47 | INFO |       "mtime_ns": 1791144037035927400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__a-vitamin.html",
+22:33:47 | INFO |       "size": 538115,
+22:33:47 | INFO |       "mtime_ns": 1791144035393312100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__ab0-vercsoport-osszeferhetetlenseg-ujszulotteknel.html",
+22:33:47 | INFO |       "size": 536707,
+22:33:47 | INFO |       "mtime_ns": 1791144036407997400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__ablacios-technikak.html",
+22:33:47 | INFO |       "size": 539588,
+22:33:47 | INFO |       "mtime_ns": 1791144037340986800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__acanthamoebiasis.html",
+22:33:47 | INFO |       "size": 536987,
+22:33:47 | INFO |       "mtime_ns": 1791144037975896200
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__ace-sztoma.html",
+22:33:47 | INFO |       "size": 536958,
+22:33:47 | INFO |       "mtime_ns": 1791144038791046800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__acetilszalicilsav.html",
+22:33:47 | INFO |       "size": 538905,
+22:33:47 | INFO |       "mtime_ns": 1791144039441212800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__actinomycosis.html",
+22:33:47 | INFO |       "size": 534957,
+22:33:47 | INFO |       "mtime_ns": 1791144040719160400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__addison-kor.html",
+22:33:47 | INFO |       "size": 536754,
+22:33:47 | INFO |       "mtime_ns": 1791144041372164200
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__adenomiozis.html",
+22:33:47 | INFO |       "size": 536889,
+22:33:47 | INFO |       "mtime_ns": 1791144043095403600
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__adenovirus-fertozes.html",
+22:33:47 | INFO |       "size": 534879,
+22:33:47 | INFO |       "mtime_ns": 1791144043687958900
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__adhd-figyelemhianyos-hiperaktivitas-zavar.html",
+22:33:47 | INFO |       "size": 542707,
+22:33:47 | INFO |       "mtime_ns": 1791144044356312400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__adrenalin-autoinjektor-hasznalata.html",
+22:33:47 | INFO |       "size": 537388,
+22:33:47 | INFO |       "mtime_ns": 1791144044976126700
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agnozia.html",
+22:33:47 | INFO |       "size": 536769,
+22:33:47 | INFO |       "mtime_ns": 1791144045602010500
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agorafobia.html",
+22:33:47 | INFO |       "size": 537500,
+22:33:47 | INFO |       "mtime_ns": 1791144046291231300
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agranulocytosis.html",
+22:33:47 | INFO |       "size": 538158,
+22:33:47 | INFO |       "mtime_ns": 1791144046998950000
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyalapi-mirigy-daganata.html",
+22:33:47 | INFO |       "size": 541893,
+22:33:47 | INFO |       "mtime_ns": 1791144047600162900
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyhartyagyulladas-meningitis.html",
+22:33:47 | INFO |       "size": 544702,
+22:33:47 | INFO |       "mtime_ns": 1791144049469357800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyhartyak-betegsegei.html",
+22:33:47 | INFO |       "size": 535794,
+22:33:47 | INFO |       "mtime_ns": 1791144050060478400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyi-aneurizma.html",
+22:33:47 | INFO |       "size": 534945,
+22:33:47 | INFO |       "mtime_ns": 1791144050634138500
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyi-cisztak.html",
+22:33:47 | INFO |       "size": 534847,
+22:33:47 | INFO |       "mtime_ns": 1791144051306163600
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyi-infarktus.html",
+22:33:47 | INFO |       "size": 545803,
+22:33:47 | INFO |       "mtime_ns": 1791144052041251100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyidegek-rendellenessegei.html",
+22:33:47 | INFO |       "size": 540032,
+22:33:47 | INFO |       "mtime_ns": 1791144052705988500
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyodema.html",
+22:33:47 | INFO |       "size": 541019,
+22:33:47 | INFO |       "mtime_ns": 1791144055913055200
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyrazkodas-sportolasbol-kifolyolag.html",
+22:33:47 | INFO |       "size": 538941,
+22:33:47 | INFO |       "mtime_ns": 1791144054023377000
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyrazkodas.html",
+22:33:47 | INFO |       "size": 536453,
+22:33:47 | INFO |       "mtime_ns": 1791144053375528100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agytumorok.html",
+22:33:47 | INFO |       "size": 545798,
+22:33:47 | INFO |       "mtime_ns": 1791144048235349900
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyvelogyulladas-encephalitis.html",
+22:33:47 | INFO |       "size": 550227,
+22:33:47 | INFO |       "mtime_ns": 1791144054653987500
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__agyverzes.html",
+22:33:47 | INFO |       "size": 543270,
+22:33:47 | INFO |       "mtime_ns": 1791144055326067100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__aids-tenyek-es-tevhitek.html",
+22:33:47 | INFO |       "size": 536923,
+22:33:47 | INFO |       "mtime_ns": 1791144056548040100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__ajakgyulladas-cheilitis.html",
+22:33:47 | INFO |       "size": 540434,
+22:33:47 | INFO |       "mtime_ns": 1791144057175100500
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__ajakhasadek.html",
+22:33:47 | INFO |       "size": 539847,
+22:33:47 | INFO |       "mtime_ns": 1791144057793310400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__ajakherpesz.html",
+22:33:47 | INFO |       "size": 535897,
+22:33:47 | INFO |       "mtime_ns": 1791144058457896800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__akromegalia.html",
+22:33:47 | INFO |       "size": 535735,
+22:33:47 | INFO |       "mtime_ns": 1791144059110289300
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__akupunktura.html",
+22:33:47 | INFO |       "size": 534771,
+22:33:47 | INFO |       "mtime_ns": 1791144059736286600
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__akusztikus-trauma.html",
+22:33:47 | INFO |       "size": 533623,
+22:33:47 | INFO |       "mtime_ns": 1791144060376021100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__akut-has.html",
+22:33:47 | INFO |       "size": 537586,
+22:33:47 | INFO |       "mtime_ns": 1791144060972826400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__akut-legzesi-distressz-szindroma-ards.html",
+22:33:47 | INFO |       "size": 537899,
+22:33:47 | INFO |       "mtime_ns": 1791144062153908500
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__akut-limfoid-leukemia-all.html",
+22:33:47 | INFO |       "size": 539199,
+22:33:47 | INFO |       "mtime_ns": 1791144061567279200
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__akut-mieloid-leukemia-aml.html",
+22:33:47 | INFO |       "size": 541337,
+22:33:47 | INFO |       "mtime_ns": 1791144062754767100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__alacsony-vercukorszint-hipoglikemia.html",
+22:33:47 | INFO |       "size": 541006,
+22:33:47 | INFO |       "mtime_ns": 1791144063374974300
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__alacsony-vernyomas.html",
+22:33:47 | INFO |       "size": 535857,
+22:33:47 | INFO |       "mtime_ns": 1791144063996012600
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__alacsonynoves.html",
+22:33:47 | INFO |       "size": 549869,
+22:33:47 | INFO |       "mtime_ns": 1791144064615210200
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__alagut-szindroma.html",
+22:33:47 | INFO |       "size": 536920,
+22:33:47 | INFO |       "mtime_ns": 1791144065213142800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__albinizmus.html",
+22:33:47 | INFO |       "size": 536515,
+22:33:47 | INFO |       "mtime_ns": 1791144065768219700
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__alfa-1-antitripszin-hiany.html",
+22:33:47 | INFO |       "size": 534663,
+22:33:47 | INFO |       "mtime_ns": 1791144066385651000
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__alkalmazkodasi-zavar.html",
+22:33:47 | INFO |       "size": 539403,
+22:33:47 | INFO |       "mtime_ns": 1791144066972388400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__asztma.html",
+22:33:47 | INFO |       "size": 541615,
+22:33:47 | INFO |       "mtime_ns": 1791144034737802900
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__az-achilles-in-serulesei.html",
+22:33:47 | INFO |       "size": 532963,
+22:33:47 | INFO |       "mtime_ns": 1791144040091008400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "a-a__gyermekkori-agydaganatok.html",
+22:33:47 | INFO |       "size": 538088,
+22:33:47 | INFO |       "mtime_ns": 1791144048884080400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b-vitaminok.html",
+22:33:47 | INFO |       "size": 545824,
+22:33:47 | INFO |       "mtime_ns": 1791144035776012900
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b1-vitamin.html",
+22:33:47 | INFO |       "size": 535893,
+22:33:47 | INFO |       "mtime_ns": 1791144036711308900
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b12-vitamin.html",
+22:33:47 | INFO |       "size": 539366,
+22:33:47 | INFO |       "mtime_ns": 1791144037682992700
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b2-vitamin.html",
+22:33:47 | INFO |       "size": 537591,
+22:33:47 | INFO |       "mtime_ns": 1791144038416134400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b3-vitamin.html",
+22:33:47 | INFO |       "size": 536043,
+22:33:47 | INFO |       "mtime_ns": 1791144039107418500
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b5-vitamin.html",
+22:33:47 | INFO |       "size": 535857,
+22:33:47 | INFO |       "mtime_ns": 1791144039755023100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b6-vitamin.html",
+22:33:47 | INFO |       "size": 537512,
+22:33:47 | INFO |       "mtime_ns": 1791144040419094400
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b7-vitamin.html",
+22:33:47 | INFO |       "size": 535757,
+22:33:47 | INFO |       "mtime_ns": 1791144041010847300
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__b9-vitamin-folsav.html",
+22:33:47 | INFO |       "size": 536706,
+22:33:47 | INFO |       "mtime_ns": 1791144042802920800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__babamento-inkubatorok.html",
+22:33:47 | INFO |       "size": 538534,
+22:33:47 | INFO |       "mtime_ns": 1791144043406782000
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__babesiosis.html",
+22:33:47 | INFO |       "size": 537545,
+22:33:47 | INFO |       "mtime_ns": 1791144043996645000
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__baker-ciszta.html",
+22:33:47 | INFO |       "size": 532406,
+22:33:47 | INFO |       "mtime_ns": 1791144044672016300
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__bakterialis-fertozesek.html",
+22:33:47 | INFO |       "size": 536799,
+22:33:47 | INFO |       "mtime_ns": 1791144045314149100
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__bakterialis-huvelyfertozes-vaginozis.html",
+22:33:47 | INFO |       "size": 536967,
+22:33:47 | INFO |       "mtime_ns": 1791144046641728600
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__bakterialis-tudogyulladas.html",
+22:33:47 | INFO |       "size": 538730,
+22:33:47 | INFO |       "mtime_ns": 1791144045956948000
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__balantidiasis.html",
+22:33:47 | INFO |       "size": 534041,
+22:33:47 | INFO |       "mtime_ns": 1791144047299542900
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__barazdazaras.html",
+22:33:47 | INFO |       "size": 534091,
+22:33:47 | INFO |       "mtime_ns": 1791144049778719600
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__barotrauma.html",
+22:33:47 | INFO |       "size": 535662,
+22:33:47 | INFO |       "mtime_ns": 1791144047925514800
+22:33:47 | INFO |     },
+22:33:47 | INFO |     {
+22:33:47 | INFO |       "name": "b__bartholin-ciszta.html",
+22:33:47 | INFO |       "size": 537362,
+22:33:47 | INFO |       "mtime_ns": 1791144048559964200
+22:33:47 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bartonella-fertozes-macskakarmolasi-betegseg.html",
+22:33:48 | INFO |       "size": 537960,
+22:33:48 | INFO |       "mtime_ns": 1791144049161228200
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bazalsejtes-karcinoma.html",
+22:33:48 | INFO |       "size": 537783,
+22:33:48 | INFO |       "mtime_ns": 1791144050352108600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bechterew-kor.html",
+22:33:48 | INFO |       "size": 539732,
+22:33:48 | INFO |       "mtime_ns": 1791144050942573900
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__befagyott-vall-szindroma.html",
+22:33:48 | INFO |       "size": 538198,
+22:33:48 | INFO |       "mtime_ns": 1791144051712254300
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__belek-veleszuletett-elteresei.html",
+22:33:48 | INFO |       "size": 540123,
+22:33:48 | INFO |       "mtime_ns": 1791144052342216600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bell-benulas.html",
+22:33:48 | INFO |       "size": 536887,
+22:33:48 | INFO |       "mtime_ns": 1791144053048095900
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__belso-elvalasztasu-mirigyek-endokrin-mirigyek.html",
+22:33:48 | INFO |       "size": 542163,
+22:33:48 | INFO |       "mtime_ns": 1791144053726017600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__belsoful-gyulladas-otitis-interna.html",
+22:33:48 | INFO |       "size": 536468,
+22:33:48 | INFO |       "mtime_ns": 1791144054352070900
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__benott-korom.html",
+22:33:48 | INFO |       "size": 533827,
+22:33:48 | INFO |       "mtime_ns": 1791144056220226400
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__benzodiazepinfuggoseg-terapiaja.html",
+22:33:48 | INFO |       "size": 539103,
+22:33:48 | INFO |       "mtime_ns": 1791144055631956100
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__benzodiazepinfuggoseg.html",
+22:33:48 | INFO |       "size": 540233,
+22:33:48 | INFO |       "mtime_ns": 1791144054981618600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__beszedfejlodes.html",
+22:33:48 | INFO |       "size": 537228,
+22:33:48 | INFO |       "mtime_ns": 1791144056860208300
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__beszedzavarok.html",
+22:33:48 | INFO |       "size": 534279,
+22:33:48 | INFO |       "mtime_ns": 1791144057458125600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__beteg-epulet-szindroma.html",
+22:33:48 | INFO |       "size": 538959,
+22:33:48 | INFO |       "mtime_ns": 1791144058147980600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bevont-nyelv.html",
+22:33:48 | INFO |       "size": 540925,
+22:33:48 | INFO |       "mtime_ns": 1791144058812176200
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bilirubin-anyagcsere-rendellenessegek.html",
+22:33:48 | INFO |       "size": 539913,
+22:33:48 | INFO |       "mtime_ns": 1791144059439451600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__biopszia-szovettani-mintavetel.html",
+22:33:48 | INFO |       "size": 534564,
+22:33:48 | INFO |       "mtime_ns": 1791144060081407000
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bipolaris-zavar-manias-depresszio.html",
+22:33:48 | INFO |       "size": 542340,
+22:33:48 | INFO |       "mtime_ns": 1791144060666524500
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__biszfenolok.html",
+22:33:48 | INFO |       "size": 536185,
+22:33:48 | INFO |       "mtime_ns": 1791144061237029800
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__biztonsagos-szex-lmbtq.html",
+22:33:48 | INFO |       "size": 543206,
+22:33:48 | INFO |       "mtime_ns": 1791144062452943800
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__biztonsagos-szex.html",
+22:33:48 | INFO |       "size": 537887,
+22:33:48 | INFO |       "mtime_ns": 1791144061839535000
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__blastomycosis.html",
+22:33:48 | INFO |       "size": 532898,
+22:33:48 | INFO |       "mtime_ns": 1791144063060129300
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bmi-kalkulator.html",
+22:33:48 | INFO |       "size": 532046,
+22:33:48 | INFO |       "mtime_ns": 1791144063668902400
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bokaficam.html",
+22:33:48 | INFO |       "size": 537811,
+22:33:48 | INFO |       "mtime_ns": 1791144064278205500
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bokatores-es-muteti-kezelese.html",
+22:33:48 | INFO |       "size": 532643,
+22:33:48 | INFO |       "mtime_ns": 1791144064897934700
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__bordatores.html",
+22:33:48 | INFO |       "size": 536295,
+22:33:48 | INFO |       "mtime_ns": 1791144065502233300
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__borderline-szemelyisegzavar.html",
+22:33:48 | INFO |       "size": 540136,
+22:33:48 | INFO |       "mtime_ns": 1791144066055286400
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "b__botulizmus.html",
+22:33:48 | INFO |       "size": 537490,
+22:33:48 | INFO |       "mtime_ns": 1791144066661264300
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__c-vitamin.html",
+22:33:48 | INFO |       "size": 540018,
+22:33:48 | INFO |       "mtime_ns": 1791145964139731400
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cachexia.html",
+22:33:48 | INFO |       "size": 532213,
+22:33:48 | INFO |       "mtime_ns": 1791145964431537800
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__campylobacter-fertozes.html",
+22:33:48 | INFO |       "size": 535396,
+22:33:48 | INFO |       "mtime_ns": 1791145964676676700
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__candidiasis.html",
+22:33:48 | INFO |       "size": 537793,
+22:33:48 | INFO |       "mtime_ns": 1791145964919804700
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cauda-equina-szindroma-lofarok-betegseg.html",
+22:33:48 | INFO |       "size": 534989,
+22:33:48 | INFO |       "mtime_ns": 1791145965192598100
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cbd.html",
+22:33:48 | INFO |       "size": 538583,
+22:33:48 | INFO |       "mtime_ns": 1791145965437986500
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cellulitis.html",
+22:33:48 | INFO |       "size": 537506,
+22:33:48 | INFO |       "mtime_ns": 1791145965742743400
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cerebralis-paresis.html",
+22:33:48 | INFO |       "size": 543507,
+22:33:48 | INFO |       "mtime_ns": 1791145966016345100
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__chagas-kor.html",
+22:33:48 | INFO |       "size": 536506,
+22:33:48 | INFO |       "mtime_ns": 1791145966301255800
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__charcot-marie-tooth-szindroma.html",
+22:33:48 | INFO |       "size": 534308,
+22:33:48 | INFO |       "mtime_ns": 1791145966563502600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__charles-bonnet-szindroma.html",
+22:33:48 | INFO |       "size": 534931,
+22:33:48 | INFO |       "mtime_ns": 1791145966847601900
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__chemsex.html",
+22:33:48 | INFO |       "size": 543534,
+22:33:48 | INFO |       "mtime_ns": 1791145967102762600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__chlamydia-fertozesek.html",
+22:33:48 | INFO |       "size": 536098,
+22:33:48 | INFO |       "mtime_ns": 1791145967958821800
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__chlamydia-psittaci-fertozes.html",
+22:33:48 | INFO |       "size": 534302,
+22:33:48 | INFO |       "mtime_ns": 1791145967366820700
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__chlamydia.html",
+22:33:48 | INFO |       "size": 539817,
+22:33:48 | INFO |       "mtime_ns": 1791145967665407200
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cholelithiasis-epekovesseg.html",
+22:33:48 | INFO |       "size": 537745,
+22:33:48 | INFO |       "mtime_ns": 1791145968254831800
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__chorionboholy-mintavetel.html",
+22:33:48 | INFO |       "size": 539124,
+22:33:48 | INFO |       "mtime_ns": 1791145968532999600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__chromomycosis.html",
+22:33:48 | INFO |       "size": 536320,
+22:33:48 | INFO |       "mtime_ns": 1791145968778880500
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__ciklotimia.html",
+22:33:48 | INFO |       "size": 536745,
+22:33:48 | INFO |       "mtime_ns": 1791145969054295600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cikluskovetes.html",
+22:33:48 | INFO |       "size": 535650,
+22:33:48 | INFO |       "mtime_ns": 1791145969320061300
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cink.html",
+22:33:48 | INFO |       "size": 536389,
+22:33:48 | INFO |       "mtime_ns": 1791145969570333600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cinkanyagcsere-rendellenessegei.html",
+22:33:48 | INFO |       "size": 541335,
+22:33:48 | INFO |       "mtime_ns": 1791145969866390100
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cirkadian-ritmus.html",
+22:33:48 | INFO |       "size": 537616,
+22:33:48 | INFO |       "mtime_ns": 1791145970169018600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cisztak.html",
+22:33:48 | INFO |       "size": 540151,
+22:33:48 | INFO |       "mtime_ns": 1791145970460302200
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cisztas-fibrozis.html",
+22:33:48 | INFO |       "size": 539713,
+22:33:48 | INFO |       "mtime_ns": 1791145970750041900
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__civilizacios-betegsegek.html",
+22:33:48 | INFO |       "size": 545144,
+22:33:48 | INFO |       "mtime_ns": 1791145971052404100
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__clostridium-difficile-fertozes.html",
+22:33:48 | INFO |       "size": 537828,
+22:33:48 | INFO |       "mtime_ns": 1791145971345068500
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__cluster-fejfajas.html",
+22:33:48 | INFO |       "size": 539217,
+22:33:48 | INFO |       "mtime_ns": 1791145971632241100
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__coarctatio-aortae.html",
+22:33:48 | INFO |       "size": 536568,
+22:33:48 | INFO |       "mtime_ns": 1791145971891511600
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__coccidioidomycosis.html",
+22:33:48 | INFO |       "size": 534014,
+22:33:48 | INFO |       "mtime_ns": 1791145972140677000
+22:33:48 | INFO |     },
+22:33:48 | INFO |     {
+22:33:48 | INFO |       "name": "c-cs__colitis-ulcerosa-fekelyes-vastagbelgyulladas.html",
+22:33:48 | INFO |       "size": 538950,
+22:33:48 | INFO |       "mtime_ns": 1791145972427789400
+22:33:48 | INFO |     }
+22:33:48 | INFO |   ],
+22:33:48 | INFO |   "config": {
+22:33:48 | INFO |     "target": 100,
+22:33:48 | INFO |     "strategy": "recursive",
+22:33:48 | INFO |     "chunk_size": 500,
+22:33:48 | INFO |     "overlap": 100,
+22:33:48 | INFO |     "semantic_threshold": 0.72,
+22:33:48 | INFO |     "embedding_model": "intfloat/multilingual-e5-small",
+22:33:48 | INFO |     "embedding_device": "auto",
+22:33:48 | INFO |     "vector_device": "cpu"
+22:33:48 | INFO |   },
+22:33:48 | INFO |   "chunks_path": "E:\\Projects\\AI engineer\\MULTI_RAG\\még1\\multi-rag-engineering-lab-v43\\data\\processed\\hungarian_medical\\chunks.json",
+22:33:48 | INFO |   "vectorstore_path": "E:\\Projects\\AI engineer\\MULTI_RAG\\még1\\multi-rag-engineering-lab-v43\\artifacts\\indexes\\hungarian_medical"
+22:33:48 | INFO | }
+22:33:48 | INFO | Figyelem: a korpusz oktatási/RAG-demó célú; nem helyettesít orvosi vizsgálatot.
+22:33:51 | INFO | [OK] Medical corpus és perzisztens index kész.
+22:33:51 | INFO | [OK] Medical vector index state: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\artifacts\indexes\hungarian_medical\index_state.json
+22:33:51 | INFO |     documents = 131
+22:33:51 | INFO |     chunks = 1938
+22:33:51 | INFO |     embedding_model = intfloat/multilingual-e5-small
+22:33:51 | INFO |     vector_device = cpu
+22:33:51 | INFO |     fingerprint = 324a66329409f03d14c69ade65d19ca5fbbf9b0b11328d933ba3cd318ded8952
+22:33:51 | INFO | [OK] Infrastruktur setup befejezve; a runtime modellek és az alapértelmezett index elő vannak készítve.
+22:34:08 | INFO | Kilepes.

@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agnozia.html",
+  "sha256": "1890507eecebfb9a7fa91864dc2febf6255132fa03d6bc3a0c3ed67e80aca8ed",
+  "size_bytes": 536769,
+  "content_type": "text/html",
+  "source_id": "medical-62c0bbb8c3caad",
+  "title": "Agnózia",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

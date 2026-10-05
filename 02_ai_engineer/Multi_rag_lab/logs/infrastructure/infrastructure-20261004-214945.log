@@ -1,0 +1,98 @@
+21:49:45 | INFO | Infrastructure CLI indul. command=cuda profile=balanced
+21:49:45 | INFO | Log file: E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\logs\infrastructure\infrastructure-20261004-214945.log
+21:49:47 | INFO | cuda-python: nincs
+21:49:47 | INFO | PyTorch: 2.14.1
+21:49:47 | INFO | PyTorch CUDA runtime: CPU build / nincs
+21:49:47 | INFO | torch.cuda.is_available(): False
+21:49:47 | INFO | GPU: PyTorchbol nem lathato
+21:49:47 | INFO | nvidia-smi: NVIDIA GeForce GTX 1650 with Max-Q Design, 566.36, 4096 MiB
+21:49:47 | WARNING | NVIDIA GPU/driver lathato, de a jelenlegi PyTorch build nem eri el a CUDA-t.
+21:49:47 | INFO | CUDA-s PyTorch telepitese/javitasa: torch==2.14.1+cu126 @ https://download.pytorch.org/whl/cu126
+21:49:47 | INFO | Parancs: "E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.venv\Scripts\python.exe" -m pip install --force-reinstall --no-cache-dir torch==2.14.1+cu126 --index-url https://download.pytorch.org/whl/cu126
+21:49:48 | INFO | Looking in indexes: https://download.pytorch.org/whl/cu126
+21:49:49 | INFO | Collecting torch==2.14.1+cu126
+21:49:49 | INFO |   Downloading torch-2.14.1%2Bcu126-cp314-cp314-win_amd64.whl.metadata (37 kB)
+21:49:49 | INFO | Collecting filelock (from torch==2.14.1+cu126)
+21:49:49 | INFO |   Downloading filelock-3.32.3-py3-none-any.whl.metadata (2.0 kB)
+21:49:49 | INFO | Collecting typing-extensions>=4.10.0 (from torch==2.14.1+cu126)
+21:49:49 | INFO |   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+21:49:49 | INFO | Collecting setuptools>=77.0.3 (from torch==2.14.1+cu126)
+21:49:49 | INFO |   Downloading setuptools-78.1.0-py3-none-any.whl.metadata (6.6 kB)
+21:49:49 | INFO | Collecting sympy>=1.13.3 (from torch==2.14.1+cu126)
+21:49:49 | INFO |   Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+21:49:49 | INFO | Collecting networkx>=2.5.1 (from torch==2.14.1+cu126)
+21:49:50 | INFO |   Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+21:49:50 | INFO | Collecting jinja2 (from torch==2.14.1+cu126)
+21:49:50 | INFO |   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+21:49:50 | INFO | Collecting fsspec>=0.8.5 (from torch==2.14.1+cu126)
+21:49:50 | INFO |   Downloading fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+21:49:50 | INFO | Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch==2.14.1+cu126)
+21:49:50 | INFO |   Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+21:49:50 | INFO | Collecting MarkupSafe>=2.0 (from jinja2->torch==2.14.1+cu126)
+21:49:50 | INFO |   Downloading markupsafe-3.0.3-cp314-cp314-win_amd64.whl.metadata (2.8 kB)
+21:49:50 | INFO | Downloading torch-2.14.1%2Bcu126-cp314-cp314-win_amd64.whl (2623.2 MB)
+21:50:14 | INFO |    ---------------------------------------- 2.6/2.6 GB 108.0 MB/s  0:00:24
+21:50:14 | INFO | Downloading fsspec-2026.7.0-py3-none-any.whl (206 kB)
+21:50:15 | INFO | Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+21:50:15 | INFO |    ---------------------------------------- 2.1/2.1 MB 22.1 MB/s  0:00:00
+21:50:15 | INFO | Downloading setuptools-78.1.0-py3-none-any.whl (1.3 MB)
+21:50:15 | INFO |    ---------------------------------------- 1.3/1.3 MB 28.6 MB/s  0:00:00
+21:50:15 | INFO | Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+21:50:15 | INFO |    ---------------------------------------- 6.3/6.3 MB 71.4 MB/s  0:00:00
+21:50:15 | INFO | Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+21:50:15 | INFO |    ---------------------------------------- 536.2/536.2 kB 34.7 MB/s  0:00:00
+21:50:15 | INFO | Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+21:50:15 | INFO | Downloading filelock-3.32.3-py3-none-any.whl (98 kB)
+21:50:15 | INFO | Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+21:50:15 | INFO | Downloading markupsafe-3.0.3-cp314-cp314-win_amd64.whl (15 kB)
+21:50:23 | INFO | Installing collected packages: mpmath, typing-extensions, sympy, setuptools, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+21:50:23 | INFO |   Attempting uninstall: mpmath
+21:50:23 | INFO |     Found existing installation: mpmath 1.3.0
+21:50:23 | INFO |     Uninstalling mpmath-1.3.0:
+21:50:23 | INFO |       Successfully uninstalled mpmath-1.3.0
+21:50:25 | INFO |   Attempting uninstall: typing-extensions
+21:50:25 | INFO |     Found existing installation: typing_extensions 4.16.0
+21:50:25 | INFO |     Uninstalling typing_extensions-4.16.0:
+21:50:26 | INFO |       Successfully uninstalled typing_extensions-4.16.0
+21:50:26 | INFO |   Attempting uninstall: sympy
+21:50:26 | INFO |     Found existing installation: sympy 1.14.0
+21:50:26 | INFO |     Uninstalling sympy-1.14.0:
+21:50:27 | INFO |       Successfully uninstalled sympy-1.14.0
+21:50:53 | INFO |   Attempting uninstall: setuptools
+21:50:53 | INFO |     Found existing installation: setuptools 84.0.0
+21:50:53 | INFO |     Uninstalling setuptools-84.0.0:
+21:50:54 | INFO |       Successfully uninstalled setuptools-84.0.0
+21:50:59 | INFO |   Attempting uninstall: networkx
+21:50:59 | INFO |     Found existing installation: networkx 3.7
+21:50:59 | INFO |     Uninstalling networkx-3.7:
+21:50:59 | INFO |       Successfully uninstalled networkx-3.7
+21:51:07 | INFO |   Attempting uninstall: MarkupSafe
+21:51:07 | INFO |     Found existing installation: MarkupSafe 3.0.4
+21:51:07 | INFO |     Uninstalling MarkupSafe-3.0.4:
+21:51:07 | INFO |       Successfully uninstalled MarkupSafe-3.0.4
+21:51:08 | INFO |   Attempting uninstall: fsspec
+21:51:08 | INFO |     Found existing installation: fsspec 2026.9.0
+21:51:08 | INFO |     Uninstalling fsspec-2026.9.0:
+21:51:08 | INFO |       Successfully uninstalled fsspec-2026.9.0
+21:51:08 | INFO |   Attempting uninstall: filelock
+21:51:08 | INFO |     Found existing installation: filelock 4.0.10
+21:51:08 | INFO |     Uninstalling filelock-4.0.10:
+21:51:08 | INFO |       Successfully uninstalled filelock-4.0.10
+21:51:09 | INFO |   Attempting uninstall: jinja2
+21:51:09 | INFO |     Found existing installation: Jinja2 3.1.6
+21:51:09 | INFO |     Uninstalling Jinja2-3.1.6:
+21:51:09 | INFO |       Successfully uninstalled Jinja2-3.1.6
+21:51:09 | INFO |   Attempting uninstall: torch
+21:51:09 | INFO |     Found existing installation: torch 2.14.1
+21:51:10 | INFO |     Uninstalling torch-2.14.1:
+21:51:11 | INFO |       Successfully uninstalled torch-2.14.1
+21:52:31 | INFO |   WARNING: Failed to remove contents in a temporary directory 'E:\Projects\AI engineer\MULTI_RAG\még1\multi-rag-engineering-lab-v43\.venv\Lib\site-packages\~orch'.
+21:52:31 | INFO |   You can safely remove it manually.
+21:52:31 | INFO | Successfully installed MarkupSafe-3.0.3 filelock-3.32.3 fsspec-2026.7.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 setuptools-78.1.0 sympy-1.14.0 torch-2.14.1+cu126 typing-extensions-4.16.0
+21:52:32 | INFO | cuda-python: nincs
+21:52:32 | INFO | PyTorch: 2.14.1+cu126
+21:52:32 | INFO | PyTorch CUDA runtime: CPU build / nincs
+21:52:32 | INFO | torch.cuda.is_available(): False
+21:52:32 | INFO | GPU: PyTorchbol nem lathato
+21:52:32 | INFO | nvidia-smi: NVIDIA GeForce GTX 1650 with Max-Q Design, 566.36, 4096 MiB
+21:52:32 | ERROR | A CUDA PyTorch wheel telepult, de torch.cuda.is_available() tovabbra is False. Ellenorizd az NVIDIA drivert es indits uj konzolt/gepet, ha a driver frissult.

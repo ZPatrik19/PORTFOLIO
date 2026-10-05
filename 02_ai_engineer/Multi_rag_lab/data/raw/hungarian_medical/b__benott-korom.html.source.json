@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/benott-korom.html",
+  "sha256": "5bb9cc4ed0bb6c29170facc4d2fe6750cf9d738a82efeeafedc8f3201dbc051c",
+  "size_bytes": 533827,
+  "content_type": "text/html",
+  "source_id": "medical-c04801cbd66b2b",
+  "title": "Benőtt köröm",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

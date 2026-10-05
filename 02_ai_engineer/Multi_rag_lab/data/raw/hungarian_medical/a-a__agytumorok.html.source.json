@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agytumorok.html",
+  "sha256": "bfa2b020b2d95c282f10870665fea6594ed0627cfe49ad63a2c565b4b9a7284b",
+  "size_bytes": 545798,
+  "content_type": "text/html",
+  "source_id": "medical-afe8753aba8a4c",
+  "title": "Agydaganatok",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

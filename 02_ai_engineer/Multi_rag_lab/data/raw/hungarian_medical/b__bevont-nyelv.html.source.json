@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bevont-nyelv.html",
+  "sha256": "625b7068c2a49ecd21b4d47ffe7ba77c28c79e3863e3025f8f474d7a5a252c6e",
+  "size_bytes": 540925,
+  "content_type": "text/html",
+  "source_id": "medical-a12033a65b6f54",
+  "title": "Bevont nyelv",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

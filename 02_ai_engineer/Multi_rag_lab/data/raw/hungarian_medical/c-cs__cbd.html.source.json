@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cbd.html",
+  "sha256": "18fb2e290c20928cf4d6b23a70f84485a2a2c5322be7f6f2bc48cb14b704c3d1",
+  "size_bytes": 538583,
+  "content_type": "text/html",
+  "source_id": "medical-f922b7600ce359",
+  "title": "CBD",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

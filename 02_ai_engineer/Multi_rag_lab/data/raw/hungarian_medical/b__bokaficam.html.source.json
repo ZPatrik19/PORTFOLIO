@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/bokaficam.html",
+  "sha256": "98d0c71a91d25d8162f9c1d50529aebd547bed2e34cacebbf766b29c4b8729b0",
+  "size_bytes": 537811,
+  "content_type": "text/html",
+  "source_id": "medical-6c01f3a695fdd9",
+  "title": "Bokaficam",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

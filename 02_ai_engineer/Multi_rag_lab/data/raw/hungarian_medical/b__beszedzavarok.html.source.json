@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/beszedzavarok.html",
+  "sha256": "ad681bd8f8b2cb4878a0937e11aedacc1b9124753c0c34bcf4008c5d4d0d4b74",
+  "size_bytes": 534279,
+  "content_type": "text/html",
+  "source_id": "medical-b99fa992e6ded6",
+  "title": "Beszédzavarok",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

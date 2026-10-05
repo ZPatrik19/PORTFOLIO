@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyi-cisztak.html",
+  "sha256": "7ef8a7c508daa26f0b6baeb7e09e0979d7c577a58b4e31446fa80d31af2adae1",
+  "size_bytes": 534847,
+  "content_type": "text/html",
+  "source_id": "medical-4d1aaa2baa5908",
+  "title": "Agyi ciszták",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

@@ -1,0 +1,678 @@
+{
+  "fingerprint": "324a66329409f03d14c69ade65d19ca5fbbf9b0b11328d933ba3cd318ded8952",
+  "documents": 131,
+  "chunks": 1938,
+  "embedding_model": "intfloat/multilingual-e5-small",
+  "embedding_device": "cuda",
+  "vector_backend": "faiss",
+  "vector_device": "cpu",
+  "source_files": [
+    {
+      "name": "1-9__1-es-tipusu-cukorbetegseg.html",
+      "size": 540061,
+      "mtime_ns": 1791144034401199300
+    },
+    {
+      "name": "1-9__17-oh-progeszteronszint-merese.html",
+      "size": 536004,
+      "mtime_ns": 1791144035056212000
+    },
+    {
+      "name": "1-9__2-es-tipusu-cukorbetegseg.html",
+      "size": 538249,
+      "mtime_ns": 1791144036086151100
+    },
+    {
+      "name": "1-9__patau-szindroma-13-as-triszomia.html",
+      "size": 536753,
+      "mtime_ns": 1791144037035927400
+    },
+    {
+      "name": "a-a__a-vitamin.html",
+      "size": 538115,
+      "mtime_ns": 1791144035393312100
+    },
+    {
+      "name": "a-a__ab0-vercsoport-osszeferhetetlenseg-ujszulotteknel.html",
+      "size": 536707,
+      "mtime_ns": 1791144036407997400
+    },
+    {
+      "name": "a-a__ablacios-technikak.html",
+      "size": 539588,
+      "mtime_ns": 1791144037340986800
+    },
+    {
+      "name": "a-a__acanthamoebiasis.html",
+      "size": 536987,
+      "mtime_ns": 1791144037975896200
+    },
+    {
+      "name": "a-a__ace-sztoma.html",
+      "size": 536958,
+      "mtime_ns": 1791144038791046800
+    },
+    {
+      "name": "a-a__acetilszalicilsav.html",
+      "size": 538905,
+      "mtime_ns": 1791144039441212800
+    },
+    {
+      "name": "a-a__actinomycosis.html",
+      "size": 534957,
+      "mtime_ns": 1791144040719160400
+    },
+    {
+      "name": "a-a__addison-kor.html",
+      "size": 536754,
+      "mtime_ns": 1791144041372164200
+    },
+    {
+      "name": "a-a__adenomiozis.html",
+      "size": 536889,
+      "mtime_ns": 1791144043095403600
+    },
+    {
+      "name": "a-a__adenovirus-fertozes.html",
+      "size": 534879,
+      "mtime_ns": 1791144043687958900
+    },
+    {
+      "name": "a-a__adhd-figyelemhianyos-hiperaktivitas-zavar.html",
+      "size": 542707,
+      "mtime_ns": 1791144044356312400
+    },
+    {
+      "name": "a-a__adrenalin-autoinjektor-hasznalata.html",
+      "size": 537388,
+      "mtime_ns": 1791144044976126700
+    },
+    {
+      "name": "a-a__agnozia.html",
+      "size": 536769,
+      "mtime_ns": 1791144045602010500
+    },
+    {
+      "name": "a-a__agorafobia.html",
+      "size": 537500,
+      "mtime_ns": 1791144046291231300
+    },
+    {
+      "name": "a-a__agranulocytosis.html",
+      "size": 538158,
+      "mtime_ns": 1791144046998950000
+    },
+    {
+      "name": "a-a__agyalapi-mirigy-daganata.html",
+      "size": 541893,
+      "mtime_ns": 1791144047600162900
+    },
+    {
+      "name": "a-a__agyhartyagyulladas-meningitis.html",
+      "size": 544702,
+      "mtime_ns": 1791144049469357800
+    },
+    {
+      "name": "a-a__agyhartyak-betegsegei.html",
+      "size": 535794,
+      "mtime_ns": 1791144050060478400
+    },
+    {
+      "name": "a-a__agyi-aneurizma.html",
+      "size": 534945,
+      "mtime_ns": 1791144050634138500
+    },
+    {
+      "name": "a-a__agyi-cisztak.html",
+      "size": 534847,
+      "mtime_ns": 1791144051306163600
+    },
+    {
+      "name": "a-a__agyi-infarktus.html",
+      "size": 545803,
+      "mtime_ns": 1791144052041251100
+    },
+    {
+      "name": "a-a__agyidegek-rendellenessegei.html",
+      "size": 540032,
+      "mtime_ns": 1791144052705988500
+    },
+    {
+      "name": "a-a__agyodema.html",
+      "size": 541019,
+      "mtime_ns": 1791144055913055200
+    },
+    {
+      "name": "a-a__agyrazkodas-sportolasbol-kifolyolag.html",
+      "size": 538941,
+      "mtime_ns": 1791144054023377000
+    },
+    {
+      "name": "a-a__agyrazkodas.html",
+      "size": 536453,
+      "mtime_ns": 1791144053375528100
+    },
+    {
+      "name": "a-a__agytumorok.html",
+      "size": 545798,
+      "mtime_ns": 1791144048235349900
+    },
+    {
+      "name": "a-a__agyvelogyulladas-encephalitis.html",
+      "size": 550227,
+      "mtime_ns": 1791144054653987500
+    },
+    {
+      "name": "a-a__agyverzes.html",
+      "size": 543270,
+      "mtime_ns": 1791144055326067100
+    },
+    {
+      "name": "a-a__aids-tenyek-es-tevhitek.html",
+      "size": 536923,
+      "mtime_ns": 1791144056548040100
+    },
+    {
+      "name": "a-a__ajakgyulladas-cheilitis.html",
+      "size": 540434,
+      "mtime_ns": 1791144057175100500
+    },
+    {
+      "name": "a-a__ajakhasadek.html",
+      "size": 539847,
+      "mtime_ns": 1791144057793310400
+    },
+    {
+      "name": "a-a__ajakherpesz.html",
+      "size": 535897,
+      "mtime_ns": 1791144058457896800
+    },
+    {
+      "name": "a-a__akromegalia.html",
+      "size": 535735,
+      "mtime_ns": 1791144059110289300
+    },
+    {
+      "name": "a-a__akupunktura.html",
+      "size": 534771,
+      "mtime_ns": 1791144059736286600
+    },
+    {
+      "name": "a-a__akusztikus-trauma.html",
+      "size": 533623,
+      "mtime_ns": 1791144060376021100
+    },
+    {
+      "name": "a-a__akut-has.html",
+      "size": 537586,
+      "mtime_ns": 1791144060972826400
+    },
+    {
+      "name": "a-a__akut-legzesi-distressz-szindroma-ards.html",
+      "size": 537899,
+      "mtime_ns": 1791144062153908500
+    },
+    {
+      "name": "a-a__akut-limfoid-leukemia-all.html",
+      "size": 539199,
+      "mtime_ns": 1791144061567279200
+    },
+    {
+      "name": "a-a__akut-mieloid-leukemia-aml.html",
+      "size": 541337,
+      "mtime_ns": 1791144062754767100
+    },
+    {
+      "name": "a-a__alacsony-vercukorszint-hipoglikemia.html",
+      "size": 541006,
+      "mtime_ns": 1791144063374974300
+    },
+    {
+      "name": "a-a__alacsony-vernyomas.html",
+      "size": 535857,
+      "mtime_ns": 1791144063996012600
+    },
+    {
+      "name": "a-a__alacsonynoves.html",
+      "size": 549869,
+      "mtime_ns": 1791144064615210200
+    },
+    {
+      "name": "a-a__alagut-szindroma.html",
+      "size": 536920,
+      "mtime_ns": 1791144065213142800
+    },
+    {
+      "name": "a-a__albinizmus.html",
+      "size": 536515,
+      "mtime_ns": 1791144065768219700
+    },
+    {
+      "name": "a-a__alfa-1-antitripszin-hiany.html",
+      "size": 534663,
+      "mtime_ns": 1791144066385651000
+    },
+    {
+      "name": "a-a__alkalmazkodasi-zavar.html",
+      "size": 539403,
+      "mtime_ns": 1791144066972388400
+    },
+    {
+      "name": "a-a__asztma.html",
+      "size": 541615,
+      "mtime_ns": 1791144034737802900
+    },
+    {
+      "name": "a-a__az-achilles-in-serulesei.html",
+      "size": 532963,
+      "mtime_ns": 1791144040091008400
+    },
+    {
+      "name": "a-a__gyermekkori-agydaganatok.html",
+      "size": 538088,
+      "mtime_ns": 1791144048884080400
+    },
+    {
+      "name": "b__b-vitaminok.html",
+      "size": 545824,
+      "mtime_ns": 1791144035776012900
+    },
+    {
+      "name": "b__b1-vitamin.html",
+      "size": 535893,
+      "mtime_ns": 1791144036711308900
+    },
+    {
+      "name": "b__b12-vitamin.html",
+      "size": 539366,
+      "mtime_ns": 1791144037682992700
+    },
+    {
+      "name": "b__b2-vitamin.html",
+      "size": 537591,
+      "mtime_ns": 1791144038416134400
+    },
+    {
+      "name": "b__b3-vitamin.html",
+      "size": 536043,
+      "mtime_ns": 1791144039107418500
+    },
+    {
+      "name": "b__b5-vitamin.html",
+      "size": 535857,
+      "mtime_ns": 1791144039755023100
+    },
+    {
+      "name": "b__b6-vitamin.html",
+      "size": 537512,
+      "mtime_ns": 1791144040419094400
+    },
+    {
+      "name": "b__b7-vitamin.html",
+      "size": 535757,
+      "mtime_ns": 1791144041010847300
+    },
+    {
+      "name": "b__b9-vitamin-folsav.html",
+      "size": 536706,
+      "mtime_ns": 1791144042802920800
+    },
+    {
+      "name": "b__babamento-inkubatorok.html",
+      "size": 538534,
+      "mtime_ns": 1791144043406782000
+    },
+    {
+      "name": "b__babesiosis.html",
+      "size": 537545,
+      "mtime_ns": 1791144043996645000
+    },
+    {
+      "name": "b__baker-ciszta.html",
+      "size": 532406,
+      "mtime_ns": 1791144044672016300
+    },
+    {
+      "name": "b__bakterialis-fertozesek.html",
+      "size": 536799,
+      "mtime_ns": 1791144045314149100
+    },
+    {
+      "name": "b__bakterialis-huvelyfertozes-vaginozis.html",
+      "size": 536967,
+      "mtime_ns": 1791144046641728600
+    },
+    {
+      "name": "b__bakterialis-tudogyulladas.html",
+      "size": 538730,
+      "mtime_ns": 1791144045956948000
+    },
+    {
+      "name": "b__balantidiasis.html",
+      "size": 534041,
+      "mtime_ns": 1791144047299542900
+    },
+    {
+      "name": "b__barazdazaras.html",
+      "size": 534091,
+      "mtime_ns": 1791144049778719600
+    },
+    {
+      "name": "b__barotrauma.html",
+      "size": 535662,
+      "mtime_ns": 1791144047925514800
+    },
+    {
+      "name": "b__bartholin-ciszta.html",
+      "size": 537362,
+      "mtime_ns": 1791144048559964200
+    },
+    {
+      "name": "b__bartonella-fertozes-macskakarmolasi-betegseg.html",
+      "size": 537960,
+      "mtime_ns": 1791144049161228200
+    },
+    {
+      "name": "b__bazalsejtes-karcinoma.html",
+      "size": 537783,
+      "mtime_ns": 1791144050352108600
+    },
+    {
+      "name": "b__bechterew-kor.html",
+      "size": 539732,
+      "mtime_ns": 1791144050942573900
+    },
+    {
+      "name": "b__befagyott-vall-szindroma.html",
+      "size": 538198,
+      "mtime_ns": 1791144051712254300
+    },
+    {
+      "name": "b__belek-veleszuletett-elteresei.html",
+      "size": 540123,
+      "mtime_ns": 1791144052342216600
+    },
+    {
+      "name": "b__bell-benulas.html",
+      "size": 536887,
+      "mtime_ns": 1791144053048095900
+    },
+    {
+      "name": "b__belso-elvalasztasu-mirigyek-endokrin-mirigyek.html",
+      "size": 542163,
+      "mtime_ns": 1791144053726017600
+    },
+    {
+      "name": "b__belsoful-gyulladas-otitis-interna.html",
+      "size": 536468,
+      "mtime_ns": 1791144054352070900
+    },
+    {
+      "name": "b__benott-korom.html",
+      "size": 533827,
+      "mtime_ns": 1791144056220226400
+    },
+    {
+      "name": "b__benzodiazepinfuggoseg-terapiaja.html",
+      "size": 539103,
+      "mtime_ns": 1791144055631956100
+    },
+    {
+      "name": "b__benzodiazepinfuggoseg.html",
+      "size": 540233,
+      "mtime_ns": 1791144054981618600
+    },
+    {
+      "name": "b__beszedfejlodes.html",
+      "size": 537228,
+      "mtime_ns": 1791144056860208300
+    },
+    {
+      "name": "b__beszedzavarok.html",
+      "size": 534279,
+      "mtime_ns": 1791144057458125600
+    },
+    {
+      "name": "b__beteg-epulet-szindroma.html",
+      "size": 538959,
+      "mtime_ns": 1791144058147980600
+    },
+    {
+      "name": "b__bevont-nyelv.html",
+      "size": 540925,
+      "mtime_ns": 1791144058812176200
+    },
+    {
+      "name": "b__bilirubin-anyagcsere-rendellenessegek.html",
+      "size": 539913,
+      "mtime_ns": 1791144059439451600
+    },
+    {
+      "name": "b__biopszia-szovettani-mintavetel.html",
+      "size": 534564,
+      "mtime_ns": 1791144060081407000
+    },
+    {
+      "name": "b__bipolaris-zavar-manias-depresszio.html",
+      "size": 542340,
+      "mtime_ns": 1791144060666524500
+    },
+    {
+      "name": "b__biszfenolok.html",
+      "size": 536185,
+      "mtime_ns": 1791144061237029800
+    },
+    {
+      "name": "b__biztonsagos-szex-lmbtq.html",
+      "size": 543206,
+      "mtime_ns": 1791144062452943800
+    },
+    {
+      "name": "b__biztonsagos-szex.html",
+      "size": 537887,
+      "mtime_ns": 1791144061839535000
+    },
+    {
+      "name": "b__blastomycosis.html",
+      "size": 532898,
+      "mtime_ns": 1791144063060129300
+    },
+    {
+      "name": "b__bmi-kalkulator.html",
+      "size": 532046,
+      "mtime_ns": 1791144063668902400
+    },
+    {
+      "name": "b__bokaficam.html",
+      "size": 537811,
+      "mtime_ns": 1791144064278205500
+    },
+    {
+      "name": "b__bokatores-es-muteti-kezelese.html",
+      "size": 532643,
+      "mtime_ns": 1791144064897934700
+    },
+    {
+      "name": "b__bordatores.html",
+      "size": 536295,
+      "mtime_ns": 1791144065502233300
+    },
+    {
+      "name": "b__borderline-szemelyisegzavar.html",
+      "size": 540136,
+      "mtime_ns": 1791144066055286400
+    },
+    {
+      "name": "b__botulizmus.html",
+      "size": 537490,
+      "mtime_ns": 1791144066661264300
+    },
+    {
+      "name": "c-cs__c-vitamin.html",
+      "size": 540018,
+      "mtime_ns": 1791145964139731400
+    },
+    {
+      "name": "c-cs__cachexia.html",
+      "size": 532213,
+      "mtime_ns": 1791145964431537800
+    },
+    {
+      "name": "c-cs__campylobacter-fertozes.html",
+      "size": 535396,
+      "mtime_ns": 1791145964676676700
+    },
+    {
+      "name": "c-cs__candidiasis.html",
+      "size": 537793,
+      "mtime_ns": 1791145964919804700
+    },
+    {
+      "name": "c-cs__cauda-equina-szindroma-lofarok-betegseg.html",
+      "size": 534989,
+      "mtime_ns": 1791145965192598100
+    },
+    {
+      "name": "c-cs__cbd.html",
+      "size": 538583,
+      "mtime_ns": 1791145965437986500
+    },
+    {
+      "name": "c-cs__cellulitis.html",
+      "size": 537506,
+      "mtime_ns": 1791145965742743400
+    },
+    {
+      "name": "c-cs__cerebralis-paresis.html",
+      "size": 543507,
+      "mtime_ns": 1791145966016345100
+    },
+    {
+      "name": "c-cs__chagas-kor.html",
+      "size": 536506,
+      "mtime_ns": 1791145966301255800
+    },
+    {
+      "name": "c-cs__charcot-marie-tooth-szindroma.html",
+      "size": 534308,
+      "mtime_ns": 1791145966563502600
+    },
+    {
+      "name": "c-cs__charles-bonnet-szindroma.html",
+      "size": 534931,
+      "mtime_ns": 1791145966847601900
+    },
+    {
+      "name": "c-cs__chemsex.html",
+      "size": 543534,
+      "mtime_ns": 1791145967102762600
+    },
+    {
+      "name": "c-cs__chlamydia-fertozesek.html",
+      "size": 536098,
+      "mtime_ns": 1791145967958821800
+    },
+    {
+      "name": "c-cs__chlamydia-psittaci-fertozes.html",
+      "size": 534302,
+      "mtime_ns": 1791145967366820700
+    },
+    {
+      "name": "c-cs__chlamydia.html",
+      "size": 539817,
+      "mtime_ns": 1791145967665407200
+    },
+    {
+      "name": "c-cs__cholelithiasis-epekovesseg.html",
+      "size": 537745,
+      "mtime_ns": 1791145968254831800
+    },
+    {
+      "name": "c-cs__chorionboholy-mintavetel.html",
+      "size": 539124,
+      "mtime_ns": 1791145968532999600
+    },
+    {
+      "name": "c-cs__chromomycosis.html",
+      "size": 536320,
+      "mtime_ns": 1791145968778880500
+    },
+    {
+      "name": "c-cs__ciklotimia.html",
+      "size": 536745,
+      "mtime_ns": 1791145969054295600
+    },
+    {
+      "name": "c-cs__cikluskovetes.html",
+      "size": 535650,
+      "mtime_ns": 1791145969320061300
+    },
+    {
+      "name": "c-cs__cink.html",
+      "size": 536389,
+      "mtime_ns": 1791145969570333600
+    },
+    {
+      "name": "c-cs__cinkanyagcsere-rendellenessegei.html",
+      "size": 541335,
+      "mtime_ns": 1791145969866390100
+    },
+    {
+      "name": "c-cs__cirkadian-ritmus.html",
+      "size": 537616,
+      "mtime_ns": 1791145970169018600
+    },
+    {
+      "name": "c-cs__cisztak.html",
+      "size": 540151,
+      "mtime_ns": 1791145970460302200
+    },
+    {
+      "name": "c-cs__cisztas-fibrozis.html",
+      "size": 539713,
+      "mtime_ns": 1791145970750041900
+    },
+    {
+      "name": "c-cs__civilizacios-betegsegek.html",
+      "size": 545144,
+      "mtime_ns": 1791145971052404100
+    },
+    {
+      "name": "c-cs__clostridium-difficile-fertozes.html",
+      "size": 537828,
+      "mtime_ns": 1791145971345068500
+    },
+    {
+      "name": "c-cs__cluster-fejfajas.html",
+      "size": 539217,
+      "mtime_ns": 1791145971632241100
+    },
+    {
+      "name": "c-cs__coarctatio-aortae.html",
+      "size": 536568,
+      "mtime_ns": 1791145971891511600
+    },
+    {
+      "name": "c-cs__coccidioidomycosis.html",
+      "size": 534014,
+      "mtime_ns": 1791145972140677000
+    },
+    {
+      "name": "c-cs__colitis-ulcerosa-fekelyes-vastagbelgyulladas.html",
+      "size": 538950,
+      "mtime_ns": 1791145972427789400
+    }
+  ],
+  "config": {
+    "target": 100,
+    "strategy": "recursive",
+    "chunk_size": 500,
+    "overlap": 100,
+    "semantic_threshold": 0.72,
+    "embedding_model": "intfloat/multilingual-e5-small",
+    "embedding_device": "auto",
+    "vector_device": "cpu"
+  },
+  "chunks_path": "E:\\Projects\\AI engineer\\MULTI_RAG\\még1\\multi-rag-engineering-lab-v43\\data\\processed\\hungarian_medical\\chunks.json",
+  "vectorstore_path": "E:\\Projects\\AI engineer\\MULTI_RAG\\még1\\multi-rag-engineering-lab-v43\\artifacts\\indexes\\hungarian_medical"
+}

@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyverzes.html",
+  "sha256": "6ded48986fbd0a09140ea1405de87e894007f145cfe35f54ab21ebd6660061d2",
+  "size_bytes": 543270,
+  "content_type": "text/html",
+  "source_id": "medical-dc14cab7d11678",
+  "title": "Agyvérzés",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

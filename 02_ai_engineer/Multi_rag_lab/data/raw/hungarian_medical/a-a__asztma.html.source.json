@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/asztma.html",
+  "sha256": "2658073f1e14b3a846551095d00be158b0112f0dff23f437ed737e00c9eb9668",
+  "size_bytes": 541615,
+  "content_type": "text/html",
+  "source_id": "medical-aac68b9215f5fd",
+  "title": "Asztma",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/b/barotrauma.html",
+  "sha256": "075ce27423b097fe9527df9ed0affb0b1d6a9aea4ee4a859bf721e7923c18a34",
+  "size_bytes": 535662,
+  "content_type": "text/html",
+  "source_id": "medical-b30ed3c25c4c18",
+  "title": "Barotrauma",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

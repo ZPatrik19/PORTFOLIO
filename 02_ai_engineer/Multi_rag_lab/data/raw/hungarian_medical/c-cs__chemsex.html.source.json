@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/chemsex.html",
+  "sha256": "5cf4787a36a66d1c1d95f56559d8fa8e7453e645b7a81bc7180b3f4443a71fd0",
+  "size_bytes": 543534,
+  "content_type": "text/html",
+  "source_id": "medical-e90f28ed20f59d",
+  "title": "Chemsex",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

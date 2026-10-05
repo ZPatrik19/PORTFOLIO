@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-10-04T20:31:56.019778+00:00",
+  "hf_home": ".cache\\huggingface",
+  "authenticated": false,
+  "models": {
+    "embedding_default": {
+      "repo_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "snapshot_path": ".cache\\huggingface\\hub\\models--sentence-transformers--all-MiniLM-L6-v2\\snapshots\\1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+    },
+    "embedding_multilingual": {
+      "repo_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "snapshot_path": ".cache\\huggingface\\hub\\models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2\\snapshots\\e8f8c211226b894fcb81acc59f3b34ba3efd5f42"
+    },
+    "embedding_e5": {
+      "repo_id": "intfloat/multilingual-e5-small",
+      "snapshot_path": ".cache\\huggingface\\hub\\models--intfloat--multilingual-e5-small\\snapshots\\614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    },
+    "reranker": {
+      "repo_id": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "snapshot_path": ".cache\\huggingface\\hub\\models--cross-encoder--ms-marco-MiniLM-L-6-v2\\snapshots\\233902d25c440f23af6f7d6e94d2946bac0bee0a"
+    }
+  }
+}

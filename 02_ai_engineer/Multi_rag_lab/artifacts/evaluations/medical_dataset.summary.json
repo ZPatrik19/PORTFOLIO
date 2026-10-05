@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "corpus_id": "hungarian_medical",
+  "source_name": "Egészségvonal magyar orvosi korpusz",
+  "source_documents": 100,
+  "questions": 80,
+  "question_types": {
+    "causes": 10,
+    "complications": 10,
+    "diagnosis": 10,
+    "doctor": 10,
+    "overview": 10,
+    "prevention": 10,
+    "symptoms": 10,
+    "treatment": 10
+  },
+  "methodology": "Extractive, source-grounded evaluation dataset. Questions and expected key facts are derived from locally downloaded source articles; no medical facts are invented by the builder."
+}

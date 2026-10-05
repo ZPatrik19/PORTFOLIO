@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/gyermekkori-agydaganatok.html",
+  "sha256": "baec2fd9062122536b0a4e63f49c3d4e11dac717fd316e5548e9d9d887027cf4",
+  "size_bytes": 538088,
+  "content_type": "text/html",
+  "source_id": "medical-829c466114c052",
+  "title": "Agydaganatok gyermekkorban",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

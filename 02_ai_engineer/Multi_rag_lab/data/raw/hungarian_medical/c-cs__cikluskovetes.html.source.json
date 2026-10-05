@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/cikluskovetes.html",
+  "sha256": "25a5d94b962020827653747aa7634cdf588a59f498b76449fcf808af88214743",
+  "size_bytes": 535650,
+  "content_type": "text/html",
+  "source_id": "medical-9f16903332fc37",
+  "title": "Cikluskövetés",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}

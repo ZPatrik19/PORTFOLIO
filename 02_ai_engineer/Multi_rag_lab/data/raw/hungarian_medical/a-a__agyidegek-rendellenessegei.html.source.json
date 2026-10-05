@@ -1,0 +1,14 @@
+{
+  "url": "https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/agyidegek-rendellenessegei.html",
+  "sha256": "f49e81ed0914e95e793d2500735832e7b22a009c6cc41ed4e0dc695254ce147a",
+  "size_bytes": 540032,
+  "content_type": "text/html",
+  "source_id": "medical-248015f8d0908c",
+  "title": "Agyidegek rendellenességei",
+  "category": "Orvosi / egészségügyi ismeretterjesztés",
+  "organization": "Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ (NNGYK)",
+  "language": "hu",
+  "format": "html",
+  "description": "Egészségvonal Egészség A-Z magyar nyelvű egészségügyi tájékoztató cikk.",
+  "corpus_id": "hungarian_medical"
+}
