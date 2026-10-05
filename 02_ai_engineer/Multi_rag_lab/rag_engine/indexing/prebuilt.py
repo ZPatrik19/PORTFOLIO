@@ -100,6 +100,7 @@ def load_prebuilt_medical(
     vector_path = _resolve_project_path(str(state["vectorstore_path"]))
     chunks = [Chunk.model_validate(item) for item in json.loads(chunks_path.read_text(encoding="utf-8"))]
     normalized_device = str(vector_device).lower()
+    store: FaissGPUVectorStore | FaissCPUVectorStore
     if normalized_device in {"cuda", "gpu", "faiss-gpu"}:
         try:
             store = FaissGPUVectorStore.load(vector_path)
