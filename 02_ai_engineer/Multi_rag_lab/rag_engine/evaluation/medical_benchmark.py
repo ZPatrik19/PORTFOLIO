@@ -29,7 +29,7 @@ from rag_engine.models import ChunkingConfig
 from rag_engine.retrieval.rerank_cross_encoder import CrossEncoderReranker
 from rag_engine.retrieval.rerank_lexical import LexicalReranker
 from rag_engine.retrieval.hybrid import HybridRetriever
-from rag_engine.service import build_lab, create_rag_pipeline
+from rag_engine.service import LabBundle, build_lab, create_rag_pipeline
 
 
 @dataclass(frozen=True)
@@ -350,7 +350,7 @@ def run_rag_benchmark(
     # A single matrix block can evaluate several RAG strategies over the exact same
     # ingestion/embedding/vector resources. Reusing the bundle avoids repeatedly
     # parsing, chunking and embedding the whole corpus for every strategy.
-    bundle_cache: dict[str, object] = {}
+    bundle_cache: dict[str, LabBundle] = {}
 
     for strategy in rag_strategies:
         effective_chunking = "parent-child" if strategy == "parent-document" else chunking_strategy
@@ -471,5 +471,5 @@ def run_rag_benchmark(
     return rows
 
 
-def rows_to_dicts(rows: Iterable[object]) -> list[dict[str, object]]:
+def rows_to_dicts(rows: Iterable[RetrievalBenchmarkRow | RAGBenchmarkRow]) -> list[dict[str, object]]:
     return [asdict(row) for row in rows]
