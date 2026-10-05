@@ -1149,6 +1149,7 @@ def _strategy_entries() -> list[ReferenceEntry]:
         )
     return entries
 
+
 def all_reference_entries() -> list[ReferenceEntry]:
     entries = [*_BASE_ENTRIES, *_strategy_entries()]
     return sorted(entries, key=lambda item: (CATEGORY_ORDER.index(item.category), item.name.casefold()))
