@@ -1,0 +1,612 @@
+name: "Multi-RAG Lab · Quality, RAG Tests, Security & Build"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "02_ai_engineer/multi_rag_lab/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "02_ai_engineer/multi_rag_lab/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: multi-rag-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PROJECT_DIR: "02_ai_engineer/multi_rag_lab"
+  PYTHON_VERSION: "3.14"
+  MIN_COVERAGE: "80"
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  TOKENIZERS_PARALLELISM: "false"
+  LLM_PROVIDER: "dummy"
+  HF_HUB_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+  STREAMLIT_PORT: "8501"
+  STREAMLIT_HEALTH_PATH: "/_stcore/health"
+  DOCKER_IMAGE: "multi-rag-lab-ci"
+
+jobs:
+  preflight:
+    name: "00 · Pre-flight & Repository Contract"
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.14
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          check-latest: true
+
+      - name: Validate project structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          python --version
+          test -f pyproject.toml
+          test -f README.md
+          test -d rag_engine
+          test -d ui
+          test -d tests
+          test -d scripts
+          test -d config
+          for f in SETUP.bat SETUP.sh INFRASTRUCTURE.bat INFRASTRUCTURE.sh RUN.bat RUN.sh EVALUATION.bat EVALUATION.sh; do
+            test -f "$f" || { echo "::error file=${PROJECT_DIR}/$f::Required launcher is missing"; exit 1; }
+          done
+
+      - name: Enforce CPython 3.14
+        run: |
+          python - <<'PY'
+          import platform, sys
+          assert sys.version_info[:2] == (3, 14), sys.version
+          assert platform.python_implementation() == "CPython"
+          print("CPython", sys.version.split()[0])
+          PY
+
+      - name: Launcher syntax and repository contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          bash -n SETUP.sh
+          bash -n INFRASTRUCTURE.sh
+          bash -n RUN.sh
+          bash -n EVALUATION.sh
+          if [[ -f scripts/check_repository.py ]]; then
+            python scripts/check_repository.py
+          fi
+
+  repository-quality:
+    name: "01 · Repository, Config & Docs"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: ${{ env.PROJECT_DIR }}/pyproject.toml
+
+      - name: Install validators
+        run: python -m pip install PyYAML
+
+      - name: Validate YAML / JSON / TOML
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          python - <<'PY'
+          import json, pathlib, sys, tomllib, yaml
+          ignored = {".git",".venv","venv",".pytest_cache",".mypy_cache",".ruff_cache","build","dist",".cache","artifacts"}
+          errors=[]; checked=0
+          for path in pathlib.Path(".").rglob("*"):
+              if not path.is_file() or any(part in ignored for part in path.parts):
+                  continue
+              try:
+                  if path.suffix.lower() in {".yml",".yaml"}:
+                      list(yaml.safe_load_all(path.read_text(encoding="utf-8"))); checked += 1
+                  elif path.suffix.lower()==".json":
+                      json.loads(path.read_text(encoding="utf-8")); checked += 1
+                  elif path.suffix.lower()==".toml":
+                      tomllib.loads(path.read_text(encoding="utf-8")); checked += 1
+              except Exception as exc:
+                  errors.append(f"{path}: {exc}")
+          if errors:
+              print("\n".join(errors)); sys.exit(1)
+          print(f"Validated {checked} config files")
+          PY
+
+      - name: Reject obvious secrets and oversized files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, pathlib, subprocess, sys
+          tracked=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+          allowed={".env.example",".env.sample",".env.template"}
+          forbidden={".env",".env.local",".env.production","credentials.json","secrets.json","service-account.json","id_rsa","id_ed25519"}
+          private={".pem",".key",".p12",".pfx"}
+          errors=[]
+          for item in tracked:
+              p=pathlib.PurePosixPath(item); name=p.name.lower()
+              if name in allowed: continue
+              if name in forbidden or p.suffix.lower() in private: errors.append(item)
+              if os.path.isfile(item) and os.path.getsize(item) >= 50*1024*1024: errors.append(item+" (>=50MB)")
+          if errors:
+              print("Rejected tracked files:"); [print(" -",x) for x in errors]; sys.exit(1)
+          print("Repository hygiene OK")
+          PY
+
+  code-quality:
+    name: "02 · Ruff, Types & Compile"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: ${{ env.PROJECT_DIR }}/pyproject.toml
+      - name: Install project and tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install ruff mypy
+          python -m pip check
+      - name: Ruff lint
+        shell: bash
+        run: cd "${PROJECT_DIR}" && ruff check rag_engine ui scripts tests
+      - name: Ruff format check
+        shell: bash
+        run: cd "${PROJECT_DIR}" && ruff format --check rag_engine ui scripts tests
+      - name: Mypy core package
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          mypy rag_engine --ignore-missing-imports --check-untyped-defs --show-error-codes --no-error-summary
+      - name: Compile + import smoke
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m compileall -q rag_engine ui scripts tests
+          python - <<'PY'
+          import rag_engine, numpy, pandas, streamlit, pyarrow
+          print("rag_engine import OK")
+          print("numpy", numpy.__version__)
+          print("pandas", pandas.__version__)
+          print("streamlit", streamlit.__version__)
+          print("pyarrow", pyarrow.__version__)
+          PY
+
+  unit-tests:
+    name: "03 · Unit Tests & Coverage"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: ${{ env.PROJECT_DIR }}/pyproject.toml
+      - name: Install
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pytest pytest-cov
+          python -m pip check
+      - name: Test with branch coverage
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          pytest tests/unit -ra --strict-markers             --cov=rag_engine --cov-branch             --cov-report=term-missing             --cov-report=xml:coverage.xml             --junitxml=junit-unit.xml             --cov-fail-under="${MIN_COVERAGE}"
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: multi-rag-unit-coverage
+          path: |
+            ${{ env.PROJECT_DIR }}/coverage.xml
+            ${{ env.PROJECT_DIR }}/junit-unit.xml
+          if-no-files-found: warn
+          retention-days: 14
+
+  rag-integration:
+    name: "04 · RAG Integration & Performance"
+    needs: [code-quality, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: ${{ env.PROJECT_DIR }}/pyproject.toml
+      - name: Install
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pytest
+          python -m pip check
+      - name: CPU-safe integration suite
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          if [[ -d tests/integration ]]; then
+            pytest tests/integration -ra
+          fi
+          if [[ -d tests/performance ]]; then
+            pytest tests/performance -ra
+          fi
+          if [[ ! -d tests/integration && ! -d tests/performance ]]; then
+            pytest tests -ra -k "not cuda and not gpu"
+          fi
+
+  faiss-cpu:
+    name: "05 · FAISS CPU Persistence Smoke"
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install project and FAISS
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install faiss-cpu pytest
+          python -m pip check
+      - name: FAISS add/search/serialize/deserialize
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python - <<'PY'
+          import faiss, numpy as np
+          rng=np.random.default_rng(42)
+          xb=rng.normal(size=(128,32)).astype("float32")
+          xq=xb[:4].copy()
+          faiss.normalize_L2(xb); faiss.normalize_L2(xq)
+          index=faiss.IndexFlatIP(32); index.add(xb)
+          scores, ids=index.search(xq,5)
+          assert index.ntotal==128
+          assert (ids[:,0]==np.arange(4)).all()
+          blob=faiss.serialize_index(index)
+          restored=faiss.deserialize_index(blob)
+          scores2,ids2=restored.search(xq,5)
+          np.testing.assert_array_equal(ids,ids2)
+          np.testing.assert_allclose(scores,scores2,rtol=1e-6,atol=1e-6)
+          print("FAISS CPU persistence smoke OK")
+          PY
+      - name: Project vector-store tests
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          if [[ -f tests/unit/test_vectorstores.py ]]; then
+            pytest tests/unit/test_vectorstores.py -ra -k "faiss"
+          fi
+
+  streamlit-ui:
+    name: "06 · Streamlit UI & Arrow Smoke"
+    needs: [code-quality, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pytest
+      - name: UI tests
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          if [[ -d tests/ui ]]; then pytest tests/ui -ra; fi
+      - name: Start Streamlit
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          streamlit run ui/app.py --server.headless=true --server.address=127.0.0.1 --server.port="${STREAMLIT_PORT}" > streamlit-ci.log 2>&1 &
+          echo $! > streamlit-ci.pid
+      - name: Health check
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          for attempt in {1..45}; do
+            if curl --silent --show-error --fail "http://127.0.0.1:${STREAMLIT_PORT}${STREAMLIT_HEALTH_PATH}" >/dev/null; then
+              echo "Streamlit health OK"; exit 0
+            fi
+            if [[ -f streamlit-ci.pid ]] && ! kill -0 "$(cat streamlit-ci.pid)" 2>/dev/null; then
+              cat streamlit-ci.log || true; exit 1
+            fi
+            sleep 2
+          done
+          cat streamlit-ci.log || true
+          exit 1
+      - name: Logs
+        if: failure()
+        shell: bash
+        run: cd "${PROJECT_DIR}" && cat streamlit-ci.log || true
+      - name: Stop
+        if: always()
+        shell: bash
+        run: cd "${PROJECT_DIR}" && kill "$(cat streamlit-ci.pid)" 2>/dev/null || true
+
+  measurement:
+    name: "07 · Measurement & Robustness Smoke"
+    needs: [unit-tests, faiss-cpu]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Measurement suite
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          test -f scripts/run_measurement_suite.py
+          python scripts/run_measurement_suite.py --repeats 1 --warmup 1 --concurrency 1
+
+  launcher-contract:
+    name: "08 · Windows/Linux Launcher Contract"
+    needs: preflight
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Linux shell syntax
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          bash -n SETUP.sh
+          bash -n INFRASTRUCTURE.sh
+          bash -n RUN.sh
+          bash -n EVALUATION.sh
+      - name: Windows BAT contract
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-Location $env:PROJECT_DIR
+          $files=@("SETUP.bat","INFRASTRUCTURE.bat","RUN.bat","EVALUATION.bat")
+          foreach($file in $files){
+            if(-not(Test-Path $file)){throw "Missing $file"}
+            $bytes=[System.IO.File]::ReadAllBytes((Resolve-Path $file))
+            if($bytes.Length -ge 3 -and $bytes[0]-eq 0xEF -and $bytes[1]-eq 0xBB -and $bytes[2]-eq 0xBF){throw "$file contains UTF-8 BOM"}
+            $text=[System.Text.Encoding]::UTF8.GetString($bytes)
+            if($text -notmatch "`r`n"){throw "$file does not use CRLF"}
+          }
+          if((Get-Content SETUP.bat -Raw)-notmatch '3\.14'){throw "SETUP.bat does not enforce Python 3.14"}
+          Write-Host "Windows launcher contract OK"
+
+  security:
+    name: "09 · Dependency Audit & Bandit"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pip-audit bandit
+      - name: pip-audit
+        shell: bash
+        run: cd "${PROJECT_DIR}" && pip-audit
+      - name: Bandit
+        shell: bash
+        run: cd "${PROJECT_DIR}" && bandit -q -r rag_engine ui scripts -x tests -ll
+
+  secret-scan:
+    name: "10 · Gitleaks"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  codeql:
+    name: "11 · CodeQL"
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: python
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:python"
+
+  package-build:
+    name: "12 · Python Package Build"
+    needs: [code-quality, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Build and validate
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip build twine
+          python -m build
+          twine check dist/*
+      - uses: actions/upload-artifact@v7
+        with:
+          name: multi-rag-python-dist
+          path: ${{ env.PROJECT_DIR }}/dist/
+          if-no-files-found: error
+          retention-days: 14
+
+  docker-build:
+    name: "13 · Docker Build, Health & Trivy"
+    needs: [rag-integration, streamlit-ui, measurement]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build CPU image
+        shell: bash
+        run: |
+          docker build --build-arg PREBUILD_RAG_ASSETS=0 --tag "${DOCKER_IMAGE}:${GITHUB_SHA}" "${PROJECT_DIR}"
+      - name: Start
+        shell: bash
+        run: |
+          docker run -d --name multi-rag-ci --env CI=true --env LLM_PROVIDER=dummy             -p "${STREAMLIT_PORT}:${STREAMLIT_PORT}" "${DOCKER_IMAGE}:${GITHUB_SHA}"
+      - name: Health
+        shell: bash
+        run: |
+          for attempt in {1..45}; do
+            if curl --silent --show-error --fail "http://127.0.0.1:${STREAMLIT_PORT}${STREAMLIT_HEALTH_PATH}" >/dev/null; then
+              echo "Container health OK"; exit 0
+            fi
+            if [[ "$(docker inspect -f '{{.State.Running}}' multi-rag-ci 2>/dev/null || echo false)" != "true" ]]; then
+              docker logs multi-rag-ci || true; exit 1
+            fi
+            sleep 2
+          done
+          docker logs multi-rag-ci || true
+          exit 1
+      - name: Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+      - name: Cleanup
+        if: always()
+        run: docker rm -f multi-rag-ci 2>/dev/null || true
+
+  final-gate:
+    name: "✅ Multi-RAG Required CI Gate"
+    if: always()
+    needs:
+      - preflight
+      - repository-quality
+      - code-quality
+      - unit-tests
+      - rag-integration
+      - faiss-cpu
+      - streamlit-ui
+      - measurement
+      - launcher-contract
+      - security
+      - secret-scan
+      - codeql
+      - package-build
+      - docker-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate gates
+        shell: bash
+        env:
+          PREFLIGHT: ${{ needs.preflight.result }}
+          REPO: ${{ needs.repository-quality.result }}
+          QUALITY: ${{ needs.code-quality.result }}
+          UNIT: ${{ needs.unit-tests.result }}
+          RAG: ${{ needs.rag-integration.result }}
+          FAISS: ${{ needs.faiss-cpu.result }}
+          UI: ${{ needs.streamlit-ui.result }}
+          MEASURE: ${{ needs.measurement.result }}
+          LAUNCH: ${{ needs.launcher-contract.result }}
+          SECURITY: ${{ needs.security.result }}
+          SECRETS: ${{ needs.secret-scan.result }}
+          CODEQL: ${{ needs.codeql.result }}
+          PACKAGE: ${{ needs.package-build.result }}
+          DOCKER: ${{ needs.docker-build.result }}
+        run: |
+          failed=0
+          check(){ if [[ "$2" == "success" || "$2" == "skipped" ]]; then echo "✓ $1: $2"; else echo "✗ $1: $2"; failed=1; fi; }
+          check Preflight "$PREFLIGHT"
+          check Repository "$REPO"
+          check Quality "$QUALITY"
+          check Unit "$UNIT"
+          check RAG "$RAG"
+          check FAISS "$FAISS"
+          check UI "$UI"
+          check Measurement "$MEASURE"
+          check Launchers "$LAUNCH"
+          check Security "$SECURITY"
+          check Secrets "$SECRETS"
+          check CodeQL "$CODEQL"
+          check Package "$PACKAGE"
+          check Docker "$DOCKER"
+          exit "$failed"
