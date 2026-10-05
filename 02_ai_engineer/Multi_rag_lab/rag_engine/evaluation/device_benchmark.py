@@ -10,6 +10,7 @@ import numpy as np
 import psutil
 
 from rag_engine.evaluation.latency import summarize_latencies
+from rag_engine.indexing.embedding_base import EmbeddingProvider
 from rag_engine.platform.hardware import get_hardware_profile
 from rag_engine.platform.memory import gpu_memory_mb
 
@@ -38,7 +39,7 @@ class BenchmarkResult:
 
 
 def benchmark_embedding(
-    provider_factory: Callable[[str], object], texts: list[str], device: str, *, warmup: bool = True
+    provider_factory: Callable[[str], EmbeddingProvider], texts: list[str], device: str, *, warmup: bool = True
 ) -> BenchmarkResult:
     cold_start = time.perf_counter()
     provider = provider_factory(device)
