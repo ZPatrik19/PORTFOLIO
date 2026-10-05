@@ -97,7 +97,7 @@ def parse_file(path: Path) -> list[Document]:
             from docx import Document as DocxDocument
         except ImportError as exc:
             raise ParseError("Install python-docx to parse DOCX files") from exc
-        docx = DocxDocument(path)
+        docx = DocxDocument(str(path))
         text = "\n".join(p.text for p in docx.paragraphs)
         return [Document(document_id=_document_id(path), text=text, metadata=_base_metadata(path))]
     raise ParseError(f"Unsupported document type: {ext}")
