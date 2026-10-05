@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - "02_ai_engineer/multi_rag_lab/**"
+      - "02_ai_engineer/Multi_rag_lab/**"
   pull_request:
     branches: [main]
     paths:
-      - "02_ai_engineer/multi_rag_lab/**"
+      - "02_ai_engineer/Multi_rag_lab/**"
   workflow_dispatch:
 
 permissions:
@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PROJECT_DIR: "02_ai_engineer/multi_rag_lab"
+  PROJECT_DIR: "02_ai_engineer/Multi_rag_lab"
   PYTHON_VERSION: "3.14"
   MIN_COVERAGE: "80"
   PYTHONUTF8: "1"
