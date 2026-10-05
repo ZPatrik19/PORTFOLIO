@@ -1093,62 +1093,61 @@ def _strategy_entries() -> list[ReferenceEntry]:
         entries.append(
             ReferenceEntry(
                 key=f"chunking_{key}",
-                name=f"{meta['name']} darabolás",
+                name=f"{chunking_meta['name']} darabolás",
                 category="Darabolás",
                 kind="Stratégia",
-                definition=str(meta["summary"]),
-                why_it_matters=str(meta["best_for"]),
-                interpretation=str(meta["how"]),
+                definition=str(chunking_meta["summary"]),
+                why_it_matters=str(chunking_meta["best_for"]),
+                interpretation=str(chunking_meta["how"]),
                 project_area=("Darabolás", "Teljes pipeline benchmark"),
                 related=("Chunk size", "Chunk overlap"),
-                caveat=str(meta["tradeoff"]),
+                caveat=str(chunking_meta["tradeoff"]),
             )
         )
-    for key, meta in RAG_STRATEGIES.items():
+    for key, rag_meta in RAG_STRATEGIES.items():
         entries.append(
             ReferenceEntry(
                 key=f"rag_{key}",
-                name=str(meta["name"]),
+                name=str(rag_meta["name"]),
                 category="RAG stratégiák",
                 kind="Stratégia",
-                definition=str(meta["summary"]),
-                why_it_matters=str(meta["when"]),
-                interpretation=f"Folyamat: {meta['flow']}",
+                definition=str(rag_meta["summary"]),
+                why_it_matters=str(rag_meta["when"]),
+                interpretation=f"Folyamat: {rag_meta['flow']}",
                 project_area=("RAG összehasonlítás", "Kiértékelés", "Teljes pipeline benchmark"),
                 related=("Visszakeresés", "Context builder", "Grounded prompt"),
             )
         )
-    for key, meta in CONTEXT_PROFILES.items():
+    for key, context_meta in CONTEXT_PROFILES.items():
         entries.append(
             ReferenceEntry(
                 key=f"context_profile_{key}",
-                name=f"Kontextusprofil: {meta['name']}",
+                name=f"Kontextusprofil: {context_meta['name']}",
                 category="Kontextus és prompt",
                 kind="Profil",
-                definition=str(meta["summary"]),
-                why_it_matters=f"Alapértelmezett evidence budget: {meta['budget']} token.",
-                interpretation=str(meta["guidance"]),
+                definition=str(context_meta["summary"]),
+                why_it_matters=f"Alapértelmezett evidence budget: {context_meta['budget']} token.",
+                interpretation=str(context_meta["guidance"]),
                 unit="token",
                 project_area=("RAG játszótér", "RAG összehasonlítás"),
                 related=("Context budget",),
             )
         )
-    for key, meta in PROMPT_PROFILES.items():
+    for key, prompt_meta in PROMPT_PROFILES.items():
         entries.append(
             ReferenceEntry(
                 key=f"prompt_profile_{key}",
-                name=f"Promptprofil: {meta['name']}",
+                name=f"Promptprofil: {prompt_meta['name']}",
                 category="Kontextus és prompt",
                 kind="Profil",
-                definition=str(meta["summary"]),
+                definition=str(prompt_meta["summary"]),
                 why_it_matters="A válasz szerkezetét és kommunikációs célját szabályozza anélkül, hogy a retrieval pipeline-t megváltoztatná.",
-                interpretation=str(meta["instruction"]),
+                interpretation=str(prompt_meta["instruction"]),
                 project_area=("RAG játszótér", "Grounded prompt"),
                 related=("Grounded prompt", "System prompt"),
             )
         )
     return entries
-
 
 def all_reference_entries() -> list[ReferenceEntry]:
     entries = [*_BASE_ENTRIES, *_strategy_entries()]
