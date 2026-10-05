@@ -14,7 +14,6 @@ EXPECTED_DIRS = {
     "scripts",
     "tests",
     "docs",
-    ".github",
 }
 FORBIDDEN_DIR_NAMES = {"__pycache__", ".pytest_cache", ".ruff_cache", ".venv", "src"}
 FORBIDDEN_SUFFIXES = {".pyc", ".pyo"}
