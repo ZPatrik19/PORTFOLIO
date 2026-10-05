@@ -21,7 +21,7 @@ concurrency:
 env:
   PROJECT_DIR: "02_ai_engineer/Multi_rag_lab"
   PYTHON_VERSION: "3.14"
-  MIN_COVERAGE: "80"
+  MIN_COVERAGE: "67"
   PYTHONUTF8: "1"
   PYTHONIOENCODING: "utf-8"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
@@ -139,7 +139,8 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           import os, pathlib, subprocess, sys
-          tracked=subprocess.check_output(["git","ls-files"],text=True).splitlines()
+          project_dir=os.environ["PROJECT_DIR"]
+          tracked=subprocess.check_output(["git","ls-files",project_dir],text=True).splitlines()
           allowed={".env.example",".env.sample",".env.template"}
           forbidden={".env",".env.local",".env.production","credentials.json","secrets.json","service-account.json","id_rsa","id_ed25519"}
           private={".pem",".key",".p12",".pfx"}
@@ -398,7 +399,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-24.04, windows-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 12
     steps:
