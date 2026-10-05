@@ -219,7 +219,7 @@ def run_pipeline_matrix(
                             f"Retrieval · {spec.label} · embed={embedding_device} · vector={vector_device} · rerank={reranker_name}/{reranker_device}",
                         )
                     try:
-                        rows = run_retrieval_benchmark(
+                        retrieval_batch = run_retrieval_benchmark(
                             paths=paths,
                             items=subset,
                             chunking_strategies=chunkings,
@@ -239,7 +239,7 @@ def run_pipeline_matrix(
                             fallback_embedding=spec.fallback_embedding,
                             reranker_device=reranker_device,
                         )
-                        for row in rows_to_dicts(rows):
+                        for row in rows_to_dicts(retrieval_batch):
                             row["embedding_mode"] = spec.label
                             row["embedding_model"] = spec.model_name
                             row["requested_embedding_device"] = embedding_device
@@ -272,7 +272,7 @@ def run_pipeline_matrix(
                                 f"RAG · {spec.label} · embed={embedding_device} · vector={vector_device} · {chunking} · {len(plain_rag_strategies)} stratégia (közös index)",
                             )
                         try:
-                            rows = run_rag_benchmark(
+                            rag_batch = run_rag_benchmark(
                                 paths=paths,
                                 items=subset,
                                 rag_strategies=plain_rag_strategies,
@@ -293,7 +293,7 @@ def run_pipeline_matrix(
                                 prompt_profile=prompt_profile,
                                 reranker=None,
                             )
-                            for row in rows_to_dicts(rows):
+                            for row in rows_to_dicts(rag_batch):
                                 row["embedding_mode"] = spec.label
                                 row["embedding_model"] = spec.model_name
                                 row["requested_embedding_device"] = embedding_device
@@ -331,10 +331,13 @@ def run_pipeline_matrix(
                             try:
                                 if reranker_name == "cross-encoder":
                                     settings = load_settings()
-                                    reranker_obj = CrossEncoderReranker(settings.reranker_model, device=reranker_device)
+                                    reranker_obj: CrossEncoderReranker | LexicalReranker = CrossEncoderReranker(
+                                        settings.reranker_model,
+                                        device=reranker_device,
+                                    )
                                 else:
                                     reranker_obj = LexicalReranker()
-                                rows = run_rag_benchmark(
+                                reranked_batch = run_rag_benchmark(
                                     paths=paths,
                                     items=subset,
                                     rag_strategies=reranked_rag_strategies,
@@ -355,7 +358,7 @@ def run_pipeline_matrix(
                                     prompt_profile=prompt_profile,
                                     reranker=reranker_obj,
                                 )
-                                for row in rows_to_dicts(rows):
+                                for row in rows_to_dicts(reranked_batch):
                                     row["embedding_mode"] = spec.label
                                     row["embedding_model"] = spec.model_name
                                     row["requested_embedding_device"] = embedding_device
