@@ -89,8 +89,15 @@ def test_runtime_preflight_works_with_dummy_provider() -> None:
 def test_project_declares_python_314_runtime() -> None:
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
-    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    repo_root = ROOT.parents[1]
+    ci_candidates = [
+        repo_root / ".github" / "workflows" / "multi-rag-ci.yml",
+        ROOT / ".github" / "workflows" / "ci.yml",
+    ]
+    ci_path = next((path for path in ci_candidates if path.exists()), None)
+    assert ci_path is not None, "Multi-RAG CI workflow is missing"
+    ci = ci_path.read_text(encoding="utf-8")
     assert 'requires-python = ">=3.14,<3.15"' in pyproject
     assert 'target-version = "py314"' in pyproject
     assert "FROM python:3.14-slim" in dockerfile
-    assert 'python-version: "3.14"' in ci
+    assert 'PYTHON_VERSION: "3.14"' in ci or 'python-version: "3.14"' in ci
