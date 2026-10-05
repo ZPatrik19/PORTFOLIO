@@ -125,7 +125,9 @@ def start_ollama(profile_name: str) -> dict[str, Any]:
         "stdin": subprocess.DEVNULL,
     }
     if platform.system() == "Windows":
-        kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS
+        new_process_group = int(getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
+        detached_process = int(getattr(subprocess, "DETACHED_PROCESS", 0))
+        kwargs["creationflags"] = new_process_group | detached_process
     else:
         kwargs["start_new_session"] = True
     subprocess.Popen([executable, "serve"], **kwargs)
