@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import re
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from typing import Protocol
 
-from rag_engine.models import RAGResult, RetrievedChunk
+from rag_engine.models import Chunk, RAGResult, RetrievedChunk
 from rag_engine.retrieval.fusion import reciprocal_rank_fusion
 
 
@@ -340,7 +340,7 @@ class CorrectiveRAG(BasePipeline):
 class ParentDocumentRAG(BasePipeline):
     name = "parent-document"
 
-    def __init__(self, *, parent_chunks: dict[str, object], **kwargs):
+    def __init__(self, *, parent_chunks: Mapping[str, Chunk], **kwargs):
         super().__init__(**kwargs)
         self.parent_chunks = parent_chunks
 
@@ -348,12 +348,12 @@ class ParentDocumentRAG(BasePipeline):
         started = time.perf_counter()
         t = time.perf_counter()
         children = self.retriever.retrieve(query, top_k=self.candidate_count)
-        parents = []
-        seen = set()
+        parents: list[RetrievedChunk] = []
+        seen: set[str] = set()
         for child in children:
-            parent_id = child.metadata.get("parent_id")
+            parent_id = str(child.metadata.get("parent_id") or "")
             parent = self.parent_chunks.get(parent_id)
-            if parent_id and parent and parent_id not in seen:
+            if parent_id and parent is not None and parent_id not in seen:
                 seen.add(parent_id)
                 parents.append(
                     RetrievedChunk(
