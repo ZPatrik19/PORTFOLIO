@@ -12,10 +12,23 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+# Pull current Debian security fixes before installing runtime packages.
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . /app
-RUN python -m pip install --upgrade pip && python -m pip install --no-cache-dir ".[cpu]"
+
+# Install the application, then explicitly raise security-sensitive transitive
+# packages to versions that include the fixes enforced by the Trivy gate.
+RUN python -m pip install --no-cache-dir --upgrade pip "setuptools>=78.1.1" wheel \
+    && python -m pip install --no-cache-dir ".[cpu]" \
+    && python -m pip install --no-cache-dir --upgrade \
+       "msgpack>=1.2.1" \
+       "urllib3>=2.8.0" \
+       "setuptools>=78.1.1" \
+    && python -m pip check
 
 # Default image build is self-contained for the RAG retrieval path: public HF
 # embedding/reranker models, medical corpus and the persistent FAISS index are
@@ -27,10 +40,14 @@ RUN if [ "$PREBUILD_RAG_ASSETS" = "1" ]; then \
       python scripts/prepare_medical_corpus.py; \
     fi
 
-RUN useradd --create-home --uid 10001 appuser && chown -R appuser:appuser /app
+RUN useradd --create-home --uid 10001 appuser \
+    && chown -R appuser:appuser /app
+
 USER appuser
 
 EXPOSE 8501
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 CMD curl -f http://localhost:8501/_stcore/health || exit 1
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
 CMD ["python", "-m", "streamlit", "run", "ui/app.py", "--server.address=0.0.0.0", "--server.port=8501"]
