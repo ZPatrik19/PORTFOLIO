@@ -14,7 +14,7 @@ def reciprocal_rank_fusion(
         for rank, item in enumerate(results, start=1):
             scores[item.chunk_id] += 1.0 / (k + rank)
             chunks[item.chunk_id] = item
-    ordered = sorted(scores, key=scores.get, reverse=True)[:top_k]
+    ordered = sorted(scores, key=lambda chunk_id: scores[chunk_id], reverse=True)[:top_k]
     return [
         chunks[cid].model_copy(update={"score": scores[cid], "rank": rank}) for rank, cid in enumerate(ordered, start=1)
     ]
@@ -34,7 +34,7 @@ def weighted_fusion(
         for r in results:
             scores[r.chunk_id] += weight * ((r.score - lo) / span)
             chunks[r.chunk_id] = r
-    ordered = sorted(scores, key=scores.get, reverse=True)[:top_k]
+    ordered = sorted(scores, key=lambda chunk_id: scores[chunk_id], reverse=True)[:top_k]
     return [
         chunks[cid].model_copy(update={"score": scores[cid], "rank": rank}) for rank, cid in enumerate(ordered, start=1)
     ]
