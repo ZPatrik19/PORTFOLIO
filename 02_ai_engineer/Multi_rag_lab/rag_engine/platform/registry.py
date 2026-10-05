@@ -506,14 +506,20 @@ class ExperimentRegistry:
         values: dict[str, Any],
     ) -> None:
         columns = ["run_id", "result_type", "variant_key", *values.keys()]
+        allowed_columns = {row[1] for row in connection.execute("PRAGMA table_info(results)").fetchall()}
+        unknown_columns = set(columns) - allowed_columns
+        if unknown_columns:
+            raise ValueError(f"Unknown result columns: {sorted(unknown_columns)}")
+
         placeholders = ",".join("?" for _ in columns)
         update_cols = [column for column in values if column != "variant_key"]
         update_sql = ",".join(f"{column}=excluded.{column}" for column in update_cols)
-        connection.execute(
-            f"""
+        query = f"""
             INSERT INTO results({','.join(columns)}) VALUES ({placeholders})
             ON CONFLICT(run_id, result_type, variant_key) DO UPDATE SET {update_sql}
-            """,
+            """  # nosec B608 -- identifiers are validated against the live SQLite schema.
+        connection.execute(
+            query,
             [run_id, result_type, variant_key, *values.values()],
         )
 
