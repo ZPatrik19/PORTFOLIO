@@ -327,7 +327,7 @@ def build_medical_evaluation_dataset(
     dataset = MedicalEvaluationDataset(
         corpus_id=str(manifest.get("corpus_id", "hungarian_medical")),
         source_name=str(manifest.get("display_name", "Egészségvonal Egészség A–Z")),
-        source_documents=int(manifest.get("available_documents", 0) or 0),
+        source_documents=int(str(manifest.get("available_documents", 0) or 0)),
         requested_questions=target_questions,
         items=items,
     )
