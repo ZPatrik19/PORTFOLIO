@@ -30,6 +30,17 @@ RUN python -m pip install --no-cache-dir --upgrade pip "setuptools>=78.1.1" whee
        "setuptools>=78.1.1" \
     && python -m pip check
 
+# pip is a build-time tool only. pip 26.2+ ships its own vendored dependency
+# SBOM under pip/_vendor/bom.cdx.json; keeping pip in the runtime image causes
+# scanners to report vulnerabilities for pip's private vendored copies even
+# when the application's installed packages are already patched.
+RUN rm -rf \
+      /usr/local/lib/python3.14/site-packages/pip \
+      /usr/local/lib/python3.14/site-packages/pip-*.dist-info \
+      /usr/local/bin/pip \
+      /usr/local/bin/pip3 \
+      /usr/local/bin/pip3.14
+
 # Default image build is self-contained for the RAG retrieval path: public HF
 # embedding/reranker models, medical corpus and the persistent FAISS index are
 # prepared once at build time. Set --build-arg PREBUILD_RAG_ASSETS=0 for an
