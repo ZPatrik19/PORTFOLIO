@@ -15,7 +15,7 @@ class NumpyVectorStore:
     device = "cpu"
 
     def __init__(self) -> None:
-        self.vectors = np.empty((0, 0), dtype=np.float32)
+        self.vectors: np.ndarray = np.empty((0, 0), dtype=np.float32)
         self.chunks: list[Chunk] = []
 
     def add(self, vectors: np.ndarray, chunks: list[Chunk]) -> None:
