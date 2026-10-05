@@ -113,7 +113,10 @@ def faiss_smoke_test() -> tuple[bool, str]:
             if gpu_ids.shape != (1, 1) or int(gpu_ids[0, 0]) != 0:
                 return False, "A FAISS GPU API elerheto, de a GPU smoke search hibas eredmenyt adott."
             return True, f"FAISS {version} GPU backend OK; visible_gpus={visible_gpus}"
-        return True, f"FAISS {version} CPU backend OK; GPU API={'igen, de nincs lathato GPU' if gpu_api else 'nem (Windows CPU buildnel normalis)'}"
+        return (
+            True,
+            f"FAISS {version} CPU backend OK; GPU API={'igen, de nincs lathato GPU' if gpu_api else 'nem (Windows CPU buildnel normalis)'}",
+        )
     except Exception as exc:  # pragma: no cover - environment dependent
         return False, f"FAISS import/smoke hiba: {exc}"
 
@@ -128,15 +131,17 @@ def ensure_faiss() -> bool:
         LOGGER.warning("%s", message)
 
     LOGGER.warning("FAISS nem hasznalhato. Binary wheel telepites indul...")
-    rc = run_stream([
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        "--upgrade",
-        "--only-binary=:all:",
-        "faiss-cpu>=1.14,<2",
-    ])
+    rc = run_stream(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "--only-binary=:all:",
+            "faiss-cpu>=1.14,<2",
+        ]
+    )
     if rc != 0:
         LOGGER.error("FAISS telepites sikertelen (exit=%s).", rc)
         return False
@@ -166,9 +171,7 @@ def _driver_cuda_version() -> tuple[int, int] | None:
     if shutil.which("nvidia-smi") is None:
         return None
     try:
-        completed = subprocess.run(
-            ["nvidia-smi"], capture_output=True, text=True, timeout=10, check=False
-        )
+        completed = subprocess.run(["nvidia-smi"], capture_output=True, text=True, timeout=10, check=False)
         match = re.search(r"CUDA Version:\s*(\d+)\.(\d+)", completed.stdout or "")
         if match:
             return int(match.group(1)), int(match.group(2))
@@ -214,30 +217,31 @@ def install_cuda_pytorch() -> bool:
     if spec is None:
         version = _driver_cuda_version()
         if version is None:
-            LOGGER.warning(
-                "NVIDIA driver / nvidia-smi nem lathato. CUDA PyTorch nem telepitheto automatikusan."
-            )
+            LOGGER.warning("NVIDIA driver / nvidia-smi nem lathato. CUDA PyTorch nem telepitheto automatikusan.")
         else:
             LOGGER.error(
                 "A driver altal jelzett CUDA %s.%s tul regi a Python 3.14-es CUDA wheelhez. "
                 "Frissitsd az NVIDIA drivert legalabb CUDA 12.6 kompatibilis verziora.",
-                version[0], version[1],
+                version[0],
+                version[1],
             )
         return False
 
     index_url, torch_spec = spec
     LOGGER.info("CUDA-s PyTorch telepitese/javitasa: %s @ %s", torch_spec, index_url)
-    rc = run_stream([
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        "--force-reinstall",
-        "--no-cache-dir",
-        torch_spec,
-        "--index-url",
-        index_url,
-    ])
+    rc = run_stream(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--force-reinstall",
+            "--no-cache-dir",
+            torch_spec,
+            "--index-url",
+            index_url,
+        ]
+    )
     if rc != 0:
         LOGGER.error("CUDA PyTorch telepites sikertelen (exit=%s).", rc)
         return False
@@ -281,10 +285,16 @@ def install_ollama() -> bool:
         return True
     if sys.platform.startswith("win"):
         LOGGER.info("Ollama telepitese a hivatalos Windows PowerShell installerrel...")
-        rc = run_stream([
-            "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command",
-            "irm https://ollama.com/install.ps1 | iex",
-        ])
+        rc = run_stream(
+            [
+                "powershell",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "irm https://ollama.com/install.ps1 | iex",
+            ]
+        )
     else:
         if shutil.which("curl") is None:
             LOGGER.error("curl nem talalhato; Ollama automatikus telepites nem indithato.")
@@ -334,7 +344,9 @@ def ensure_llm(profile_name: str) -> bool:
         LOGGER.info("A %s modellprofil modositva lett; alias automatikus frissitese...", alias)
         created = create_llm_profile(profile_name)
         if not created.get("ok"):
-            LOGGER.error("Ollama alias frissites sikertelen: %s", created.get("stderr") or created.get("error") or created)
+            LOGGER.error(
+                "Ollama alias frissites sikertelen: %s", created.get("stderr") or created.get("error") or created
+            )
             return False
         LOGGER.info("[OK] Ollama alias frissitve az aktualis magyar grounded profilra: %s", alias)
 
@@ -400,9 +412,13 @@ def show_faiss_index() -> None:
         except Exception as exc:
             LOGGER.warning("Az index_state.json nem olvashato teljesen: %s", exc)
     elif MEDICAL_MANIFEST.exists():
-        LOGGER.warning("Medical corpus mar letezik, de nincs perzisztens index. Használd: python scripts/infrastructure_cli.py reindex")
+        LOGGER.warning(
+            "Medical corpus mar letezik, de nincs perzisztens index. Használd: python scripts/infrastructure_cli.py reindex"
+        )
     else:
-        LOGGER.warning("Medical corpus/index meg nincs letoltve. Ez nem FAISS telepitesi hiba. A Dokumentumok oldalon vagy a python scripts/infrastructure_cli.py reindex paranccsal keszitheto el.")
+        LOGGER.warning(
+            "Medical corpus/index meg nincs letoltve. Ez nem FAISS telepitesi hiba. A Dokumentumok oldalon vagy a python scripts/infrastructure_cli.py reindex paranccsal keszitheto el."
+        )
 
 
 def reindex() -> bool:
@@ -442,7 +458,9 @@ def setup_all(profile: str, *, install_cuda: bool = False, install_ollama_runtim
         return 5
 
     show_faiss_index()
-    LOGGER.info("[OK] Infrastruktur setup befejezve; a runtime modellek és az alapértelmezett index elő vannak készítve.")
+    LOGGER.info(
+        "[OK] Infrastruktur setup befejezve; a runtime modellek és az alapértelmezett index elő vannak készítve."
+    )
     return 0
 
 
@@ -477,7 +495,12 @@ def verify_all(profile: str) -> int:
     llm_ok = ensure_llm(profile)
     if llm_ok:
         llm_smoke(profile)
-    LOGGER.info("Osszesites: CUDA=%s | FAISS=%s | OLLAMA/QWEN=%s", "OK" if cuda_ok else "CPU fallback", "OK" if faiss_ok else "HIBA", "OK" if llm_ok else "HIBA")
+    LOGGER.info(
+        "Osszesites: CUDA=%s | FAISS=%s | OLLAMA/QWEN=%s",
+        "OK" if cuda_ok else "CPU fallback",
+        "OK" if faiss_ok else "HIBA",
+        "OK" if llm_ok else "HIBA",
+    )
     return 0 if faiss_ok and llm_ok else 1
 
 
@@ -540,7 +563,12 @@ def interactive_menu(default_profile: str) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Multi-RAG infrastructure manager")
-    parser.add_argument("command", nargs="?", default="menu", choices=["menu", "setup", "run", "verify", "models", "reindex", "cuda", "faiss", "llm"])
+    parser.add_argument(
+        "command",
+        nargs="?",
+        default="menu",
+        choices=["menu", "setup", "run", "verify", "models", "reindex", "cuda", "faiss", "llm"],
+    )
     parser.add_argument("profile", nargs="?", default="balanced")
     parser.add_argument("--install-cuda", choices=["auto", "yes", "no"], default="auto")
     parser.add_argument("--install-ollama", choices=["auto", "yes", "no"], default="auto")
@@ -555,7 +583,9 @@ def main() -> int:
         if args.command == "menu":
             return interactive_menu(args.profile)
         if args.command == "setup":
-            cuda_install = args.install_cuda == "yes" or (args.install_cuda == "auto" and cuda_status().get("nvidia_smi"))
+            cuda_install = args.install_cuda == "yes" or (
+                args.install_cuda == "auto" and cuda_status().get("nvidia_smi")
+            )
             ollama_install = args.install_ollama in {"auto", "yes"}
             return setup_all(
                 args.profile,

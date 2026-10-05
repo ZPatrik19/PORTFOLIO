@@ -26,7 +26,15 @@ from ui.components.charts import (
     stacked_latency_chart,
 )
 from ui.components.common import ROOT
-from ui.components.education import info_cards, kpi_cards, live_run_card, note_box, page_intro, section_intro, status_cards
+from ui.components.education import (
+    info_cards,
+    kpi_cards,
+    live_run_card,
+    note_box,
+    page_intro,
+    section_intro,
+    status_cards,
+)
 from ui.components.exports import render_dataframe_exports
 from ui.components.tables import safe_dataframe
 
@@ -62,7 +70,16 @@ PRESETS = {
     "Teljes benchmark": {
         "questions": 80,
         "embeddings": ["multilingual", "e5-small", "english", "hashing"],
-        "chunkings": ["fixed", "fixed-token", "recursive", "sentence", "paragraph", "structure-aware", "parent-child", "semantic"],
+        "chunkings": [
+            "fixed",
+            "fixed-token",
+            "recursive",
+            "sentence",
+            "paragraph",
+            "structure-aware",
+            "parent-child",
+            "semantic",
+        ],
         "retrieval": ["dense", "bm25", "hybrid-rrf", "hybrid-weighted"],
         "rerankers": ["none", "lexical", "cross-encoder"],
         "rag": list(RAG_STRATEGIES),
@@ -104,8 +121,16 @@ def _rag_frame(rows: list[dict[str, object]]) -> pd.DataFrame:
     if not rows:
         return pd.DataFrame()
     frame = pd.DataFrame(rows)
-    reranker_text = frame["reranker"].astype(str) if "reranker" in frame.columns else pd.Series(["none"] * len(frame), index=frame.index)
-    reranker_device = frame["requested_reranker_device"].astype(str) if "requested_reranker_device" in frame.columns else pd.Series(["—"] * len(frame), index=frame.index)
+    reranker_text = (
+        frame["reranker"].astype(str)
+        if "reranker" in frame.columns
+        else pd.Series(["none"] * len(frame), index=frame.index)
+    )
+    reranker_device = (
+        frame["requested_reranker_device"].astype(str)
+        if "requested_reranker_device" in frame.columns
+        else pd.Series(["—"] * len(frame), index=frame.index)
+    )
     frame["Konfiguráció"] = (
         frame["embedding_mode"].astype(str)
         + " · E="
@@ -181,7 +206,6 @@ def _component_frames(rows: list[dict[str, object]]) -> tuple[pd.DataFrame, pd.D
     return parse, chunking, embedding, vector
 
 
-
 def _safe_load_eval_items() -> list:
     if not EVAL_PATH.exists():
         return []
@@ -223,6 +247,7 @@ def _rebuild_eval_dataset() -> int:
     )
     return len(dataset.items)
 
+
 def render() -> None:
     page_intro(
         "Teljes pipeline benchmark",
@@ -237,10 +262,30 @@ def render() -> None:
 
     status_cards(
         [
-            ("Orvosi korpusz", "Kész" if corpus_ready else "Hiányos", f"{len(corpus_paths)} / 100 forrásdokumentum", "ok" if corpus_ready else "warn"),
-            ("Evaluation dataset", "Kész" if eval_ready else "Hiányzik", f"{len(items)} forrásolt kérdés", "ok" if eval_ready else "warn"),
-            ("CUDA", "Elérhető" if cuda_available() else "CPU mód", "Embedding és Cross-Encoder gyorsítás külön mérhető.", "ok" if cuda_available() else "info"),
-            ("Benchmark mód", "Reprodukálható", "A quality benchmark ugyanazon corpus + question set páron fut.", "info"),
+            (
+                "Orvosi korpusz",
+                "Kész" if corpus_ready else "Hiányos",
+                f"{len(corpus_paths)} / 100 forrásdokumentum",
+                "ok" if corpus_ready else "warn",
+            ),
+            (
+                "Evaluation dataset",
+                "Kész" if eval_ready else "Hiányzik",
+                f"{len(items)} forrásolt kérdés",
+                "ok" if eval_ready else "warn",
+            ),
+            (
+                "CUDA",
+                "Elérhető" if cuda_available() else "CPU mód",
+                "Embedding és Cross-Encoder gyorsítás külön mérhető.",
+                "ok" if cuda_available() else "info",
+            ),
+            (
+                "Benchmark mód",
+                "Reprodukálható",
+                "A quality benchmark ugyanazon corpus + question set páron fut.",
+                "info",
+            ),
         ],
         columns=4,
     )
@@ -262,7 +307,9 @@ def render() -> None:
         else:
             if st.button("100 cikkes korpusz + evaluation dataset előkészítése", type="primary", width="stretch"):
                 try:
-                    with st.spinner("Korpusz letöltése, evaluation dataset és alapindex építése. Első futáskor ez több perc is lehet..."):
+                    with st.spinner(
+                        "Korpusz letöltése, evaluation dataset és alapindex építése. Első futáskor ez több perc is lehet..."
+                    ):
                         result = _prepare_full_benchmark_assets()
                     if result.returncode == 0:
                         st.success("Benchmark assetek elkészültek.")
@@ -272,7 +319,9 @@ def render() -> None:
                         with st.expander("Előkészítési napló", expanded=True):
                             st.code((result.stdout + "\n" + result.stderr)[-12000:], language=None)
                 except subprocess.TimeoutExpired:
-                    st.error("Az előkészítés 60 perc után sem fejeződött be. Futtasd terminálból: python scripts/prepare_medical_corpus.py")
+                    st.error(
+                        "Az előkészítés 60 perc után sem fejeződött be. Futtasd terminálból: python scripts/prepare_medical_corpus.py"
+                    )
                 except Exception as exc:
                     st.error(f"Az előkészítés nem indítható: {exc}")
         note_box(
@@ -284,19 +333,43 @@ def render() -> None:
     kpi_cards(
         [
             ("Evaluation dataset", str(len(items)), "Ugyanaz a source-grounded kérdéskészlet minden variánshoz."),
-            ("CUDA", "elérhető" if cuda_available() else "nem elérhető", "A beágyazás és a Cross-Encoder tényleges CUDA futtatás esetén mérhető."),
-            ("Chunking", "8 stratégia", "Fixed, recursive, sentence, paragraph, structure-aware, parent-child és semantic."),
-            ("RAG", f"{len(RAG_STRATEGIES)} stratégia", "Baseline, lexical, hybrid, reranked, HyDE, Multi-Hop és további variánsok."),
+            (
+                "CUDA",
+                "elérhető" if cuda_available() else "nem elérhető",
+                "A beágyazás és a Cross-Encoder tényleges CUDA futtatás esetén mérhető.",
+            ),
+            (
+                "Chunking",
+                "8 stratégia",
+                "Fixed, recursive, sentence, paragraph, structure-aware, parent-child és semantic.",
+            ),
+            (
+                "RAG",
+                f"{len(RAG_STRATEGIES)} stratégia",
+                "Baseline, lexical, hybrid, reranked, HyDE, Multi-Hop és további variánsok.",
+            ),
         ],
         columns=4,
     )
 
     info_cards(
         [
-            ("Komponensprofil", "Parsing/cleaning, chunking latency és chunk-statisztika, embedding load/throughput, vector index build és search percentilisek."),
-            ("Visszakeresési minőség", "Recall@K, Precision@K, F1@K, Hit Rate, MRR, MAP@K, nDCG@K, first relevant rank, diversity és duplicate ratio."),
-            ("Generálás", "Hivatkozási pontosság/coverage/source coverage, key-fact coverage, context utilization, answer redundancy, TTFT és token/s."),
-            ("Reprodukálhatóság", "Minden teljes mátrix run_id-val, config hash-sel és teljes JSON payload-dal bekerül az Experiment Registry-be."),
+            (
+                "Komponensprofil",
+                "Parsing/cleaning, chunking latency és chunk-statisztika, embedding load/throughput, vector index build és search percentilisek.",
+            ),
+            (
+                "Visszakeresési minőség",
+                "Recall@K, Precision@K, F1@K, Hit Rate, MRR, MAP@K, nDCG@K, first relevant rank, diversity és duplicate ratio.",
+            ),
+            (
+                "Generálás",
+                "Hivatkozási pontosság/coverage/source coverage, key-fact coverage, context utilization, answer redundancy, TTFT és token/s.",
+            ),
+            (
+                "Reprodukálhatóság",
+                "Minden teljes mátrix run_id-val, config hash-sel és teljes JSON payload-dal bekerül az Experiment Registry-be.",
+            ),
         ],
         columns=4,
     )
@@ -323,7 +396,14 @@ def render() -> None:
     with st.expander("Benchmark konfiguráció · részletes beállítások", expanded=False):
         c1, c2, c3, c4 = st.columns(4)
         with c1:
-            question_count = st.slider("Evaluation kérdések", 5, len(items), min(int(preset["questions"]), len(items)), step=5, key=f"matrix_q_{preset_name}")
+            question_count = st.slider(
+                "Evaluation kérdések",
+                5,
+                len(items),
+                min(int(preset["questions"]), len(items)),
+                step=5,
+                key=f"matrix_q_{preset_name}",
+            )
             embedding_modes = st.multiselect(
                 "Beágyazási modellek",
                 ["multilingual", "e5-small", "english", "hashing"],
@@ -339,7 +419,16 @@ def render() -> None:
         with c2:
             chunkings = st.multiselect(
                 "Chunking stratégiák",
-                ["fixed", "fixed-token", "recursive", "sentence", "paragraph", "structure-aware", "parent-child", "semantic"],
+                [
+                    "fixed",
+                    "fixed-token",
+                    "recursive",
+                    "sentence",
+                    "paragraph",
+                    "structure-aware",
+                    "parent-child",
+                    "semantic",
+                ],
                 default=list(preset["chunkings"]),
                 key=f"matrix_chunk_{preset_name}",
             )
@@ -350,7 +439,9 @@ def render() -> None:
                 help="Windows faiss-cpu esetén a CUDA kérés valós CPU fallbackként fog látszani, nem hamis GPU eredményként.",
                 key=f"matrix_vector_devices_{preset_name}",
             )
-            include_components = st.checkbox("Komponens microbenchmark", value=True, key=f"matrix_components_{preset_name}")
+            include_components = st.checkbox(
+                "Komponens microbenchmark", value=True, key=f"matrix_components_{preset_name}"
+            )
         with c3:
             retrieval_modes = st.multiselect(
                 "Visszakeresési módok",
@@ -371,7 +462,11 @@ def render() -> None:
                 key=f"matrix_reranker_devices_{preset_name}",
             )
         with c4:
-            include_rag = st.checkbox("End-to-end RAG is fusson", value=preset_name != "Teljes benchmark", key=f"matrix_include_rag_{preset_name}")
+            include_rag = st.checkbox(
+                "End-to-end RAG is fusson",
+                value=preset_name != "Teljes benchmark",
+                key=f"matrix_include_rag_{preset_name}",
+            )
             rag_strategies = st.multiselect(
                 "RAG stratégiák",
                 list(RAG_STRATEGIES),
@@ -418,7 +513,9 @@ def render() -> None:
                 key=f"matrix_component_chunks_{preset_name}",
                 disabled=not include_components,
             )
-        st.caption("A microbenchmark külön méri a pipeline komponenseket; ez nem helyettesíti a forrásolt retrieval/RAG quality benchmarkot.")
+        st.caption(
+            "A microbenchmark külön méri a pipeline komponenseket; ez nem helyettesíti a forrásolt retrieval/RAG quality benchmarkot."
+        )
 
     plan = build_matrix_plan(
         embedding_modes=embedding_modes,
@@ -435,10 +532,26 @@ def render() -> None:
 
     kpi_cards(
         [
-            ("Komponens variáns", f"{plan.component_configurations:,}", "Parsing/chunking/embedding/vector microbenchmark becsült konfigurációszám."),
-            ("Visszakeresési variáns", f"{plan.retrieval_configurations:,}", "Beágyazás × device × vector backend × chunking × retrieval × tényleges reranker-variáns. A lexical/none nem duplázódik CUDA device szerint."),
-            ("RAG variáns", f"{plan.rag_configurations:,}", "Beágyazás × eszköz × vektortár × darabolás × RAG stratégia; az újrarangsorolt stratégiáknál az újrarangsoroló és eszköze is külön variáns."),
-            ("Összes konfiguráció", f"{plan.total_configurations:,}", "A kérdésszám ezen felül megszorozza a query-szintű futások számát."),
+            (
+                "Komponens variáns",
+                f"{plan.component_configurations:,}",
+                "Parsing/chunking/embedding/vector microbenchmark becsült konfigurációszám.",
+            ),
+            (
+                "Visszakeresési variáns",
+                f"{plan.retrieval_configurations:,}",
+                "Beágyazás × device × vector backend × chunking × retrieval × tényleges reranker-variáns. A lexical/none nem duplázódik CUDA device szerint.",
+            ),
+            (
+                "RAG variáns",
+                f"{plan.rag_configurations:,}",
+                "Beágyazás × eszköz × vektortár × darabolás × RAG stratégia; az újrarangsorolt stratégiáknál az újrarangsoroló és eszköze is külön variáns.",
+            ),
+            (
+                "Összes konfiguráció",
+                f"{plan.total_configurations:,}",
+                "A kérdésszám ezen felül megszorozza a query-szintű futások számát.",
+            ),
         ],
         columns=4,
     )
@@ -462,10 +575,26 @@ def render() -> None:
     eta_high_s = runtime_estimate.high_seconds
     kpi_cards(
         [
-            ("Becsült futási idő", f"{_human_seconds(runtime_estimate.expected_seconds)}", "Konfigurációszám, kérdésszám, LLM provider és CPU/CUDA választás alapján számolt becslés."),
-            ("Reális időtartomány", f"{_human_seconds(eta_low_s)} – {_human_seconds(eta_high_s)}", "A gép terhelése, cold start és Ollama válaszidő miatt természetes szórással."),
-            ("Lekérdezésszintű futások", f"{runtime_estimate.retrieval_executions:,}", "Visszakeresési részterhelés a kiválasztott benchmark-térben."),
-            ("End-to-end generálások", f"{runtime_estimate.rag_generations:,}", "Csak akkor számít, ha az end-to-end RAG be van kapcsolva."),
+            (
+                "Becsült futási idő",
+                f"{_human_seconds(runtime_estimate.expected_seconds)}",
+                "Konfigurációszám, kérdésszám, LLM provider és CPU/CUDA választás alapján számolt becslés.",
+            ),
+            (
+                "Reális időtartomány",
+                f"{_human_seconds(eta_low_s)} – {_human_seconds(eta_high_s)}",
+                "A gép terhelése, cold start és Ollama válaszidő miatt természetes szórással.",
+            ),
+            (
+                "Lekérdezésszintű futások",
+                f"{runtime_estimate.retrieval_executions:,}",
+                "Visszakeresési részterhelés a kiválasztott benchmark-térben.",
+            ),
+            (
+                "End-to-end generálások",
+                f"{runtime_estimate.rag_generations:,}",
+                "Csak akkor számít, ha az end-to-end RAG be van kapcsolva.",
+            ),
         ],
         columns=4,
     )
@@ -475,15 +604,25 @@ def render() -> None:
     )
 
     if plan.cuda_requested and not plan.cuda_available:
-        st.warning("CUDA ki van választva, de a PyTorch runtime-ban nem elérhető. Az embedding/reranker CUDA sorok kimaradnak; becsült GPU eredményt nem generálunk.")
+        st.warning(
+            "CUDA ki van választva, de a PyTorch runtime-ban nem elérhető. Az embedding/reranker CUDA sorok kimaradnak; becsült GPU eredményt nem generálunk."
+        )
     if "cuda" in vector_devices:
-        st.info("A FAISS GPU külön képesség a PyTorch CUDA-tól. Ha a Windows build csak faiss-cpu, a kért CUDA vector backend tényleges CPU fallbackként és külön actual_device mezővel jelenik meg.")
+        st.info(
+            "A FAISS GPU külön képesség a PyTorch CUDA-tól. Ha a Windows build csak faiss-cpu, a kért CUDA vector backend tényleges CPU fallbackként és külön actual_device mezővel jelenik meg."
+        )
     if llm_provider == "ollama" and plan.rag_configurations > 30:
-        st.warning("A valódi Ollama generálás több tucat RAG variánson hosszú lehet. A teljes retrieval/component mátrixhoz Dummy módot, majd célzott Ollama RAG futást használj.")
+        st.warning(
+            "A valódi Ollama generálás több tucat RAG variánson hosszú lehet. A teljes retrieval/component mátrixhoz Dummy módot, majd célzott Ollama RAG futást használj."
+        )
     if plan.total_configurations > 500:
-        st.warning(f"Nagy benchmark tér: {plan.total_configurations:,} konfiguráció. Ez több index/model futást és jelentős futási időt jelent.")
+        st.warning(
+            f"Nagy benchmark tér: {plan.total_configurations:,} konfiguráció. Ez több index/model futást és jelentős futási időt jelent."
+        )
 
-    run_disabled = not all([embedding_modes, embedding_devices, vector_devices, reranker_devices, chunkings, retrieval_modes, rerankers]) or (include_rag and not rag_strategies)
+    run_disabled = not all(
+        [embedding_modes, embedding_devices, vector_devices, reranker_devices, chunkings, retrieval_modes, rerankers]
+    ) or (include_rag and not rag_strategies)
     if st.button("TELJES PIPELINE MÁTRIX FUTTATÁSA", type="primary", width="stretch", disabled=run_disabled):
         registry = ExperimentRegistry(REGISTRY_PATH)
         run_id = None
@@ -626,15 +765,31 @@ def render() -> None:
             safe_dataframe(chunk_frame, width="stretch", hide_index=True)
             ch1, ch2 = st.columns(2)
             with ch1:
-                metric_bar_chart(chunk_frame, x="chunking", y="total_ms", key="matrix_chunk_latency", title="Chunking teljes latency")
+                metric_bar_chart(
+                    chunk_frame, x="chunking", y="total_ms", key="matrix_chunk_latency", title="Chunking teljes latency"
+                )
             with ch2:
-                metric_bar_chart(chunk_frame, x="chunking", y="documents_per_second", key="matrix_chunk_throughput", title="Chunking throughput · dokumentum/s")
+                metric_bar_chart(
+                    chunk_frame,
+                    x="chunking",
+                    y="documents_per_second",
+                    key="matrix_chunk_throughput",
+                    title="Chunking throughput · dokumentum/s",
+                )
             ch3, ch4 = st.columns(2)
             with ch3:
-                metric_bar_chart(chunk_frame, x="chunking", y="chunks_per_document", key="matrix_chunks_per_doc", title="Chunkok száma dokumentumonként")
+                metric_bar_chart(
+                    chunk_frame,
+                    x="chunking",
+                    y="chunks_per_document",
+                    key="matrix_chunks_per_doc",
+                    title="Chunkok száma dokumentumonként",
+                )
             with ch4:
                 percentile_latency_chart(
-                    chunk_frame.rename(columns={"mean_chunk_chars": "Mean", "median_chunk_chars": "Median", "p95_chunk_chars": "P95"}),
+                    chunk_frame.rename(
+                        columns={"mean_chunk_chars": "Mean", "median_chunk_chars": "Median", "p95_chunk_chars": "P95"}
+                    ),
                     category="chunking",
                     percentiles=["Mean", "Median", "P95"],
                     key="matrix_chunk_size_distribution",
@@ -707,16 +862,44 @@ def render() -> None:
         else:
             retrieval = retrieval.copy()
             retrieval["overall_score"] = _retrieval_overall_score(retrieval)
-            retrieval["efficiency_score"] = (0.75 * retrieval["overall_score"] + 0.25 * _scale_inverse(retrieval["mean_latency_ms"])).round(3)
+            retrieval["efficiency_score"] = (
+                0.75 * retrieval["overall_score"] + 0.25 * _scale_inverse(retrieval["mean_latency_ms"])
+            ).round(3)
             with st.expander("Nyers retrieval eredmények", expanded=False):
-                safe_dataframe(retrieval.sort_values(["overall_score", "ndcg_at_k"], ascending=False), width="stretch", hide_index=True)
-            render_dataframe_exports(retrieval, stem="pipeline_matrix_retrieval", key_prefix="pipeline_retrieval_export")
+                safe_dataframe(
+                    retrieval.sort_values(["overall_score", "ndcg_at_k"], ascending=False),
+                    width="stretch",
+                    hide_index=True,
+                )
+            render_dataframe_exports(
+                retrieval, stem="pipeline_matrix_retrieval", key_prefix="pipeline_retrieval_export"
+            )
             kpi_cards(
                 [
-                    ("Legjobb retrieval konfiguráció", str(retrieval.sort_values(["overall_score", "ndcg_at_k"], ascending=False).iloc[0]["Konfiguráció"]), "A legsikeresebb setup a súlyozott quality score szerint."),
-                    ("Legjobb overall score", f"{retrieval['overall_score'].max():.3f}", "Recall, MRR, nDCG, F1, forrásdiverzitás és label coverage alapján."),
-                    ("Legjobb hatékonysági pontszám", f"{retrieval['efficiency_score'].max():.3f}", "Minőség és átlagos késleltetés egyensúlyi mutatója."),
-                    ("Leggyorsabb mean latency", f"{retrieval['mean_latency_ms'].min():.1f} ms", "A retrieval futások legalacsonyabb átlagideje."),
+                    (
+                        "Legjobb retrieval konfiguráció",
+                        str(
+                            retrieval.sort_values(["overall_score", "ndcg_at_k"], ascending=False).iloc[0][
+                                "Konfiguráció"
+                            ]
+                        ),
+                        "A legsikeresebb setup a súlyozott quality score szerint.",
+                    ),
+                    (
+                        "Legjobb overall score",
+                        f"{retrieval['overall_score'].max():.3f}",
+                        "Recall, MRR, nDCG, F1, forrásdiverzitás és label coverage alapján.",
+                    ),
+                    (
+                        "Legjobb hatékonysági pontszám",
+                        f"{retrieval['efficiency_score'].max():.3f}",
+                        "Minőség és átlagos késleltetés egyensúlyi mutatója.",
+                    ),
+                    (
+                        "Leggyorsabb mean latency",
+                        f"{retrieval['mean_latency_ms'].min():.1f} ms",
+                        "A retrieval futások legalacsonyabb átlagideje.",
+                    ),
                 ],
                 columns=4,
             )
@@ -727,7 +910,16 @@ def render() -> None:
                     x="mean_latency_ms",
                     y="overall_score",
                     color="retriever",
-                    hover=["embedding_mode", "requested_vector_device", "chunking", "retriever", "reranker", "recall_at_k", "mrr", "ndcg_at_k"],
+                    hover=[
+                        "embedding_mode",
+                        "requested_vector_device",
+                        "chunking",
+                        "retriever",
+                        "reranker",
+                        "recall_at_k",
+                        "mrr",
+                        "ndcg_at_k",
+                    ],
                     size="queries_per_second",
                     key="matrix_quality_latency",
                     title="Visszakeresési minőség–latency tér · overall score vs mean latency",
@@ -753,7 +945,9 @@ def render() -> None:
                 )
             with d2:
                 metric_bar_chart(
-                    retrieval.groupby("retriever", as_index=False)[["overall_score", "ndcg_at_k", "mrr"]].mean().sort_values("overall_score", ascending=False),
+                    retrieval.groupby("retriever", as_index=False)[["overall_score", "ndcg_at_k", "mrr"]]
+                    .mean()
+                    .sort_values("overall_score", ascending=False),
                     x="retriever",
                     y="overall_score",
                     color="retriever",
@@ -778,16 +972,42 @@ def render() -> None:
         else:
             rag = rag.copy()
             rag["overall_score"] = _rag_overall_score(rag)
-            rag["efficiency_score"] = (0.75 * rag["overall_score"] + 0.25 * _scale_inverse(rag["mean_total_latency_ms"])).round(3)
+            rag["efficiency_score"] = (
+                0.75 * rag["overall_score"] + 0.25 * _scale_inverse(rag["mean_total_latency_ms"])
+            ).round(3)
             with st.expander("Nyers end-to-end RAG eredmények", expanded=False):
-                safe_dataframe(rag.sort_values(["overall_score", "key_fact_coverage"], ascending=False), width="stretch", hide_index=True)
+                safe_dataframe(
+                    rag.sort_values(["overall_score", "key_fact_coverage"], ascending=False),
+                    width="stretch",
+                    hide_index=True,
+                )
             render_dataframe_exports(rag, stem="pipeline_matrix_rag", key_prefix="pipeline_rag_export")
             kpi_cards(
                 [
-                    ("Legjobb end-to-end setup", str(rag.sort_values(["overall_score", "key_fact_coverage"], ascending=False).iloc[0]["Konfiguráció"]), "A legsikeresebb RAG konfiguráció a fő minőségi mutatók alapján."),
-                    ("Legjobb overall score", f"{rag['overall_score'].max():.3f}", "Hivatkozási pontosság, key-fact coverage és context utilization kombinációja."),
-                    ("Legjobb hatékonysági pontszám", f"{rag['efficiency_score'].max():.3f}", "Minőség és teljes késleltetés egyensúlyi mutatója."),
-                    ("Legjobb TTFT", f"{rag['mean_ttft_ms'].min():.0f} ms", "A leggyorsabb első token átlag a futott RAG variánsok között."),
+                    (
+                        "Legjobb end-to-end setup",
+                        str(
+                            rag.sort_values(["overall_score", "key_fact_coverage"], ascending=False).iloc[0][
+                                "Konfiguráció"
+                            ]
+                        ),
+                        "A legsikeresebb RAG konfiguráció a fő minőségi mutatók alapján.",
+                    ),
+                    (
+                        "Legjobb overall score",
+                        f"{rag['overall_score'].max():.3f}",
+                        "Hivatkozási pontosság, key-fact coverage és context utilization kombinációja.",
+                    ),
+                    (
+                        "Legjobb hatékonysági pontszám",
+                        f"{rag['efficiency_score'].max():.3f}",
+                        "Minőség és teljes késleltetés egyensúlyi mutatója.",
+                    ),
+                    (
+                        "Legjobb TTFT",
+                        f"{rag['mean_ttft_ms'].min():.0f} ms",
+                        "A leggyorsabb első token átlag a futott RAG variánsok között.",
+                    ),
                 ],
                 columns=4,
             )
@@ -798,7 +1018,16 @@ def render() -> None:
                     x="mean_total_latency_ms",
                     y="overall_score",
                     color="rag_strategy",
-                    hover=["embedding_mode", "requested_embedding_device", "requested_vector_device", "chunking", "citation_accuracy", "citation_coverage", "mean_ttft_ms", "key_fact_coverage"],
+                    hover=[
+                        "embedding_mode",
+                        "requested_embedding_device",
+                        "requested_vector_device",
+                        "chunking",
+                        "citation_accuracy",
+                        "citation_coverage",
+                        "mean_ttft_ms",
+                        "key_fact_coverage",
+                    ],
                     size="mean_tokens_per_second",
                     key="matrix_rag_quality_latency",
                     title="RAG quality–latency · overall score vs total latency",
@@ -817,14 +1046,24 @@ def render() -> None:
                 radar_metrics_chart(
                     rag.sort_values(["overall_score", "key_fact_coverage"], ascending=False),
                     label_col="ID",
-                    metrics=["citation_accuracy", "citation_coverage", "citation_source_coverage", "key_fact_coverage", "context_utilization"],
+                    metrics=[
+                        "citation_accuracy",
+                        "citation_coverage",
+                        "citation_source_coverage",
+                        "key_fact_coverage",
+                        "context_utilization",
+                    ],
                     key="matrix_rag_radar",
                     title="RAG quality profil · top konfigurációk",
                     max_series=5,
                 )
             with r4:
                 metric_bar_chart(
-                    rag.groupby("rag_strategy", as_index=False)[["overall_score", "mean_total_latency_ms", "mean_tokens_per_second"]].mean().sort_values("overall_score", ascending=False),
+                    rag.groupby("rag_strategy", as_index=False)[
+                        ["overall_score", "mean_total_latency_ms", "mean_tokens_per_second"]
+                    ]
+                    .mean()
+                    .sort_values("overall_score", ascending=False),
                     x="rag_strategy",
                     y="overall_score",
                     color="rag_strategy",
@@ -873,7 +1112,9 @@ def render() -> None:
             d1, d2 = st.columns(2)
             with d1:
                 device_metric_bars(
-                    retrieval.groupby(["embedding_mode", "requested_embedding_device"], as_index=False)["mean_latency_ms"].mean(),
+                    retrieval.groupby(["embedding_mode", "requested_embedding_device"], as_index=False)[
+                        "mean_latency_ms"
+                    ].mean(),
                     category="embedding_mode",
                     metric="mean_latency_ms",
                     device="requested_embedding_device",
@@ -882,7 +1123,9 @@ def render() -> None:
                 )
             with d2:
                 device_metric_bars(
-                    retrieval.groupby(["embedding_mode", "requested_embedding_device"], as_index=False)["queries_per_second"].mean(),
+                    retrieval.groupby(["embedding_mode", "requested_embedding_device"], as_index=False)[
+                        "queries_per_second"
+                    ].mean(),
                     category="embedding_mode",
                     metric="queries_per_second",
                     device="requested_embedding_device",
@@ -913,6 +1156,8 @@ def render() -> None:
         if not vector_frame.empty and "fallback_used" in vector_frame:
             fallbacks = vector_frame[vector_frame["fallback_used"].astype(bool)]
             if not fallbacks.empty:
-                st.info("Vector backend fallbackok: a kért device nem volt ténylegesen elérhető, ezért a rendszer hordozható backendre váltott.")
+                st.info(
+                    "Vector backend fallbackok: a kért device nem volt ténylegesen elérhető, ezért a rendszer hordozható backendre váltott."
+                )
                 safe_dataframe(fallbacks, width="stretch", hide_index=True)
         st.caption(f"Utolsó export: {OUTPUT_PATH}")

@@ -22,7 +22,7 @@ def _filename_from_response(url: str, response: requests.Response) -> str:
     disposition = response.headers.get("content-disposition", "")
     marker = "filename="
     if marker in disposition.lower():
-        raw = disposition.split(marker, 1)[1].strip().strip('"\'')
+        raw = disposition.split(marker, 1)[1].strip().strip("\"'")
         if raw:
             return Path(raw).name
     name = Path(urlparse(url).path).name
@@ -98,7 +98,11 @@ def download_url(
                 _validate_download(name, content_type, first_bytes, size_bytes)
                 sha256 = digest.hexdigest()
 
-            if target.exists() and checksum_path.exists() and checksum_path.read_text(encoding="utf-8").strip() == sha256:
+            if (
+                target.exists()
+                and checksum_path.exists()
+                and checksum_path.read_text(encoding="utf-8").strip() == sha256
+            ):
                 temp_path.unlink(missing_ok=True)
                 LOGGER.info("Duplicate download skipped: %s", url)
                 return target
@@ -123,5 +127,5 @@ def download_url(
                 temp_path.unlink(missing_ok=True)
             LOGGER.warning("Download failed (%s/%s): %s", attempt + 1, retries + 1, exc)
             if attempt < retries:
-                time.sleep(min(2 ** attempt * 2, 20))
+                time.sleep(min(2**attempt * 2, 20))
     raise DownloadError(f"A dokumentum nem tölthető le: {url}. Utolsó hiba: {last_error}")

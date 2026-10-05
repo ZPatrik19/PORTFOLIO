@@ -18,8 +18,16 @@ def test_clean_documents_deduplicates():
 
 def test_repeated_pdf_edge_lines_are_removed():
     docs = [
-        Document(document_id="p1", text="Manual Title\nPage body one has enough content for cleaning.\nConfidential", metadata={"source": "manual.pdf", "page": 1}),
-        Document(document_id="p2", text="Manual Title\nPage body two also has enough content for cleaning.\nConfidential", metadata={"source": "manual.pdf", "page": 2}),
+        Document(
+            document_id="p1",
+            text="Manual Title\nPage body one has enough content for cleaning.\nConfidential",
+            metadata={"source": "manual.pdf", "page": 1},
+        ),
+        Document(
+            document_id="p2",
+            text="Manual Title\nPage body two also has enough content for cleaning.\nConfidential",
+            metadata={"source": "manual.pdf", "page": 2},
+        ),
     ]
     cleaned, stats = clean_documents(docs)
     assert len(cleaned) == 2

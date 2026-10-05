@@ -19,10 +19,7 @@ def test_context_profile_uses_callback_instead_of_post_widget_state_mutation() -
 
 
 def test_obsolete_end_to_end_workflow_diagram_is_removed() -> None:
-    combined = "\n".join(
-        path.read_text(encoding="utf-8")
-        for path in [APP, OVERVIEW, GUIDE, CHARTS]
-    )
+    combined = "\n".join(path.read_text(encoding="utf-8") for path in [APP, OVERVIEW, GUIDE, CHARTS])
     assert "render_workflow_panel" not in combined
     assert "architecture_overview_chart" not in combined
     assert "workflow_pipeline_chart" not in combined

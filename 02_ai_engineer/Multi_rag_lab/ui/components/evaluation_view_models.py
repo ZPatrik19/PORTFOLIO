@@ -151,8 +151,7 @@ def build_retrieval_display_frame(rows: Iterable[Mapping[str, Any] | Any]) -> pd
         + 0.10 * _clip01(display["Címkézési lefedettség"])
     ).round(3)
     display["Hatékonysági pontszám"] = (
-        0.75 * display["Összesített pontszám"]
-        + 0.25 * _scale_inverse(display["Átlagos késleltetés ms"])
+        0.75 * display["Összesített pontszám"] + 0.25 * _scale_inverse(display["Átlagos késleltetés ms"])
     ).round(3)
     return display
 
@@ -190,8 +189,7 @@ def build_rag_display_frame(rows: Iterable[Mapping[str, Any] | Any]) -> pd.DataF
         + 0.12 * _clip01(display["Kontextus-kihasználtság"])
     ).round(3)
     display["Hatékonysági pontszám"] = (
-        0.75 * display["Összesített pontszám"]
-        + 0.25 * _scale_inverse(display["Átlagos teljes idő ms"])
+        0.75 * display["Összesített pontszám"] + 0.25 * _scale_inverse(display["Átlagos teljes idő ms"])
     ).round(3)
     return display
 

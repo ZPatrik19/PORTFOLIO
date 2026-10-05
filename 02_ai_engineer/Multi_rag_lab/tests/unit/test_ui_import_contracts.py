@@ -10,11 +10,7 @@ CHARTS_PATH = ROOT / "ui" / "components" / "charts.py"
 
 def _defined_symbols(path: Path) -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"))
-    return {
-        node.name
-        for node in tree.body
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
-    }
+    return {node.name for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))}
 
 
 def test_all_ui_component_chart_imports_exist() -> None:

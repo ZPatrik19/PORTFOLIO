@@ -28,7 +28,7 @@ def _configure_console_encoding() -> None:
         if callable(reconfigure):
             try:
                 reconfigure(encoding="utf-8", errors="replace")
-            except (OSError, ValueError):
+            except OSError, ValueError:
                 pass
 
 
@@ -50,7 +50,7 @@ def _load_state(path: Path) -> dict[str, object]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+    except OSError, json.JSONDecodeError:
         return {}
 
 
@@ -60,7 +60,9 @@ def main() -> int:
         description="100 magyar Egészségvonal orvosi cikk automatikus letöltése, darabolása és FAISS indexelése."
     )
     parser.add_argument("--config", type=Path, default=ROOT / "config" / "medical_corpus.yaml")
-    parser.add_argument("--target", type=int, default=None, help="Letöltendő dokumentumok száma; alapértelmezés a YAML-ból.")
+    parser.add_argument(
+        "--target", type=int, default=None, help="Letöltendő dokumentumok száma; alapértelmezés a YAML-ból."
+    )
     parser.add_argument("--refresh", action="store_true", help="A már meglévő HTML cikkek újraletöltése.")
     parser.add_argument("--force-index", action="store_true", help="Index újraépítése változatlan bemenet esetén is.")
     parser.add_argument("--strategy", default=None)
@@ -77,12 +79,28 @@ def main() -> int:
     corpus = load_medical_corpus_config(args.config)
     target = args.target or corpus.target_documents
     indexing_defaults = corpus.indexing
-    strategy = args.strategy or str(indexing_defaults.get("strategy", indexing_defaults.get("chunking_strategy", "recursive")))
+    strategy = args.strategy or str(
+        indexing_defaults.get("strategy", indexing_defaults.get("chunking_strategy", "recursive"))
+    )
     chunk_size = args.chunk_size or int(indexing_defaults.get("chunk_size", 700))
-    overlap = args.overlap if args.overlap is not None else int(indexing_defaults.get("overlap", indexing_defaults.get("chunk_overlap", 100)))
-    semantic_threshold = args.semantic_threshold if args.semantic_threshold is not None else float(indexing_defaults.get("semantic_threshold", 0.72))
-    embedding_device = args.embedding_device or os.getenv("RAG_EMBEDDING_DEVICE") or str(indexing_defaults.get("embedding_device", "auto"))
-    vector_device = args.vector_device or os.getenv("RAG_VECTOR_DEVICE") or str(indexing_defaults.get("vector_device", "cpu"))
+    overlap = (
+        args.overlap
+        if args.overlap is not None
+        else int(indexing_defaults.get("overlap", indexing_defaults.get("chunk_overlap", 100)))
+    )
+    semantic_threshold = (
+        args.semantic_threshold
+        if args.semantic_threshold is not None
+        else float(indexing_defaults.get("semantic_threshold", 0.72))
+    )
+    embedding_device = (
+        args.embedding_device
+        or os.getenv("RAG_EMBEDDING_DEVICE")
+        or str(indexing_defaults.get("embedding_device", "auto"))
+    )
+    vector_device = (
+        args.vector_device or os.getenv("RAG_VECTOR_DEVICE") or str(indexing_defaults.get("vector_device", "cpu"))
+    )
     raw_dir = ROOT / corpus.output_dir
     chunks_path = ROOT / corpus.processed_chunks
     vector_dir = ROOT / corpus.vectorstore_dir
@@ -130,20 +148,20 @@ def main() -> int:
         output_path=eval_path,
         target_questions=eval_target,
     )
-    print(f"       {len(evaluation_dataset.items)} kérdés · {len({item.source_id for item in evaluation_dataset.items})} forráscikk")
+    print(
+        f"       {len(evaluation_dataset.items)} kérdés · {len({item.source_id for item in evaluation_dataset.items})} forráscikk"
+    )
     print(f"       Dataset: {eval_path}")
 
-    paths = [
-        path
-        for path in sorted(raw_dir.iterdir())
-        if path.is_file() and path.suffix.lower() in SUPPORTED
-    ]
+    paths = [path for path in sorted(raw_dir.iterdir()) if path.is_file() and path.suffix.lower() in SUPPORTED]
     if not paths:
         raise SystemExit("Nincs indexelhető orvosi dokumentum.")
 
     settings = load_settings()
     configured_model = indexing_defaults.get("embedding_model")
-    model_name = "hashing" if args.hashing else (args.model or configured_model or settings.multilingual_embedding_model)
+    model_name = (
+        "hashing" if args.hashing else (args.model or configured_model or settings.multilingual_embedding_model)
+    )
     index_config = {
         "target": target,
         "strategy": strategy,
@@ -215,8 +233,7 @@ def main() -> int:
         "vector_backend": getattr(store, "backend_name", "unknown"),
         "vector_device": getattr(store, "device", "unknown"),
         "source_files": [
-            {"name": path.name, "size": path.stat().st_size, "mtime_ns": path.stat().st_mtime_ns}
-            for path in paths
+            {"name": path.name, "size": path.stat().st_size, "mtime_ns": path.stat().st_mtime_ns} for path in paths
         ],
         "config": index_config,
         "chunks_path": str(chunks_path),

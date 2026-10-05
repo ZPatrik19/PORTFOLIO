@@ -45,10 +45,19 @@ def render() -> None:
     info_cards(
         [
             ("PDF", "Oldalanként külön Document objektum készül; az oldalszám megmarad a provenance metadata-ban."),
-            ("HTML", "A script/style zaj eltűnik, a H1/H2/H3 headingek Markdown-jelöléssé alakulnak a structure-aware chunking számára."),
+            (
+                "HTML",
+                "A script/style zaj eltűnik, a H1/H2/H3 headingek Markdown-jelöléssé alakulnak a structure-aware chunking számára.",
+            ),
             ("TXT / Markdown / DOCX", "UTF-8 szöveg és bekezdések kerülnek egységes Document modellbe."),
-            ("Tisztítás", "Unicode NFKC, whitespace-normalizálás, ismétlődő PDF header/footer, rövid blokkok és exact duplikátumok szűrése."),
-            ("Provenance", "A forrás URL, cím, szervezet, kategória, oldal és SHA-256 metadata továbbmegy a chunkokhoz és citationökhöz."),
+            (
+                "Tisztítás",
+                "Unicode NFKC, whitespace-normalizálás, ismétlődő PDF header/footer, rövid blokkok és exact duplikátumok szűrése.",
+            ),
+            (
+                "Provenance",
+                "A forrás URL, cím, szervezet, kategória, oldal és SHA-256 metadata továbbmegy a chunkokhoz és citationökhöz.",
+            ),
             ("Idempotens letöltés", "Azonos SHA-256 esetén a downloader nem írja újra ugyanazt a fájlt."),
         ]
     )
@@ -65,6 +74,7 @@ def render() -> None:
     if manifest_path.exists():
         try:
             import json
+
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         except Exception:
             manifest = {}
@@ -72,7 +82,11 @@ def render() -> None:
     kpi_cards(
         [
             ("Célméret", f"{medical_cfg.target_documents} cikk", "Magyar Egészségvonal Egészség A–Z"),
-            ("Lokálisan elérhető", f"{len(existing_medical)} cikk", "Újrafuttatáskor a meglévő fájlok újrahasznosulnak"),
+            (
+                "Lokálisan elérhető",
+                f"{len(existing_medical)} cikk",
+                "Újrafuttatáskor a meglévő fájlok újrahasznosulnak",
+            ),
             ("Forrás", "Egészségvonal / NNGYK", "Hivatalos magyar egészségügyi tájékoztatás"),
             ("Index", "FAISS / fallback", str(ROOT / medical_cfg.vectorstore_dir)),
         ],
@@ -80,14 +94,18 @@ def render() -> None:
     )
     note_box("Orvosi biztonság", medical_cfg.disclaimer)
 
-    target_count = st.slider("Orvosi dokumentumok száma", 20, 200, medical_cfg.target_documents, step=10, key="medical_target_count")
+    target_count = st.slider(
+        "Orvosi dokumentumok száma", 20, 200, medical_cfg.target_documents, step=10, key="medical_target_count"
+    )
     m1, m2, m3 = st.columns(3)
     if m1.button(f"{target_count} cikk letöltése + aktiválása + indexelése", type="primary", width="stretch"):
         progress = st.progress(0.0, text="Egészségvonal cikkek felfedezése...")
         status = st.empty()
+
         def _progress(current: int, total: int, title: str) -> None:
             status.write(f"**{current}/{total}** – {title}")
             progress.progress(current / max(total, 1), text=f"{current}/{total} cikk feldolgozva")
+
         try:
             result = download_medical_corpus(medical_cfg, medical_dir, target=target_count, progress_callback=_progress)
             paths = sorted(str(path) for path in medical_dir.glob("*.html"))[:target_count]
@@ -95,7 +113,9 @@ def render() -> None:
             cached_lab.clear()
             _analyze_file.clear()
             status.write("**Indexelés:** parsing → cleaning → chunking → embedding → FAISS")
-            with st.spinner(f"A {target_count} cikk indexelése folyamatban. Első futáskor a multilingual embedding modell letöltése miatt ez hosszabb lehet..."):
+            with st.spinner(
+                f"A {target_count} cikk indexelése folyamatban. Első futáskor a multilingual embedding modell letöltése miatt ez hosszabb lehet..."
+            ):
                 lab = get_lab()
                 output_dir = ROOT / medical_cfg.vectorstore_dir
                 output_dir.mkdir(parents=True, exist_ok=True)
@@ -119,7 +139,9 @@ def render() -> None:
         try:
             st.session_state["document_paths"] = [str(path) for path in existing_medical[:target_count]]
             cached_lab.clear()
-            with st.spinner("Parsing → cleaning → chunking → embedding → FAISS index... Ez első futáskor több perc lehet."):
+            with st.spinner(
+                "Parsing → cleaning → chunking → embedding → FAISS index... Ez első futáskor több perc lehet."
+            ):
                 lab = get_lab()
                 output_dir = ROOT / medical_cfg.vectorstore_dir
                 output_dir.mkdir(parents=True, exist_ok=True)
@@ -141,7 +163,9 @@ def render() -> None:
                     pd.DataFrame(docs)[["title", "group", "url", "filename"]],
                     width="stretch",
                     hide_index=True,
-                    column_config={"url": st.column_config.LinkColumn("Eredeti Egészségvonal cikk", display_text="megnyitás")},
+                    column_config={
+                        "url": st.column_config.LinkColumn("Eredeti Egészségvonal cikk", display_text="megnyitás")
+                    },
                 )
 
     st.divider()
@@ -170,7 +194,9 @@ def render() -> None:
     if not paths:
         st.warning("Nincs aktív dokumentum.")
         return
-    st.caption(f"Aktív fájlok: {len(paths)}. A parsing eredmény cache-elt, így a Streamlit rerun nem olvassa újra feleslegesen ugyanazt a fájlt.")
+    st.caption(
+        f"Aktív fájlok: {len(paths)}. A parsing eredmény cache-elt, így a Streamlit rerun nem olvassa újra feleslegesen ugyanazt a fájlt."
+    )
     if st.button("Aktív korpusz elemzése"):
         analyzed = []
         for path in paths:

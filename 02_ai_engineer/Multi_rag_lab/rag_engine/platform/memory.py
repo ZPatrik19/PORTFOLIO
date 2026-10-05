@@ -7,6 +7,7 @@ def clear_cuda_cache() -> None:
     gc.collect()
     try:
         import torch
+
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
     except ImportError:
@@ -16,6 +17,7 @@ def clear_cuda_cache() -> None:
 def gpu_memory_mb() -> dict[str, float]:
     try:
         import torch
+
         if not torch.cuda.is_available():
             return {"allocated_mb": 0.0, "reserved_mb": 0.0, "peak_mb": 0.0}
         return {

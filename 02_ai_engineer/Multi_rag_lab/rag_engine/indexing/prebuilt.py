@@ -19,7 +19,7 @@ def _read_json(path: Path) -> dict:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
         return data if isinstance(data, dict) else {}
-    except (OSError, json.JSONDecodeError):
+    except OSError, json.JSONDecodeError:
         return {}
 
 
@@ -66,10 +66,7 @@ def prebuilt_medical_compatible(
         return False, state
     source_files = state.get("source_files")
     if isinstance(source_files, list) and source_files:
-        expected_files = {
-            (path.name, int(path.stat().st_size), int(path.stat().st_mtime_ns))
-            for path in paths
-        }
+        expected_files = {(path.name, int(path.stat().st_size), int(path.stat().st_mtime_ns)) for path in paths}
         stored_files = {
             (str(item.get("name", "")), int(item.get("size", -1)), int(item.get("mtime_ns", -1)))
             for item in source_files
@@ -79,7 +76,11 @@ def prebuilt_medical_compatible(
             return False, state
     chunks_path = _resolve_project_path(str(state.get("chunks_path", "")))
     vector_path = _resolve_project_path(str(state.get("vectorstore_path", "")))
-    if not chunks_path.exists() or not (vector_path / "index.faiss").exists() or not (vector_path / "metadata.json").exists():
+    if (
+        not chunks_path.exists()
+        or not (vector_path / "index.faiss").exists()
+        or not (vector_path / "metadata.json").exists()
+    ):
         return False, state
     return True, state
 

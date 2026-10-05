@@ -102,10 +102,7 @@ def build_matrix_plan(
     components = 0
     if include_components:
         components = (
-            1
-            + n_chunkings
-            + n_embeddings * n_embedding_devices
-            + n_embeddings * n_embedding_devices * n_vector_devices
+            1 + n_chunkings + n_embeddings * n_embedding_devices + n_embeddings * n_embedding_devices * n_vector_devices
         )
 
     reranker_cuda_requested = "cross-encoder" in rerankers and "cuda" in reranker_devices
@@ -174,7 +171,9 @@ def run_pipeline_matrix(
 
     component_steps = 1 if include_components else 0
     retrieval_steps = len(specs) * len(embedding_devices_actual) * len(vector_devices) * max(1, len(retrieval_variants))
-    rag_groups_per_chunk = (1 if plain_rag_strategies else 0) + (len(rag_reranker_variants) if reranked_rag_strategies else 0)
+    rag_groups_per_chunk = (1 if plain_rag_strategies else 0) + (
+        len(rag_reranker_variants) if reranked_rag_strategies else 0
+    )
     rag_steps = (
         len(specs) * len(embedding_devices_actual) * len(vector_devices) * len(chunkings) * rag_groups_per_chunk
         if include_rag
@@ -299,7 +298,9 @@ def run_pipeline_matrix(
                                 row["embedding_model"] = spec.model_name
                                 row["requested_embedding_device"] = embedding_device
                                 row["requested_vector_device"] = vector_device
-                                row["chunking"] = "parent-child" if row["rag_strategy"] == "parent-document" else chunking
+                                row["chunking"] = (
+                                    "parent-child" if row["rag_strategy"] == "parent-document" else chunking
+                                )
                                 row["reranker"] = "none"
                                 row["requested_reranker_device"] = "cpu"
                                 row["actual_reranker_device"] = "—"
@@ -359,7 +360,9 @@ def run_pipeline_matrix(
                                     row["embedding_model"] = spec.model_name
                                     row["requested_embedding_device"] = embedding_device
                                     row["requested_vector_device"] = vector_device
-                                    row["chunking"] = "parent-child" if row["rag_strategy"] == "parent-document" else chunking
+                                    row["chunking"] = (
+                                        "parent-child" if row["rag_strategy"] == "parent-document" else chunking
+                                    )
                                     row["reranker"] = reranker_name
                                     row["requested_reranker_device"] = reranker_device
                                     row["actual_reranker_device"] = str(getattr(reranker_obj, "device", "cpu"))
@@ -380,4 +383,3 @@ def run_pipeline_matrix(
                                 )
 
     return {"components": component_rows, "retrieval": retrieval_rows, "rag": rag_rows, "errors": errors}
-

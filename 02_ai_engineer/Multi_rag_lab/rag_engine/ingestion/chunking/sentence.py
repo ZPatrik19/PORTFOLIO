@@ -17,7 +17,18 @@ class SentenceChunker:
             parts = sliding_windows(split_sentences(doc.text), self.chunk_size)
             for index, text in enumerate(parts):
                 chunk_id = f"{doc.document_id}:sentence:{index}"
-                output.append(Chunk(chunk_id=chunk_id, document_id=doc.document_id, text=text,
-                    metadata=chunk_metadata(doc.metadata, document_id=doc.document_id, chunk_id=chunk_id,
-                                            strategy=self.name, chunk_size=self.chunk_size)))
+                output.append(
+                    Chunk(
+                        chunk_id=chunk_id,
+                        document_id=doc.document_id,
+                        text=text,
+                        metadata=chunk_metadata(
+                            doc.metadata,
+                            document_id=doc.document_id,
+                            chunk_id=chunk_id,
+                            strategy=self.name,
+                            chunk_size=self.chunk_size,
+                        ),
+                    )
+                )
         return output

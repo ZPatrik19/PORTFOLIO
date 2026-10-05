@@ -61,6 +61,7 @@ def ndcg_at_k(retrieved: list[str], relevant: set[str], k: int) -> float:
     idcg = sum(1.0 / math.log2(rank + 1) for rank in range(1, ideal_hits + 1))
     return dcg / idcg if idcg else 0.0
 
+
 def reciprocal_rank_at_k(retrieved: list[str], relevant: set[str], k: int) -> float:
     return reciprocal_rank(retrieved[:k], relevant)
 
@@ -91,6 +92,7 @@ def context_precision_at_k(retrieved: list[str], relevant: set[str], k: int) -> 
     return precision_sum / relevant_in_top_k if relevant_in_top_k else 0.0
 
 
-def recall_profile(retrieved: list[str], relevant: set[str], ks: tuple[int, ...] = (1, 3, 5, 10, 20)) -> dict[int, float]:
+def recall_profile(
+    retrieved: list[str], relevant: set[str], ks: tuple[int, ...] = (1, 3, 5, 10, 20)
+) -> dict[int, float]:
     return {k: recall_at_k(retrieved, relevant, k) for k in ks if k > 0}
-

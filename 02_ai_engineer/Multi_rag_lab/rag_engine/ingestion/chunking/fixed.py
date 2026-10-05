@@ -22,13 +22,21 @@ class FixedChunker:
                 if not text:
                     continue
                 chunk_id = f"{doc.document_id}:fixed:{index}"
-                output.append(Chunk(
-                    chunk_id=chunk_id,
-                    document_id=doc.document_id,
-                    text=text,
-                    metadata=chunk_metadata(doc.metadata, document_id=doc.document_id, chunk_id=chunk_id,
-                                            strategy=self.name, chunk_size=self.chunk_size, chunk_overlap=self.overlap),
-                ))
+                output.append(
+                    Chunk(
+                        chunk_id=chunk_id,
+                        document_id=doc.document_id,
+                        text=text,
+                        metadata=chunk_metadata(
+                            doc.metadata,
+                            document_id=doc.document_id,
+                            chunk_id=chunk_id,
+                            strategy=self.name,
+                            chunk_size=self.chunk_size,
+                            chunk_overlap=self.overlap,
+                        ),
+                    )
+                )
                 if start + self.chunk_size >= len(doc.text):
                     break
         return output

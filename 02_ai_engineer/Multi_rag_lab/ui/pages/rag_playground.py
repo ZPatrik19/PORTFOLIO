@@ -43,7 +43,10 @@ def render() -> None:
         [
             (rag_strategy_label(strategy, details["name"]), details["summary"]),
             ("Folyamat", details["flow"]),
-            ("Aktív újrarangsorolás", f"{reranker_status_text(preview_reranker_status)}. {preview_reranker_status.reason}"),
+            (
+                "Aktív újrarangsorolás",
+                f"{reranker_status_text(preview_reranker_status)}. {preview_reranker_status.reason}",
+            ),
             ("Kontextusprofil", str(CONTEXT_PROFILES[context_profile]["summary"])),
         ],
         columns=4,
@@ -66,8 +69,13 @@ def render() -> None:
         f"újrarangsorolás=`{reranker_status_text(preview_reranker_status)}`"
     )
 
-    if strategy in {"multi-query", "query-rewrite", "corrective", "hyde", "multi-hop"} and st.session_state.get("llm_provider") == "dummy":
-        st.info("Ez a stratégia lekérdezés-transzformációt használ. Dummy módban determinisztikus demonstráció fut; valódi nyelvi transzformációhoz válts Ollamára.")
+    if (
+        strategy in {"multi-query", "query-rewrite", "corrective", "hyde", "multi-hop"}
+        and st.session_state.get("llm_provider") == "dummy"
+    ):
+        st.info(
+            "Ez a stratégia lekérdezés-transzformációt használ. Dummy módban determinisztikus demonstráció fut; valódi nyelvi transzformációhoz válts Ollamára."
+        )
 
     if st.button("RAG folyamat futtatása", type="primary"):
         try:
@@ -98,7 +106,9 @@ def render() -> None:
                 "LLM szolgáltató": getattr(lab.llm, "name", "ismeretlen"),
                 "LLM modell": getattr(lab.llm, "model_name", "ismeretlen"),
                 "RAG stratégia": rag_strategy_label(strategy, strategy),
-                "Index forrás": "perzisztens, előre épített" if bool(getattr(lab, "build_trace", {}).get("prebuilt_index_used")) else "futás közben épített",
+                "Index forrás": "perzisztens, előre épített"
+                if bool(getattr(lab, "build_trace", {}).get("prebuilt_index_used"))
+                else "futás közben épített",
                 "Retrieval erőforrás build": f"{float(getattr(lab, 'build_trace', {}).get('resource_build_total_ms', 0.0)):.0f} ms",
                 "Dokumentum embedding build": f"{float(getattr(lab, 'build_trace', {}).get('document_embedding_ms', 0.0)):.0f} ms",
                 "Kontextusprofil": CONTEXT_PROFILES[context_profile]["name"],
@@ -107,7 +117,9 @@ def render() -> None:
             }
         except OllamaGenerationError as exc:
             st.error(str(exc))
-            st.warning("4 GB VRAM mellett próbáld a Qwen3 Low Memory profilt és a 900–1200 tokenes kontextuskeretet. A visszakeresési eredmények ettől nem vesznek el.")
+            st.warning(
+                "4 GB VRAM mellett próbáld a Qwen3 Low Memory profilt és a 900–1200 tokenes kontextuskeretet. A visszakeresési eredmények ettől nem vesznek el."
+            )
         except Exception as exc:
             st.error(f"A RAG futás sikertelen: {exc}")
 
@@ -130,32 +142,54 @@ def render() -> None:
 
     kpi_cards(
         [
-            ("Teljes válaszidő", f"{result.total_latency_ms:.0f} ms", f"Visszakeresés {result.retrieval_latency_ms:.0f} · generálás {result.generation_latency_ms:.0f} ms"),
+            (
+                "Teljes válaszidő",
+                f"{result.total_latency_ms:.0f} ms",
+                f"Visszakeresés {result.retrieval_latency_ms:.0f} · generálás {result.generation_latency_ms:.0f} ms",
+            ),
             ("TTFT", f"{float(result.generation_ttft_ms or 0):.0f} ms", "Az első generált tokenig eltelt idő."),
-            ("Generálási sebesség", f"{float(result.tokens_per_second or 0):.1f} token/s", f"Kimeneti token: {int(result.output_tokens or 0)}"),
+            (
+                "Generálási sebesség",
+                f"{float(result.tokens_per_second or 0):.1f} token/s",
+                f"Kimeneti token: {int(result.output_tokens or 0)}",
+            ),
             ("Kontextus", f"{result.context_tokens} token", f"{source_count} bizonyíték / forrásrészlet"),
             (LABELS["citation_accuracy"], f"{citation_acc:.2f}", "Az [Sx] hivatkozások érvényessége."),
             (LABELS["citation_coverage"], f"{citation_cov:.2f}", f"Forráslefedettség: {source_cov:.2f}"),
             (LABELS["context_utilization"], f"{context_score:.2f}", "Lexikális groundedness proxy."),
-            ("Válaszhossz", f"{answer_token_estimate(result.answer)} token", f"Redundancia proxy: {answer_redundancy_proxy(result.answer):.2f}"),
+            (
+                "Válaszhossz",
+                f"{answer_token_estimate(result.answer)} token",
+                f"Redundancia proxy: {answer_redundancy_proxy(result.answer):.2f}",
+            ),
         ],
         columns=4,
     )
 
-    tabs = st.tabs(["Válasz", "Futási nyomvonal", "Kontextus", "Bizonyítékok", "LLM telemetria", "Forrásokra támaszkodó prompt"])
+    tabs = st.tabs(
+        ["Válasz", "Futási nyomvonal", "Kontextus", "Bizonyítékok", "LLM telemetria", "Forrásokra támaszkodó prompt"]
+    )
 
     with tabs[0]:
         st.subheader("Válasz")
         generation_mode = str(result.trace.get("generation_mode", "standard"))
         st.markdown(result.answer)
         if generation_mode != "standard":
-            st.caption("Válaszgenerálási mód: " + {
-                "grounded-repair": "automatikusan javított, forrásokra támaszkodó válasz",
-                "source-synthesis-fallback": "forrásmondatokból összeállított biztonsági válasz",
-            }.get(generation_mode, generation_mode))
+            st.caption(
+                "Válaszgenerálási mód: "
+                + {
+                    "grounded-repair": "automatikusan javított, forrásokra támaszkodó válasz",
+                    "source-synthesis-fallback": "forrásmondatokból összeállított biztonsági válasz",
+                }.get(generation_mode, generation_mode)
+            )
         st.caption("Hivatkozások: " + ", ".join(result.citations or ["nincs"]))
         export_text = f"Kérdés:\n{result.query}\n\nVálasz:\n{result.answer}\n\nHivatkozások: {', '.join(result.citations or ['nincs'])}\n"
-        render_text_export(export_text, label="Válasz letöltése TXT-ként", filename="rag_valasz.txt", key=f"rag_answer_export_{strategy}")
+        render_text_export(
+            export_text,
+            label="Válasz letöltése TXT-ként",
+            filename="rag_valasz.txt",
+            key=f"rag_answer_export_{strategy}",
+        )
 
     with tabs[1]:
         rag_trace_graph(
@@ -165,7 +199,9 @@ def render() -> None:
         )
         st.markdown("**Tényleges futtatási környezet**")
         safe_dataframe(
-            pd.DataFrame([{"Komponens": key, "Érték": value} for key, value in runtime.items() if key != "reranker_active"]),
+            pd.DataFrame(
+                [{"Komponens": key, "Érték": value} for key, value in runtime.items() if key != "reranker_active"]
+            ),
             width="stretch",
             hide_index=True,
         )

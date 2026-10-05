@@ -55,12 +55,18 @@ def load_settings() -> Settings:
         ollama_profile=os.getenv("OLLAMA_PROFILE", "balanced"),
         ollama_base_url=os.getenv("OLLAMA_BASE_URL", models.get("llm", {}).get("base_url", "http://localhost:11434")),
         ollama_model=os.getenv("OLLAMA_MODEL", models.get("llm", {}).get("model", "rag-qwen-balanced")),
-        ollama_connect_timeout_seconds=float(os.getenv("OLLAMA_CONNECT_TIMEOUT_S", models.get("llm", {}).get("connect_timeout_seconds", 10))),
-        ollama_read_timeout_seconds=float(os.getenv("OLLAMA_READ_TIMEOUT_S", models.get("llm", {}).get("read_timeout_seconds", 600))),
+        ollama_connect_timeout_seconds=float(
+            os.getenv("OLLAMA_CONNECT_TIMEOUT_S", models.get("llm", {}).get("connect_timeout_seconds", 10))
+        ),
+        ollama_read_timeout_seconds=float(
+            os.getenv("OLLAMA_READ_TIMEOUT_S", models.get("llm", {}).get("read_timeout_seconds", 600))
+        ),
         ollama_max_retries=int(os.getenv("OLLAMA_MAX_RETRIES", models.get("llm", {}).get("max_retries", 1))),
         ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", models.get("llm", {}).get("num_predict", 384))),
         embedding_model=models.get("embedding", {}).get("default", "sentence-transformers/all-MiniLM-L6-v2"),
-        multilingual_embedding_model=models.get("embedding", {}).get("multilingual", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"),
+        multilingual_embedding_model=models.get("embedding", {}).get(
+            "multilingual", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        ),
         e5_embedding_model=models.get("embedding", {}).get("e5_multilingual", "intfloat/multilingual-e5-small"),
         reranker_model=models.get("reranker", {}).get("default", "cross-encoder/ms-marco-MiniLM-L-6-v2"),
         max_context_tokens=int(os.getenv("MAX_CONTEXT_TOKENS", "1800")),

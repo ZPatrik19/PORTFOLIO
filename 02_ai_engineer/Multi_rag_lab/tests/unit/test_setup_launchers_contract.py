@@ -13,7 +13,7 @@ def test_windows_setup_is_python_314_and_idempotent() -> None:
     assert "py -3.14" in batch
     assert "3.11" not in batch
     assert "3.12" not in batch
-    assert '.[dev,cpu]' in batch
+    assert ".[dev,cpu]" in batch
     assert "setup_state.py check" in batch
     assert "setup_state.py write" in batch
     assert 'pytest -q -m "not gpu"' in batch
@@ -30,7 +30,7 @@ def test_linux_setup_is_python_314_and_idempotent() -> None:
     assert "setup_state.py check" in shell
     assert "setup_state.py write" in shell
     assert "pytest -q -m 'not gpu'" in shell
-    assert 'infrastructure_cli.py cuda --install-cuda yes' in shell
+    assert "infrastructure_cli.py cuda --install-cuda yes" in shell
 
 
 def test_run_launchers_setup_then_infrastructure_then_streamlit() -> None:

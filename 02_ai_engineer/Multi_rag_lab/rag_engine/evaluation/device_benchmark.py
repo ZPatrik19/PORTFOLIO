@@ -37,7 +37,9 @@ class BenchmarkResult:
         return asdict(self)
 
 
-def benchmark_embedding(provider_factory: Callable[[str], object], texts: list[str], device: str, *, warmup: bool = True) -> BenchmarkResult:
+def benchmark_embedding(
+    provider_factory: Callable[[str], object], texts: list[str], device: str, *, warmup: bool = True
+) -> BenchmarkResult:
     cold_start = time.perf_counter()
     provider = provider_factory(device)
     cold_ms = (time.perf_counter() - cold_start) * 1000
@@ -48,14 +50,18 @@ def benchmark_embedding(provider_factory: Callable[[str], object], texts: list[s
     total_ms = (time.perf_counter() - start) * 1000
     actual_device = str(getattr(provider, "device", device))
     return BenchmarkResult(
-        component="embedding", device=actual_device, total_ms=total_ms,
+        component="embedding",
+        device=actual_device,
+        total_ms=total_ms,
         throughput_per_sec=len(texts) / max(total_ms / 1000, 1e-9),
         mean_ms=total_ms / max(1, len(texts)),
         median_ms=total_ms / max(1, len(texts)),
         p95_ms=total_ms / max(1, len(texts)),
         ram_mb=psutil.Process().memory_info().rss / 1024**2,
         peak_gpu_memory_mb=gpu_memory_mb()["peak_mb"] if actual_device == "cuda" else None,
-        workload_size=len(texts), cold_start_ms=cold_ms, timestamp=datetime.now(UTC).isoformat(),
+        workload_size=len(texts),
+        cold_start_ms=cold_ms,
+        timestamp=datetime.now(UTC).isoformat(),
     )
 
 
@@ -71,12 +77,17 @@ def benchmark_retrieval(retriever, queries: list[str], device: str = "cpu", top_
     stats = summarize_latencies(latencies)
     total = sum(latencies)
     return BenchmarkResult(
-        component="retrieval", device=device, total_ms=total,
+        component="retrieval",
+        device=device,
+        total_ms=total,
         throughput_per_sec=len(queries) / max(total / 1000, 1e-9),
-        mean_ms=stats.mean_ms, median_ms=stats.median_ms, p95_ms=stats.p95_ms,
+        mean_ms=stats.mean_ms,
+        median_ms=stats.median_ms,
+        p95_ms=stats.p95_ms,
         ram_mb=psutil.Process().memory_info().rss / 1024**2,
         peak_gpu_memory_mb=gpu_memory_mb()["peak_mb"] if device == "cuda" else None,
-        workload_size=len(queries), timestamp=datetime.now(UTC).isoformat(),
+        workload_size=len(queries),
+        timestamp=datetime.now(UTC).isoformat(),
     )
 
 
@@ -140,7 +151,9 @@ def benchmark_pipeline(pipeline, queries: list[str]) -> BenchmarkResult:
         device=device,
         total_ms=total,
         throughput_per_sec=len(queries) / max(total / 1000, 1e-9),
-        mean_ms=stats.mean_ms, median_ms=stats.median_ms, p95_ms=stats.p95_ms,
+        mean_ms=stats.mean_ms,
+        median_ms=stats.median_ms,
+        p95_ms=stats.p95_ms,
         ram_mb=psutil.Process().memory_info().rss / 1024**2,
         peak_gpu_memory_mb=gpu_memory_mb()["peak_mb"] if device == "cuda" else None,
         workload_size=len(queries),
@@ -155,7 +168,14 @@ def benchmark_pipeline(pipeline, queries: list[str]) -> BenchmarkResult:
 def benchmark_llm(llm, prompts: list[str], *, device: str = "runtime") -> BenchmarkResult:
     """Benchmark the active LLM provider without changing external runtime state."""
     if not prompts:
-        return BenchmarkResult(component="llm-generation", device=device, total_ms=0.0, throughput_per_sec=0.0, workload_size=0, timestamp=datetime.now(UTC).isoformat())
+        return BenchmarkResult(
+            component="llm-generation",
+            device=device,
+            total_ms=0.0,
+            throughput_per_sec=0.0,
+            workload_size=0,
+            timestamp=datetime.now(UTC).isoformat(),
+        )
     latencies: list[float] = []
     ttfts: list[float] = []
     speeds: list[float] = []
@@ -175,12 +195,17 @@ def benchmark_llm(llm, prompts: list[str], *, device: str = "runtime") -> Benchm
     output_total = sum(output_counts)
     throughput = output_total / max(total / 1000, 1e-9) if output_total else len(prompts) / max(total / 1000, 1e-9)
     return BenchmarkResult(
-        component="llm-generation", device=device, total_ms=total, throughput_per_sec=throughput,
-        mean_ms=stats.mean_ms, median_ms=stats.median_ms, p95_ms=stats.p95_ms,
-        ram_mb=psutil.Process().memory_info().rss / 1024**2, workload_size=len(prompts),
+        component="llm-generation",
+        device=device,
+        total_ms=total,
+        throughput_per_sec=throughput,
+        mean_ms=stats.mean_ms,
+        median_ms=stats.median_ms,
+        p95_ms=stats.p95_ms,
+        ram_mb=psutil.Process().memory_info().rss / 1024**2,
+        workload_size=len(prompts),
         ttft_ms=float(np.mean(ttfts)) if ttfts else None,
         tokens_per_second=float(np.mean(speeds)) if speeds else None,
         output_tokens=float(np.mean(output_counts)) if output_counts else None,
         timestamp=datetime.now(UTC).isoformat(),
     )
-

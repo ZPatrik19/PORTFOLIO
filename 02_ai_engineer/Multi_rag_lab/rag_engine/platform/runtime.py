@@ -39,7 +39,7 @@ def _load_profile_state() -> dict[str, str]:
     try:
         payload = json.loads(PROFILE_STATE_PATH.read_text(encoding="utf-8"))
         return {str(k): str(v) for k, v in payload.items()} if isinstance(payload, dict) else {}
-    except (OSError, json.JSONDecodeError):
+    except OSError, json.JSONDecodeError:
         return {}
 
 
@@ -104,7 +104,10 @@ def ollama_profile_environment(profile_name: str) -> dict[str, str]:
 def start_ollama(profile_name: str) -> dict[str, Any]:
     executable = ollama_executable()
     if not executable:
-        return {"ok": False, "error": "Az ollama parancs nem található. Futtasd a SETUP.bat fájlt, majd ellenőrzéshez használd: python scripts/infrastructure_cli.py verify."}
+        return {
+            "ok": False,
+            "error": "Az ollama parancs nem található. Futtasd a SETUP.bat fájlt, majd ellenőrzéshez használd: python scripts/infrastructure_cli.py verify.",
+        }
     health = ollama_health()
     if health.get("ok"):
         return {"ok": True, "already_running": True, **health}

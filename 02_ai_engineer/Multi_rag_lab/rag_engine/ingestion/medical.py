@@ -17,11 +17,33 @@ from bs4 import BeautifulSoup
 from rag_engine.ingestion.downloader import download_url
 
 
-
 CATEGORY_SLUGS = (
-    "1-9", "a-a", "b", "c-cs", "d", "e-e", "f", "g-gy", "h", "i-j", "k", "l-ly",
-    "m", "n-ny", "o-o", "oo-oo", "p-q", "r", "s-sz", "t-ty", "u-u", "v-w", "x-y", "z-zs",
+    "1-9",
+    "a-a",
+    "b",
+    "c-cs",
+    "d",
+    "e-e",
+    "f",
+    "g-gy",
+    "h",
+    "i-j",
+    "k",
+    "l-ly",
+    "m",
+    "n-ny",
+    "o-o",
+    "oo-oo",
+    "p-q",
+    "r",
+    "s-sz",
+    "t-ty",
+    "u-u",
+    "v-w",
+    "x-y",
+    "z-zs",
 )
+
 
 @dataclass(frozen=True)
 class MedicalCorpusConfig:

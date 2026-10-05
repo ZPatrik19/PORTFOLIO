@@ -54,7 +54,6 @@ HUNGARIAN_QUERY_PRESETS = [
 ]
 
 
-
 CHUNKING_STRATEGIES: dict[str, dict[str, str]] = {
     "fixed": {
         "name": "Fix karakterhossz",
@@ -245,18 +244,30 @@ PROMPT_PROFILES: dict[str, dict[str, str]] = {
 
 PAGE_METRICS: dict[str, list[tuple[str, str]]] = {
     "overview": [
-        ("Folyamatszintű áttekintés", "Az irányítópult a korpusz, a runtime, az aktív retrieval/RAG konfiguráció és a benchmark állapot legfontosabb adatait foglalja össze."),
-        ("Aktív konfiguráció", "A kiválasztott darabolási, retrieval, újrarangsorolási, kontextus- és LLM-beállítások kártyákon jelennek meg, külön architektúra-diagram nélkül."),
+        (
+            "Folyamatszintű áttekintés",
+            "Az irányítópult a korpusz, a runtime, az aktív retrieval/RAG konfiguráció és a benchmark állapot legfontosabb adatait foglalja össze.",
+        ),
+        (
+            "Aktív konfiguráció",
+            "A kiválasztott darabolási, retrieval, újrarangsorolási, kontextus- és LLM-beállítások kártyákon jelennek meg, külön architektúra-diagram nélkül.",
+        ),
     ],
     "documents": [
-        ("Dokumentumok / oldalak", "A parser által létrehozott dokumentumegységek száma; PDF-nél jellemzően oldalanként egy egység."),
+        (
+            "Dokumentumok / oldalak",
+            "A parser által létrehozott dokumentumegységek száma; PDF-nél jellemzően oldalanként egy egység.",
+        ),
         ("Karakterek tisztítás előtt/után", "Megmutatja, mennyi zajt távolított el a cleaning pipeline."),
         ("Duplikátumok", "Azonos normalizált tartalmú dokumentumrészek eltávolításának száma."),
     ],
     "chunking": [
         ("Szövegrészek száma", "A létrehozott visszakeresési egységek száma."),
         ("Átlag / medián / P95 hossz", "A chunkméret-eloszlás stabilitását és szélsőértékeit mutatja."),
-        ("Darabolási késleltetés", "A feldarabolás teljes futási ideje; semantic chunkingnál embedding időt is tartalmazhat."),
+        (
+            "Darabolási késleltetés",
+            "A feldarabolás teljes futási ideje; semantic chunkingnál embedding időt is tartalmazhat.",
+        ),
         ("Szövegrész / dokumentum", "Mennyire darabolja fel a forrásokat a stratégia."),
     ],
     "embedding": [
@@ -268,7 +279,10 @@ PAGE_METRICS: dict[str, list[tuple[str, str]]] = {
     "vector": [
         ("Visszakeresési késleltetés", "A query feldolgozása és a Top-K találat előállítása közötti idő."),
         ("Top-K", "Ennyi eredmény kerül a végső találati listába."),
-        ("Pontszám", "Dense keresésnél normalizált inner product ≈ cosine similarity; BM25/RRF esetén más skálájú pontszám."),
+        (
+            "Pontszám",
+            "Dense keresésnél normalizált inner product ≈ cosine similarity; BM25/RRF esetén más skálájú pontszám.",
+        ),
         ("Forrásdiverzitás", "Hány különböző dokumentumból érkeznek a Top-K találatok."),
     ],
     "rag": [
@@ -279,27 +293,45 @@ PAGE_METRICS: dict[str, list[tuple[str, str]]] = {
         ("Context tokens", "A végső LLM-kontextus becsült tokenmennyisége."),
         ("Citation accuracy", "A válaszban lévő [Sx] hivatkozások érvényes retrieved evidence-re mutatnak-e."),
         ("Citation coverage", "A válasz állításainak mekkora része kap explicit hivatkozást; transzparens proxy."),
-        ("Context utilization", "A válasz lexikális tartalmának mekkora része támaszkodik a rendelkezésre adott evidence-re."),
+        (
+            "Context utilization",
+            "A válasz lexikális tartalmának mekkora része támaszkodik a rendelkezésre adott evidence-re.",
+        ),
     ],
     "evaluation": [
-        ("Recall@K", "A forrásolt evidence-hez illeszkedő releváns chunkok mekkora részét találtuk meg a Top-K között."),
+        (
+            "Recall@K",
+            "A forrásolt evidence-hez illeszkedő releváns chunkok mekkora részét találtuk meg a Top-K között.",
+        ),
         ("Precision@K", "A Top-K találatok mekkora része evidence-szempontból releváns."),
         ("F1@K", "A Recall@K és Precision@K harmonikus átlaga."),
         ("Hit Rate@K", "Volt-e legalább egy releváns találat a Top-K listában."),
         ("MRR", "Az első releváns találat reciprok rangjának átlaga."),
-        ("MAP@K", "Az Average Precision query-szintű átlaga, amely több releváns találat sorrendjét is figyelembe veszi."),
+        (
+            "MAP@K",
+            "Az Average Precision query-szintű átlaga, amely több releváns találat sorrendjét is figyelembe veszi.",
+        ),
         ("nDCG@K", "A releváns elemek rangpozícióját is figyelembe vevő normalizált ranking metrika."),
-        ("First relevant rank", "Az első evidence-hez illeszkedő találat átlagos rangpozíciója; kisebb érték kedvezőbb."),
+        (
+            "First relevant rank",
+            "Az első evidence-hez illeszkedő találat átlagos rangpozíciója; kisebb érték kedvezőbb.",
+        ),
         ("Source diversity", "A Top-K találatok hány különböző forrásdokumentumból származnak."),
         ("Duplicate ratio", "A Top-K listán belüli ismétlődő chunkok aránya; kisebb érték kedvezőbb."),
         ("P50/P95/P99 latency", "A tipikus és tail-latency külön mérése, nem csak egyetlen átlag."),
         ("QPS", "Retrieval throughput: másodpercenként hány query dolgozható fel."),
-        ("Key-fact coverage", "Az expected key factek mekkora része jelenik meg lexikálisan a válaszban; proxy, nem klinikai correctness judge."),
+        (
+            "Key-fact coverage",
+            "Az expected key factek mekkora része jelenik meg lexikálisan a válaszban; proxy, nem klinikai correctness judge.",
+        ),
         ("Citation accuracy", "A válasz [Sx] hivatkozásai érvényes retrieved evidence-ekre mutatnak-e."),
         ("Citation coverage", "Mekkora a hivatkozással ellátott válaszmondatok aránya."),
         ("Citation source coverage", "A visszakeresett források mekkora része jelenik meg ténylegesen hivatkozásként."),
         ("Context utilization", "Mennyire hasznosul a retrievalből felépített kontextus a végső válaszban."),
         ("Answer redundancy", "Ismétlődő válaszmondatok lexikális proxyja; kisebb érték kedvezőbb."),
-        ("Label coverage", "A dataset itemek mekkora részéhez sikerült az adott chunking mellett evidence-alapú releváns chunkot feloldani."),
+        (
+            "Label coverage",
+            "A dataset itemek mekkora részéhez sikerült az adott chunking mellett evidence-alapú releváns chunkot feloldani.",
+        ),
     ],
 }

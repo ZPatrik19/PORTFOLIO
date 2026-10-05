@@ -61,10 +61,19 @@ def render() -> None:
     render_runtime_badges()
     info_cards(
         [
-            ("CUDA Python", "Az NVIDIA `cuda-python` Python bindingot ad a CUDA Driver/Runtime API-khoz. Nem helyettesíti a CUDA-képes PyTorch buildet."),
-            ("PyTorch CUDA", "A Sentence Transformers és a Cross-Encoder GPU gyorsításához a `torch.cuda.is_available()` ténylegesen igaz kell legyen."),
+            (
+                "CUDA Python",
+                "Az NVIDIA `cuda-python` Python bindingot ad a CUDA Driver/Runtime API-khoz. Nem helyettesíti a CUDA-képes PyTorch buildet.",
+            ),
+            (
+                "PyTorch CUDA",
+                "A Sentence Transformers és a Cross-Encoder GPU gyorsításához a `torch.cuda.is_available()` ténylegesen igaz kell legyen.",
+            ),
             ("FAISS", "A FAISS CPU a hordozható baseline. A Python csomag és a GPU API külön státuszként jelenik meg."),
-            ("Ollama", "Az Ollama külön process/service. A Python CUDA státuszából nem következik az Ollama tényleges GPU használata."),
+            (
+                "Ollama",
+                "Az Ollama külön process/service. A Python CUDA státuszából nem következik az Ollama tényleges GPU használata.",
+            ),
         ],
         columns=4,
     )
@@ -91,11 +100,17 @@ def render() -> None:
         [
             ("NVIDIA cuda-python", _package_version("cuda-python"), "CUDA Python binding verzió."),
             ("PyTorch CUDA runtime", torch_cuda_runtime, f"torch.cuda.is_available(): {torch_cuda_available}"),
-            ("FAISS backend", _faiss_backend_status(), "Windows alatt a CPU FAISS teljesen támogatott baseline; a GPU API nem kötelező."),
+            (
+                "FAISS backend",
+                _faiss_backend_status(),
+                "Windows alatt a CPU FAISS teljesen támogatott baseline; a GPU API nem kötelező.",
+            ),
         ],
         columns=3,
     )
-    st.caption("A négy érték külön jelentésű. Például a `cuda-python` telepítve lehet úgy is, hogy a PyTorch még CPU build vagy a driver nem kompatibilis.")
+    st.caption(
+        "A négy érték külön jelentésű. Például a `cuda-python` telepítve lehet úgy is, hogy a PyTorch még CPU build vagy a driver nem kompatibilis."
+    )
 
     st.subheader("Szoftverkörnyezet")
     versions = {
@@ -108,7 +123,9 @@ def render() -> None:
         "Sentence Transformers": _version("sentence_transformers"),
         "Streamlit": _version("streamlit"),
     }
-    safe_dataframe([{"Komponens": k, "Verzió / státusz": v} for k, v in versions.items()], width="stretch", hide_index=True)
+    safe_dataframe(
+        [{"Komponens": k, "Verzió / státusz": v} for k, v in versions.items()], width="stretch", hide_index=True
+    )
 
     st.subheader("Aktív workflow konfiguráció")
     st.json(snap)
@@ -122,7 +139,9 @@ def render() -> None:
     health = llm.health()
     st.json(health)
     if st.session_state.get("llm_provider") == "ollama" and not health.get("ok"):
-        st.warning("Az Ollama jelenleg nem elérhető. A retrieval és a laborok ettől még futtathatók; teljes generáláshoz indítsd el az Ollamát vagy válts Dummy módra.")
+        st.warning(
+            "Az Ollama jelenleg nem elérhető. A retrieval és a laborok ettől még futtathatók; teljes generáláshoz indítsd el az Ollamát vagy válts Dummy módra."
+        )
 
     st.subheader("Aktív korpusz")
     paths = active_paths()
@@ -131,11 +150,21 @@ def render() -> None:
         [
             ("Aktív fájlok", str(len(paths)), "A jelenlegi RAG korpusz fájljainak száma."),
             ("Korpuszméret", f"{total_mb:.1f} MB", "Az aktív forrásfájlok összmérete."),
-            ("FAISS Python modul", "igen" if importlib.util.find_spec("faiss") else "nem", "A vector backend importálhatósága."),
+            (
+                "FAISS Python modul",
+                "igen" if importlib.util.find_spec("faiss") else "nem",
+                "A vector backend importálhatósága.",
+            ),
         ],
         columns=3,
     )
     if paths:
-        safe_dataframe([{"Fájl": path.name, "Méret MB": round(path.stat().st_size / 1024**2, 2)} for path in paths], width="stretch", hide_index=True)
+        safe_dataframe(
+            [{"Fájl": path.name, "Méret MB": round(path.stat().st_size / 1024**2, 2)} for path in paths],
+            width="stretch",
+            hide_index=True,
+        )
     else:
-        st.warning("Nincs aktív dokumentum. A Dokumentumok oldalon tölts le magyar korpuszt vagy tölts fel saját fájlt.")
+        st.warning(
+            "Nincs aktív dokumentum. A Dokumentumok oldalon tölts le magyar korpuszt vagy tölts fel saját fájlt."
+        )

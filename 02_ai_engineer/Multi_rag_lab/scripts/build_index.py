@@ -29,10 +29,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    chunks = [
-        Chunk.model_validate(item)
-        for item in json.loads(args.chunks.read_text(encoding="utf-8"))
-    ]
+    chunks = [Chunk.model_validate(item) for item in json.loads(args.chunks.read_text(encoding="utf-8"))]
     index_chunks = [chunk for chunk in chunks if chunk.metadata.get("role") != "parent"]
     embedder = create_embedding_provider(
         args.model,

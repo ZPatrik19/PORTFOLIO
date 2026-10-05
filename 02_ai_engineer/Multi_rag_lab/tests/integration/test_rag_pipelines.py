@@ -21,11 +21,22 @@ from rag_engine.indexing.numpy_store import NumpyVectorStore
 
 def build_components():
     chunks = [
-        Chunk(chunk_id="c1", document_id="d", text="RAG uses retrieval to add external evidence before grounded generation.", metadata={"source": "doc"}),
-        Chunk(chunk_id="c2", document_id="d", text="BM25 is sparse retrieval while embeddings enable dense retrieval.", metadata={"source": "doc"}),
+        Chunk(
+            chunk_id="c1",
+            document_id="d",
+            text="RAG uses retrieval to add external evidence before grounded generation.",
+            metadata={"source": "doc"},
+        ),
+        Chunk(
+            chunk_id="c2",
+            document_id="d",
+            text="BM25 is sparse retrieval while embeddings enable dense retrieval.",
+            metadata={"source": "doc"},
+        ),
     ]
     embedder = HashingEmbeddingProvider()
-    store = NumpyVectorStore(); store.add(embedder.embed_documents([c.text for c in chunks]), chunks)
+    store = NumpyVectorStore()
+    store.add(embedder.embed_documents([c.text for c in chunks]), chunks)
     dense = DenseRetriever(embedder, store)
     hybrid = HybridRetriever(dense, BM25Retriever(chunks))
     llm = DummyLLMProvider()
@@ -55,8 +66,15 @@ def test_parent_document_rag_maps_children_to_parent():
     from rag_engine.retrieval.strategies import ParentDocumentRAG
 
     _, _, _, common = build_components()
-    parent = Chunk(chunk_id="p1", document_id="d", text="Parent context contains the complete RAG explanation.", metadata={"source": "doc", "role": "parent"})
-    child = RetrievedChunk(chunk_id="ch1", text="RAG explanation", source="doc", score=0.9, rank=1, metadata={"parent_id": "p1"})
+    parent = Chunk(
+        chunk_id="p1",
+        document_id="d",
+        text="Parent context contains the complete RAG explanation.",
+        metadata={"source": "doc", "role": "parent"},
+    )
+    child = RetrievedChunk(
+        chunk_id="ch1", text="RAG explanation", source="doc", score=0.9, rank=1, metadata={"parent_id": "p1"}
+    )
 
     class ChildRetriever:
         def retrieve(self, query: str, top_k: int = 5):

@@ -256,7 +256,9 @@ def _sync_context_budget_from_profile() -> None:
 def sidebar_runtime_controls() -> None:
     settings = load_settings()
     st.sidebar.markdown("### Aktív folyamat konfiguráció")
-    st.sidebar.caption("Ezek a beállítások közösek a laboroldalak között, és az összes releváns folyamatlépést módosítják.")
+    st.sidebar.caption(
+        "Ezek a beállítások közösek a laboroldalak között, és az összes releváns folyamatlépést módosítják."
+    )
 
     with st.sidebar.expander("1. Darabolás (chunking)", expanded=False):
         st.selectbox(
@@ -290,7 +292,11 @@ def sidebar_runtime_controls() -> None:
             "Visszakereső",
             ["dense", "bm25", "hybrid"],
             key="retrieval_mode",
-            format_func=lambda x: {"dense": "Dense / beágyazás", "bm25": "BM25 / lexikális", "hybrid": "Hibrid / dense + BM25"}[x],
+            format_func=lambda x: {
+                "dense": "Dense / beágyazás",
+                "bm25": "BM25 / lexikális",
+                "hybrid": "Hibrid / dense + BM25",
+            }[x],
         )
         st.slider("Top-K", 1, 20, key="top_k")
         min_candidate = int(st.session_state.get("top_k", 5))
@@ -298,7 +304,12 @@ def sidebar_runtime_controls() -> None:
             st.session_state["candidate_count"] = min_candidate
         st.slider("Jelöltek száma", min_candidate, 60, key="candidate_count")
         if st.session_state.get("retrieval_mode") == "hybrid":
-            st.selectbox("Rangfúzió", ["rrf", "weighted"], key="fusion_mode", format_func=lambda x: "Reciprocal Rank Fusion (RRF)" if x == "rrf" else "Súlyozott pontszámfúzió")
+            st.selectbox(
+                "Rangfúzió",
+                ["rrf", "weighted"],
+                key="fusion_mode",
+                format_func=lambda x: "Reciprocal Rank Fusion (RRF)" if x == "rrf" else "Súlyozott pontszámfúzió",
+            )
             if st.session_state.get("fusion_mode") == "rrf":
                 st.slider("RRF k", 1, 120, key="rrf_k")
             else:
@@ -311,7 +322,16 @@ def sidebar_runtime_controls() -> None:
             key="rag_strategy",
             format_func=lambda x: RAG_STRATEGIES[x]["name"],
         )
-        st.selectbox("Újrarangsoroló", ["lexical", "cross-encoder", "none"], key="reranker_mode", format_func=lambda x: {"lexical": "Lexikális / CPU", "cross-encoder": "Cross-Encoder / CPU vagy CUDA", "none": "Nincs"}[x])
+        st.selectbox(
+            "Újrarangsoroló",
+            ["lexical", "cross-encoder", "none"],
+            key="reranker_mode",
+            format_func=lambda x: {
+                "lexical": "Lexikális / CPU",
+                "cross-encoder": "Cross-Encoder / CPU vagy CUDA",
+                "none": "Nincs",
+            }[x],
+        )
         st.selectbox("Újrarangsoroló eszköz", ["auto", "cpu", "cuda"], key="reranker_device")
         st.slider("Kontextus tokenkeret", 256, 8192, step=128, key="context_budget")
         st.selectbox(
@@ -335,10 +355,12 @@ def sidebar_runtime_controls() -> None:
                 format_func=lambda x: str(llm_profiles.get(x, {}).get("display_name", x)),
                 help="A profil a Streamlit által használt Ollama modellaliast választja. A teljes futtatási környezetet a RUN/INFRASTRUCTURE launcherek kezelik.",
             )
-            selected_llm = llm_profiles[resolve_profile_name(
-                llm_profiles, st.session_state.get("ollama_profile"), fallback="balanced"
-            )]
-            st.caption(f"Modell: {selected_llm['alias']} · kontextus: {selected_llm['context_length']} · alapmodell: {selected_llm['base_model']}")
+            selected_llm = llm_profiles[
+                resolve_profile_name(llm_profiles, st.session_state.get("ollama_profile"), fallback="balanced")
+            ]
+            st.caption(
+                f"Modell: {selected_llm['alias']} · kontextus: {selected_llm['context_length']} · alapmodell: {selected_llm['base_model']}"
+            )
 
     with st.sidebar.expander("5. Kontextus- és promptprofilok", expanded=False):
         st.selectbox(

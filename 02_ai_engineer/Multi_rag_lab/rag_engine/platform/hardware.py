@@ -30,6 +30,7 @@ def get_hardware_profile(requested: ExecutionDevice | str = ExecutionDevice.AUTO
     cuda_ok = False
     try:
         import torch
+
         cuda_ok = bool(torch.cuda.is_available())
         if cuda_ok:
             gpu_count = torch.cuda.device_count()

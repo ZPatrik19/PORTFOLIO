@@ -11,7 +11,6 @@ from ui.components.i18n import hu_label
 CARD_KICKERS = ["Mit csinál?", "Miért fontos?", "Mikor hasznos?", "Mit figyelj?", "Mérési fókusz", "Best practice"]
 
 
-
 def page_intro(title: str, subtitle: str, *, eyebrow: str | None = None) -> None:
     eyebrow_html = f'<div class="rag-small">{html.escape(eyebrow)}</div>' if eyebrow else ""
     st.markdown(
@@ -26,7 +25,6 @@ def page_intro(title: str, subtitle: str, *, eyebrow: str | None = None) -> None
     )
 
 
-
 def section_intro(title: str, subtitle: str | None = None) -> None:
     subtitle_html = f'<div class="rag-section-subtitle">{html.escape(subtitle)}</div>' if subtitle else ""
     st.markdown(
@@ -38,23 +36,23 @@ def section_intro(title: str, subtitle: str | None = None) -> None:
     )
 
 
-
 def info_cards(cards: list[tuple[str, str]], *, columns: int = 3) -> None:
     for start in range(0, len(cards), columns):
         cols = st.columns(columns)
-        for idx, (col, (title, body)) in enumerate(zip(cols, cards[start : start + columns], strict=False), start=start):
+        for idx, (col, (title, body)) in enumerate(
+            zip(cols, cards[start : start + columns], strict=False), start=start
+        ):
             kicker = CARD_KICKERS[idx % len(CARD_KICKERS)]
             col.markdown(
-                f'''
+                f"""
 <div class="rag-card">
   <div class="rag-kicker">{html.escape(kicker)}</div>
   <h4>{html.escape(title)}</h4>
   <p>{html.escape(body)}</p>
 </div>
-''',
+""",
                 unsafe_allow_html=True,
             )
-
 
 
 def kpi_cards(items: list[tuple[str, str, str]], *, columns: int = 4) -> None:
@@ -62,16 +60,15 @@ def kpi_cards(items: list[tuple[str, str, str]], *, columns: int = 4) -> None:
         cols = st.columns(columns)
         for col, (label, value, subtext) in zip(cols, items[start : start + columns], strict=False):
             col.markdown(
-                f'''
+                f"""
 <div class="rag-kpi">
   <div class="label">{html.escape(label)}</div>
   <div class="value">{html.escape(value)}</div>
   <div class="sub">{html.escape(subtext)}</div>
 </div>
-''',
+""",
                 unsafe_allow_html=True,
             )
-
 
 
 def note_box(title: str, text: str) -> None:
@@ -79,7 +76,6 @@ def note_box(title: str, text: str) -> None:
         f'<div class="rag-note"><strong>{html.escape(title)}</strong><br>{html.escape(text)}</div>',
         unsafe_allow_html=True,
     )
-
 
 
 def status_cards(items: list[tuple[str, str, str, str]], *, columns: int = 2) -> None:
@@ -97,7 +93,7 @@ def status_cards(items: list[tuple[str, str, str, str]], *, columns: int = 2) ->
                 f'<div class="rag-status-head"><span class="rag-status-dot {state}"></span>{html.escape(label)}</div>'
                 f'<div class="rag-status-value">{html.escape(value)}</div>'
                 f'<div class="rag-status-detail">{html.escape(detail)}</div>'
-                '</div>'
+                "</div>"
             )
             col.markdown(html_block, unsafe_allow_html=True)
 
@@ -109,7 +105,6 @@ def metrics_reference(page: str) -> None:
     with st.expander("Mit jelentenek az ezen az oldalon használt metrikák?", expanded=False):
         for name, explanation in metrics:
             st.markdown(f"**{hu_label(name)}** — {explanation}")
-
 
 
 def methodology_note(title: str, text: str) -> None:

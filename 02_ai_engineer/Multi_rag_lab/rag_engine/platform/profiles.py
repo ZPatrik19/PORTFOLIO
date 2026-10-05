@@ -55,7 +55,6 @@ def load_cuda_profiles() -> dict[str, dict[str, Any]]:
     return _load_profiles(CONFIG_ROOT / "cuda_profiles.yaml")
 
 
-
 def resolve_profile_name(profiles: dict[str, dict[str, Any]], requested: str | None, *, fallback: str) -> str:
     """Return a valid profile name without allowing stale session/config values to crash the UI."""
     if requested and requested in profiles:

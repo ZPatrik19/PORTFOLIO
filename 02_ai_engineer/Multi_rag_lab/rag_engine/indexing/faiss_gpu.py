@@ -61,9 +61,7 @@ class FaissGPUVectorStore(FaissCPUVectorStore):
                     "WSL2 GPU passthrough, the NVIDIA driver, and container GPU access."
                 )
             if self.gpu_id >= gpu_count:
-                raise RuntimeError(
-                    f"Requested FAISS GPU id {self.gpu_id}, but only {gpu_count} GPU(s) are visible."
-                )
+                raise RuntimeError(f"Requested FAISS GPU id {self.gpu_id}, but only {gpu_count} GPU(s) are visible.")
 
     def _configure_resources(self) -> None:
         if self.temp_memory_mb is None:
@@ -118,8 +116,7 @@ class FaissGPUVectorStore(FaissCPUVectorStore):
         store.dimension = cpu_index.d
         store.index = store._cpu_to_gpu(cpu_index)
         store.chunks = [
-            Chunk.model_validate(item)
-            for item in json.loads((path / "metadata.json").read_text(encoding="utf-8"))
+            Chunk.model_validate(item) for item in json.loads((path / "metadata.json").read_text(encoding="utf-8"))
         ]
         return store
 

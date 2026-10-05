@@ -176,6 +176,8 @@ def runtime_snapshot() -> dict[str, object]:
         "llm": (
             "dummy"
             if st.session_state.get("llm_provider", "dummy") == "dummy"
-            else str(load_llm_profiles().get(st.session_state.get("ollama_profile", "balanced"), {}).get("alias", "ollama"))
+            else str(
+                load_llm_profiles().get(st.session_state.get("ollama_profile", "balanced"), {}).get("alias", "ollama")
+            )
         ),
     }

@@ -28,9 +28,7 @@ class ParentChildChunker:
                 "parent_chunk_size": self.parent_size,
                 "child_chunk_size": self.child_size,
             }
-            parent_chunk = parent.model_copy(
-                update={"chunk_id": parent_id, "metadata": parent_metadata}
-            )
+            parent_chunk = parent.model_copy(update={"chunk_id": parent_id, "metadata": parent_metadata})
             output.append(parent_chunk)
 
             child_doc = Document(

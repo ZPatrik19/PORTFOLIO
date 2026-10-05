@@ -109,7 +109,10 @@ def run_component_benchmarks(
     documents, parse_row = _parse_and_clean(paths, max_documents)
     component_rows.append(parse_row)
     if not documents:
-        return {"components": component_rows, "errors": [{"phase": "components", "error": "Nincs feldolgozható dokumentum."}]}
+        return {
+            "components": component_rows,
+            "errors": [{"phase": "components", "error": "Nincs feldolgozható dokumentum."}],
+        }
 
     settings = load_settings()
     spec_map = {
@@ -118,11 +121,7 @@ def run_component_benchmarks(
         "e5-small": (settings.e5_embedding_model, False),
         "hashing": ("__offline_hashing_fallback__", True),
     }
-    specs = [
-        (mode, *spec_map[mode])
-        for mode in embedding_modes
-        if mode in spec_map
-    ]
+    specs = [(mode, *spec_map[mode]) for mode in embedding_modes if mode in spec_map]
 
     # A semantic chunker needs an embedder. Reuse one representative selected model;
     # all non-semantic chunkers are model-independent.
@@ -171,7 +170,10 @@ def run_component_benchmarks(
     sample_chunks = [chunk for chunk in sample_chunks if chunk.metadata.get("role") != "parent"][:max_embedding_chunks]
     texts = [chunk.text for chunk in sample_chunks]
     if not texts:
-        return {"components": component_rows, "errors": errors + [{"phase": "embedding", "error": "Nincs embeddingelhető chunk."}]}
+        return {
+            "components": component_rows,
+            "errors": errors + [{"phase": "embedding", "error": "Nincs embeddingelhető chunk."}],
+        }
 
     embedding_cache: dict[tuple[str, str], tuple[object, np.ndarray]] = {}
     for embedding_label, model_name, fallback_embedding in specs:
@@ -213,7 +215,9 @@ def run_component_benchmarks(
                 )
                 embedding_cache[(embedding_label, requested_device)] = (provider, vectors)
             except Exception as exc:
-                errors.append({"phase": "embedding", "variant": f"{embedding_label}|{requested_device}", "error": str(exc)})
+                errors.append(
+                    {"phase": "embedding", "variant": f"{embedding_label}|{requested_device}", "error": str(exc)}
+                )
 
     for (embedding_mode, embedding_device), (provider, vectors) in embedding_cache.items():
         if not len(vectors):

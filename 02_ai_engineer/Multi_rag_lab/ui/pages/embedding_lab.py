@@ -21,10 +21,22 @@ def render() -> None:
     metrics_reference("embedding")
     info_cards(
         [
-            ("Mi a beágyazás (embedding)?", "Egy szöveghez fix dimenziós vektort rendel. A hasonló jelentésű szövegek ideális esetben közel kerülnek egymáshoz a vektortérben."),
-            ("Koszinusz-hasonlóság", "A vektorok irányának hasonlóságát méri. Normalizált vektoroknál az inner product megegyezik a cosine similarityvel."),
-            ("CPU és CUDA", "A modell matematikája ugyanaz; CUDA nagyobb batchnél jelentősen gyorsíthatja az embedding számítást, de a retrieval minősége ettől nem lesz automatikusan jobb."),
-            ("Többnyelvű modell", "Magyar korpusznál a többnyelvű embedding modell a célszerű alapbeállítás, mert magyar szemantikai reprezentációra is tanították."),
+            (
+                "Mi a beágyazás (embedding)?",
+                "Egy szöveghez fix dimenziós vektort rendel. A hasonló jelentésű szövegek ideális esetben közel kerülnek egymáshoz a vektortérben.",
+            ),
+            (
+                "Koszinusz-hasonlóság",
+                "A vektorok irányának hasonlóságát méri. Normalizált vektoroknál az inner product megegyezik a cosine similarityvel.",
+            ),
+            (
+                "CPU és CUDA",
+                "A modell matematikája ugyanaz; CUDA nagyobb batchnél jelentősen gyorsíthatja az embedding számítást, de a retrieval minősége ettől nem lesz automatikusan jobb.",
+            ),
+            (
+                "Többnyelvű modell",
+                "Magyar korpusznál a többnyelvű embedding modell a célszerű alapbeállítás, mert magyar szemantikai reprezentációra is tanították.",
+            ),
         ],
         columns=4,
     )
@@ -36,13 +48,17 @@ def render() -> None:
         index=["cpu", "cuda", "auto"].index(st.session_state.get("embedding_device", "auto")),
     )
     if requested == "cuda" and not cuda_available():
-        st.warning("A PyTorch ebben a környezetben nem lát CUDA-t. A provider a konfigurált fallback szabály szerint CPU-ra válthat.")
+        st.warning(
+            "A PyTorch ebben a környezetben nem lát CUDA-t. A provider a konfigurált fallback szabály szerint CPU-ra válthat."
+        )
 
     max_chunks = st.slider("Benchmarkba bevont szövegrészek maximális száma", 10, 1000, 200, 10)
     if st.button("Beágyazási mérés futtatása", type="primary"):
         try:
             lab = get_lab(embedding_device=requested)
-            texts = [chunk.text for chunk in lab.ingestion.chunks if chunk.metadata.get("role") != "parent"][:max_chunks]
+            texts = [chunk.text for chunk in lab.ingestion.chunks if chunk.metadata.get("role") != "parent"][
+                :max_chunks
+            ]
             if not texts:
                 st.warning("Nincs beágyazható szövegrész.")
                 return
@@ -53,7 +69,9 @@ def render() -> None:
             throughput = len(texts) / max(elapsed_ms / 1000, 1e-9)
             ms_per_chunk = elapsed_ms / max(len(texts), 1)
             st.session_state["embedding_projection_vectors"] = np.asarray(vectors)
-            st.session_state["embedding_projection_chunks"] = [c for c in lab.ingestion.chunks if c.metadata.get("role") != "parent"][:max_chunks]
+            st.session_state["embedding_projection_chunks"] = [
+                c for c in lab.ingestion.chunks if c.metadata.get("role") != "parent"
+            ][:max_chunks]
             st.session_state["embedding_projection_model"] = getattr(lab.embedder, "model_name", "ismeretlen")
             st.session_state["embedding_projection_device"] = getattr(lab.embedder, "device", "ismeretlen")
 
@@ -71,7 +89,12 @@ def render() -> None:
             safe_dataframe(
                 {
                     "Mutató": ["Szövegrészek", "Összes beágyazási idő (ms)", "Minimum norma", "Maximum norma"],
-                    "Érték": [len(texts), round(elapsed_ms, 2), round(float(norms.min()), 5), round(float(norms.max()), 5)],
+                    "Érték": [
+                        len(texts),
+                        round(elapsed_ms, 2),
+                        round(float(norms.min()), 5),
+                        round(float(norms.max()), 5),
+                    ],
                 },
                 width="stretch",
                 hide_index=True,
@@ -79,14 +102,19 @@ def render() -> None:
         except Exception as exc:
             st.error(f"A beágyazási mérés sikertelen: {exc}")
 
-
     vectors = st.session_state.get("embedding_projection_vectors")
     chunks = st.session_state.get("embedding_projection_chunks", [])
     if vectors is not None and len(chunks) >= 2:
         st.divider()
         st.subheader("Beágyazási tér 2D vetítése")
-        st.caption("A PCA-vetítés diagnosztikai vizualizáció: a magas dimenziós beágyazási tér szerkezetének kétdimenziós közelítését mutatja, nem helyettesíti a visszakeresési pontszámot.")
-        query = st.text_input("Opcionális lekérdezés kiemelése a vetítésen", value="Melyek a magas vérnyomás fő tünetei?", key="embedding_projection_query")
+        st.caption(
+            "A PCA-vetítés diagnosztikai vizualizáció: a magas dimenziós beágyazási tér szerkezetének kétdimenziós közelítését mutatja, nem helyettesíti a visszakeresési pontszámot."
+        )
+        query = st.text_input(
+            "Opcionális lekérdezés kiemelése a vetítésen",
+            value="Melyek a magas vérnyomás fő tünetei?",
+            key="embedding_projection_query",
+        )
         query_vector = None
         if query:
             try:
@@ -99,5 +127,5 @@ def render() -> None:
             chunks,
             query_vector=np.asarray(query_vector) if query_vector is not None else None,
             query_label="Lekérdezés",
-            key=f"embedding_pca_{len(chunks)}_{st.session_state.get('embedding_projection_device','cpu')}",
+            key=f"embedding_pca_{len(chunks)}_{st.session_state.get('embedding_projection_device', 'cpu')}",
         )

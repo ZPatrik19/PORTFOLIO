@@ -86,7 +86,7 @@ def main() -> int:
             continue
         try:
             text = path.read_text(encoding="utf-8")
-        except (UnicodeDecodeError, OSError):
+        except UnicodeDecodeError, OSError:
             continue
         if WINDOWS_ABSOLUTE_PATH.search(text):
             errors.append(f"machine-specific absolute Windows path: {_relative(path)}")

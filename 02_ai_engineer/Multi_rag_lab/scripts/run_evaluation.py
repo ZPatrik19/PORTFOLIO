@@ -12,7 +12,9 @@ from rag_engine.evaluation.runner import evaluate_retrieval
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Evaluate retrieval from a JSONL file with retrieved/relevant chunk IDs.")
+    parser = argparse.ArgumentParser(
+        description="Evaluate retrieval from a JSONL file with retrieved/relevant chunk IDs."
+    )
     parser.add_argument("dataset", type=Path)
     parser.add_argument("--k", type=int, default=5)
     args = parser.parse_args()

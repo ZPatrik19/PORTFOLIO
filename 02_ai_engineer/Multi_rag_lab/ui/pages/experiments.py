@@ -24,10 +24,7 @@ def _short(value: object, length: int = 12) -> str:
 
 
 def _run_label(run: dict[str, object]) -> str:
-    return (
-        f"{str(run['created_at'])[:19].replace('T', ' ')} · "
-        f"{run['benchmark_type']} · {_short(run['run_id'], 18)}"
-    )
+    return f"{str(run['created_at'])[:19].replace('T', ' ')} · {run['benchmark_type']} · {_short(run['run_id'], 18)}"
 
 
 def _result_family(row: dict[str, object]) -> str:
@@ -220,11 +217,17 @@ def render() -> None:
     statuses = sorted({str(run.get("status") or "unknown") for run in all_runs})
     f1, f2, f3 = st.columns([1, 1, 1.35])
     with f1:
-        selected_types = st.multiselect("Benchmark típus", benchmark_types, default=benchmark_types, key="exp_filter_types")
+        selected_types = st.multiselect(
+            "Benchmark típus", benchmark_types, default=benchmark_types, key="exp_filter_types"
+        )
     with f2:
         selected_statuses = st.multiselect("Státusz", statuses, default=statuses, key="exp_filter_status")
     with f3:
-        search = st.text_input("Keresés", placeholder="run_id, config hash, megjegyzés…", key="exp_filter_search").strip().lower()
+        search = (
+            st.text_input("Keresés", placeholder="run_id, config hash, megjegyzés…", key="exp_filter_search")
+            .strip()
+            .lower()
+        )
 
     runs = []
     for run in all_runs:
@@ -245,7 +248,11 @@ def render() -> None:
     with history_tab:
         section_intro("Kísérleti futástörténet", f"{len(runs)} futás felel meg az aktuális szűrőknek.")
         if not runs:
-            empty_state("Nincs találat", "Az aktuális szűrőkkel nincs megjeleníthető kísérleti futás.", hint="Tágítsd a típus/státusz szűrőt vagy töröld a keresőkifejezést.")
+            empty_state(
+                "Nincs találat",
+                "Az aktuális szűrőkkel nincs megjeleníthető kísérleti futás.",
+                hint="Tágítsd a típus/státusz szűrőt vagy töröld a keresőkifejezést.",
+            )
         else:
             history = _history_frame(runs)
             left, right = st.columns([1.45, 1])
@@ -253,20 +260,46 @@ def render() -> None:
                 safe_dataframe(history, width="stretch", hide_index=True, height=min(520, 76 + 35 * len(history)))
             with right:
                 type_counts = history["Típus"].value_counts().rename_axis("Benchmarktípus").reset_index(name="Futások")
-                fig = px.bar(type_counts, x="Futások", y="Benchmarktípus", orientation="h", title="Futások megoszlása benchmarktípus szerint")
-                fig.update_layout(height=330, margin=dict(l=16, r=16, t=62, b=32), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+                fig = px.bar(
+                    type_counts,
+                    x="Futások",
+                    y="Benchmarktípus",
+                    orientation="h",
+                    title="Futások megoszlása benchmarktípus szerint",
+                )
+                fig.update_layout(
+                    height=330,
+                    margin=dict(l=16, r=16, t=62, b=32),
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                )
                 st.plotly_chart(fig, width="stretch", key="experiments_run_types_v22")
                 completed_history = history[history["Státusz"] == "completed"].copy()
                 if not completed_history.empty:
-                    duration = completed_history.groupby("Típus", as_index=False)["Időtartam s"].median().sort_values("Időtartam s")
-                    fig2 = px.bar(duration, x="Időtartam s", y="Típus", orientation="h", title="Medián futási idő típusonként")
-                    fig2.update_layout(height=300, margin=dict(l=16, r=16, t=62, b=32), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+                    duration = (
+                        completed_history.groupby("Típus", as_index=False)["Időtartam s"]
+                        .median()
+                        .sort_values("Időtartam s")
+                    )
+                    fig2 = px.bar(
+                        duration, x="Időtartam s", y="Típus", orientation="h", title="Medián futási idő típusonként"
+                    )
+                    fig2.update_layout(
+                        height=300,
+                        margin=dict(l=16, r=16, t=62, b=32),
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(0,0,0,0)",
+                    )
                     st.plotly_chart(fig2, width="stretch", key="experiments_duration_v22")
 
     with detail_tab:
-        section_intro("Futásvizsgáló", "Egy futás konfigurációja, dataset fingerprintje és eredményvariánsai egy nézetben.")
+        section_intro(
+            "Futásvizsgáló", "Egy futás konfigurációja, dataset fingerprintje és eredményvariánsai egy nézetben."
+        )
         run_map = {str(run["run_id"]): run for run in runs or all_runs}
-        selected_id = st.selectbox("Futás", list(run_map), format_func=lambda rid: _run_label(run_map[rid]), key="experiment_detail_run_v22")
+        selected_id = st.selectbox(
+            "Futás", list(run_map), format_func=lambda rid: _run_label(run_map[rid]), key="experiment_detail_run_v22"
+        )
         run = registry.get_run(selected_id) or run_map[selected_id]
         results = registry.get_results(selected_id)
         kpi_cards(
@@ -281,9 +314,16 @@ def render() -> None:
         if results:
             result_frame = _results_frame(results)
             if "result_type" in result_frame.columns:
-                counts = result_frame["result_type"].value_counts().rename_axis("Result type").reset_index(name="Variáns")
+                counts = (
+                    result_frame["result_type"].value_counts().rename_axis("Result type").reset_index(name="Variáns")
+                )
                 fig = px.bar(counts, x="Result type", y="Variáns", title="Eredményvariánsok összetétele")
-                fig.update_layout(height=320, margin=dict(l=16, r=16, t=62, b=36), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+                fig.update_layout(
+                    height=320,
+                    margin=dict(l=16, r=16, t=62, b=36),
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                )
                 st.plotly_chart(fig, width="stretch", key=f"run_inspector_types_{selected_id}")
             with st.expander("Nyers eredménysorok", expanded=False):
                 safe_dataframe(result_frame, width="stretch", hide_index=True)
@@ -302,23 +342,47 @@ def render() -> None:
             "A/B összehasonlítás",
             "Két konkrét benchmarkvariáns közvetlen összehasonlítása. Az eltérésdiagramon a pozitív irány mindig javulást, a negatív regressziót jelent — a metrika természetétől függetlenül.",
         )
-        completed = [run for run in all_runs if run.get("status") == "completed" and registry.get_results(str(run["run_id"]))]
+        completed = [
+            run for run in all_runs if run.get("status") == "completed" and registry.get_results(str(run["run_id"]))
+        ]
         if not completed:
-            empty_state("Nincs összehasonlítható futás", "Legalább egy sikeres benchmarkfutás és benne legalább két variáns szükséges az A/B nézethez.")
+            empty_state(
+                "Nincs összehasonlítható futás",
+                "Legalább egy sikeres benchmarkfutás és benne legalább két variáns szükséges az A/B nézethez.",
+            )
         else:
             run_ids = [str(run["run_id"]) for run in completed]
             run_lookup = {str(run["run_id"]): run for run in completed}
             ca, cb = st.columns(2)
             with ca:
-                run_a = st.selectbox("Futás A", run_ids, format_func=lambda rid: _run_label(run_lookup[rid]), key="compare_run_a_v22")
+                run_a = st.selectbox(
+                    "Futás A", run_ids, format_func=lambda rid: _run_label(run_lookup[rid]), key="compare_run_a_v22"
+                )
                 results_a = registry.get_results(run_a)
-                idx_a = st.selectbox("Variáns A", range(len(results_a)), format_func=lambda idx: _variant_label(results_a[idx]), key="compare_variant_a_v22")
+                idx_a = st.selectbox(
+                    "Variáns A",
+                    range(len(results_a)),
+                    format_func=lambda idx: _variant_label(results_a[idx]),
+                    key="compare_variant_a_v22",
+                )
                 variant_a = results_a[idx_a]
             with cb:
                 default_b = min(1, len(run_ids) - 1)
-                run_b = st.selectbox("Futás B", run_ids, index=default_b, format_func=lambda rid: _run_label(run_lookup[rid]), key="compare_run_b_v22")
+                run_b = st.selectbox(
+                    "Futás B",
+                    run_ids,
+                    index=default_b,
+                    format_func=lambda rid: _run_label(run_lookup[rid]),
+                    key="compare_run_b_v22",
+                )
                 results_b = registry.get_results(run_b)
-                idx_b = st.selectbox("Variáns B", range(len(results_b)), index=min(1, len(results_b) - 1), format_func=lambda idx: _variant_label(results_b[idx]), key="compare_variant_b_v22")
+                idx_b = st.selectbox(
+                    "Variáns B",
+                    range(len(results_b)),
+                    index=min(1, len(results_b) - 1),
+                    format_func=lambda idx: _variant_label(results_b[idx]),
+                    key="compare_variant_b_v22",
+                )
                 variant_b = results_b[idx_b]
 
             diff = _config_diff(variant_a, variant_b)
@@ -328,19 +392,31 @@ def render() -> None:
 
             metric_frame, family = _compare_metric_table(variant_a, variant_b)
             if family == "mixed":
-                st.warning("Eltérő eredménytípusokat választottál. Válassz két retrieval, két RAG vagy két performance variánst a quality delta megjelenítéséhez.")
+                st.warning(
+                    "Eltérő eredménytípusokat választottál. Válassz két retrieval, két RAG vagy két performance variánst a quality delta megjelenítéséhez."
+                )
             elif metric_frame.empty:
-                empty_state("Nincs közös metrikakészlet", "A kiválasztott eredménytípushoz még nincs definiált A/B scorecard.")
+                empty_state(
+                    "Nincs közös metrikakészlet", "A kiválasztott eredménytípushoz még nincs definiált A/B scorecard."
+                )
             else:
                 improved = int((metric_frame["Hatás B vs A"] > 0).sum())
                 regressed = int((metric_frame["Hatás B vs A"] < 0).sum())
                 unchanged = int((metric_frame["Hatás B vs A"].abs() < 1e-12).sum())
                 kpi_cards(
                     [
-                        ("Javuló metrikák", str(improved), "B kedvezőbb A-nál a metrika helyes irányát figyelembe véve."),
+                        (
+                            "Javuló metrikák",
+                            str(improved),
+                            "B kedvezőbb A-nál a metrika helyes irányát figyelembe véve.",
+                        ),
                         ("Romló metrikák", str(regressed), "B regressziót mutat A-hoz képest."),
                         ("Változatlan", str(unchanged), "A mért különbség gyakorlatilag nulla."),
-                        ("Legnagyobb hatás", f"{metric_frame['Hatás B vs A'].abs().max():.3f}", "A legnagyobb abszolút irányhelyes delta."),
+                        (
+                            "Legnagyobb hatás",
+                            f"{metric_frame['Hatás B vs A'].abs().max():.3f}",
+                            "A legnagyobb abszolút irányhelyes delta.",
+                        ),
                     ],
                     columns=4,
                 )
@@ -373,7 +449,10 @@ def render() -> None:
             )
 
     with export_tab:
-        section_intro("Registry exportálása", "A teljes futástörténet JSON-ba exportálható, és később benchmarkjelentés vagy CI artifact bemeneteként használható.")
+        section_intro(
+            "Registry exportálása",
+            "A teljes futástörténet JSON-ba exportálható, és később benchmarkjelentés vagy CI artifact bemeneteként használható.",
+        )
         export_path = registry.export_json(EXPORT_PATH)
         st.code(str(REGISTRY_PATH), language="text")
         st.download_button(

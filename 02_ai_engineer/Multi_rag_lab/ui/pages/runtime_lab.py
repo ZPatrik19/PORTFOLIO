@@ -7,7 +7,12 @@ import pandas as pd
 import streamlit as st
 
 from rag_engine.platform.config import load_settings
-from rag_engine.platform.profiles import load_cuda_profiles, load_faiss_profiles, load_llm_profiles, resolve_profile_name
+from rag_engine.platform.profiles import (
+    load_cuda_profiles,
+    load_faiss_profiles,
+    load_llm_profiles,
+    resolve_profile_name,
+)
 from rag_engine.platform.runtime import (
     create_llm_profile,
     cuda_status,
@@ -55,19 +60,48 @@ def render() -> None:
 
     status_cards(
         [
-            ("Ollama / Qwen", "Elérhető" if health.get("ok") else "Nem elérhető", f"Ollama {health.get('version') or '—'} · {len(health.get('models', []))} modell", "ok" if health.get("ok") else "warn"),
-            ("FAISS backend", f"FAISS {fs.get('version') or '—'} · {str(fs.get('backend', 'cpu')).upper()}" if fs.get("import_ok") else "Nem elérhető", f"GPU API: {'igen' if fs.get('gpu_api') else 'nem'} · látható GPU-k: {fs.get('visible_gpus', 0)}", "ok" if fs.get("import_ok") else "warn"),
-            ("PyTorch CUDA", "Aktív" if cs.get("torch_cuda_available") else "CPU fallback", f"Futtatási környezet: {cs.get('torch_cuda_runtime') or '—'} · {cs.get('gpu_name') or 'GPU nem látható'}", "ok" if cs.get("torch_cuda_available") else "warn"),
-            ("GPU memória", f"{cs.get('vram_gb') or '—'} GB", "A lokális Qwen, embedding és Cross-Encoder ugyanazért a VRAM-ért versenyezhet.", "info"),
+            (
+                "Ollama / Qwen",
+                "Elérhető" if health.get("ok") else "Nem elérhető",
+                f"Ollama {health.get('version') or '—'} · {len(health.get('models', []))} modell",
+                "ok" if health.get("ok") else "warn",
+            ),
+            (
+                "FAISS backend",
+                f"FAISS {fs.get('version') or '—'} · {str(fs.get('backend', 'cpu')).upper()}"
+                if fs.get("import_ok")
+                else "Nem elérhető",
+                f"GPU API: {'igen' if fs.get('gpu_api') else 'nem'} · látható GPU-k: {fs.get('visible_gpus', 0)}",
+                "ok" if fs.get("import_ok") else "warn",
+            ),
+            (
+                "PyTorch CUDA",
+                "Aktív" if cs.get("torch_cuda_available") else "CPU fallback",
+                f"Futtatási környezet: {cs.get('torch_cuda_runtime') or '—'} · {cs.get('gpu_name') or 'GPU nem látható'}",
+                "ok" if cs.get("torch_cuda_available") else "warn",
+            ),
+            (
+                "GPU memória",
+                f"{cs.get('vram_gb') or '—'} GB",
+                "A lokális Qwen, embedding és Cross-Encoder ugyanazért a VRAM-ért versenyezhet.",
+                "info",
+            ),
         ],
         columns=2,
     )
 
-    llm_tab, faiss_tab, cuda_tab, env_tab = st.tabs(["LLM · Ollama + Qwen", "Vector DB · FAISS", "CUDA · NVIDIA + PyTorch", "Environment · Corpus"])
+    llm_tab, faiss_tab, cuda_tab, env_tab = st.tabs(
+        ["LLM · Ollama + Qwen", "Vector DB · FAISS", "CUDA · NVIDIA + PyTorch", "Environment · Corpus"]
+    )
 
     with llm_tab:
-        section_intro("Ollama / Qwen runtime", "A profilok eltérő modellel, kontextusmérettel és memória-beállításokkal dolgoznak. A Streamlit az alias modellt hívja az Ollama API-n keresztül.")
-        current_llm_profile = resolve_profile_name(llm_profiles, st.session_state.get("ollama_profile"), fallback="balanced")
+        section_intro(
+            "Ollama / Qwen runtime",
+            "A profilok eltérő modellel, kontextusmérettel és memória-beállításokkal dolgoznak. A Streamlit az alias modellt hívja az Ollama API-n keresztül.",
+        )
+        current_llm_profile = resolve_profile_name(
+            llm_profiles, st.session_state.get("ollama_profile"), fallback="balanced"
+        )
         selected = st.selectbox(
             "LLM runtime profil",
             list(llm_profiles),
@@ -82,9 +116,17 @@ def render() -> None:
                 ("Profil", str(profile["display_name"]), "Aktív Ollama/Qwen runtime konfiguráció."),
                 ("Base model", str(profile["base_model"]), "A lokálisan letöltött alapmodell."),
                 ("Streamlit alias", str(profile["alias"]), "A RAG alkalmazás ezt az alias modellt hívja."),
-                ("Kontextus", f"{profile['context_length']} token", "Ollama modell-context; nem azonos a RAG evidence budgettel."),
+                (
+                    "Kontextus",
+                    f"{profile['context_length']} token",
+                    "Ollama modell-context; nem azonos a RAG evidence budgettel.",
+                ),
                 ("KV cache", str(profile["kv_cache_type"]), "Memóriaigény és generálási sebesség kompromisszuma."),
-                ("Párhuzamosság", f"{profile['num_parallel']} kérés · max {profile['max_loaded_models']} modell", "4 GB VRAM mellett az 1×1 stabil baseline."),
+                (
+                    "Párhuzamosság",
+                    f"{profile['num_parallel']} kérés · max {profile['max_loaded_models']} modell",
+                    "4 GB VRAM mellett az 1×1 stabil baseline.",
+                ),
             ],
             columns=3,
         )
@@ -142,7 +184,15 @@ def render() -> None:
                 [
                     {"Tulajdonság": "API", "Érték": "OK" if current_health.get("ok") else "nem elérhető"},
                     {"Tulajdonság": "Ollama verzió", "Érték": current_health.get("version", "—")},
-                    {"Tulajdonság": "Kiválasztott alias telepítve", "Érték": "igen" if any(str(name) == str(profile["alias"]) or str(name).startswith(f"{profile['alias']}:") for name in models) else "nem"},
+                    {
+                        "Tulajdonság": "Kiválasztott alias telepítve",
+                        "Érték": "igen"
+                        if any(
+                            str(name) == str(profile["alias"]) or str(name).startswith(f"{profile['alias']}:")
+                            for name in models
+                        )
+                        else "nem",
+                    },
                     {"Tulajdonság": "OLLAMA_MODELS", "Érték": env["OLLAMA_MODELS"]},
                     {"Tulajdonság": "Kontextus", "Érték": env["OLLAMA_CONTEXT_LENGTH"]},
                     {"Tulajdonság": "KV cache", "Érték": env["OLLAMA_KV_CACHE_TYPE"]},
@@ -156,12 +206,22 @@ def render() -> None:
         if process.get("ok") and str(process.get("table", "")).strip():
             with st.expander("Ollama modellmemória / CPU–GPU offload", expanded=False):
                 st.code(str(process.get("table", "")), language=None)
-                st.caption("A PROCESSOR oszlopból látható, hogy a modell GPU-n, CPU-n vagy megosztva fut-e. A túlzott CPU offload jelentősen növelheti a latency-t.")
-        note_box("Egyszerű indítás", f"Napi használathoz elég a gyökérben a RUN.bat. Külön infrastruktúra-kezeléshez használd a `python scripts/infrastructure_cli.py` diagnosztikát; az aktív Qwen profil itt: {selected}.")
+                st.caption(
+                    "A PROCESSOR oszlopból látható, hogy a modell GPU-n, CPU-n vagy megosztva fut-e. A túlzott CPU offload jelentősen növelheti a latency-t."
+                )
+        note_box(
+            "Egyszerű indítás",
+            f"Napi használathoz elég a gyökérben a RUN.bat. Külön infrastruktúra-kezeléshez használd a `python scripts/infrastructure_cli.py` diagnosztikát; az aktív Qwen profil itt: {selected}.",
+        )
 
     with faiss_tab:
-        section_intro("FAISS vector database", "A FAISS nem külön szerver: a Python processben futó index. Itt profilt választasz, ellenőrzöd a backendet és perzisztens indexet építhetsz az aktív korpuszból.")
-        current_faiss_profile = resolve_profile_name(faiss_profiles, st.session_state.get("faiss_profile"), fallback="cpu")
+        section_intro(
+            "FAISS vector database",
+            "A FAISS nem külön szerver: a Python processben futó index. Itt profilt választasz, ellenőrzöd a backendet és perzisztens indexet építhetsz az aktív korpuszból.",
+        )
+        current_faiss_profile = resolve_profile_name(
+            faiss_profiles, st.session_state.get("faiss_profile"), fallback="cpu"
+        )
         selected = st.selectbox(
             "FAISS profil",
             list(faiss_profiles),
@@ -174,7 +234,10 @@ def render() -> None:
             [
                 ("Profil", str(profile["display_name"])),
                 ("Kért device", str(profile["vector_device"])),
-                ("Fallback", "NumPy exact search engedélyezve" if profile.get("fallback_to_numpy") else "nincs fallback"),
+                (
+                    "Fallback",
+                    "NumPy exact search engedélyezve" if profile.get("fallback_to_numpy") else "nincs fallback",
+                ),
                 ("Perzisztens index", str(profile["output_dir"])),
             ],
             columns=4,
@@ -218,17 +281,28 @@ def render() -> None:
                     {"Komponens": "Látható FAISS GPU", "Érték": current.get("visible_gpus", 0)},
                     {"Komponens": "FAISS import", "Érték": "OK" if current.get("import_ok") else "hiba"},
                     {"Komponens": "FAISS verzió", "Érték": current.get("version") or "—"},
-                    {"Komponens": "GPU API", "Érték": "elérhető" if current.get("gpu_api") else "nem elérhető / CPU build"},
+                    {
+                        "Komponens": "GPU API",
+                        "Érték": "elérhető" if current.get("gpu_api") else "nem elérhető / CPU build",
+                    },
                 ]
             ),
             width="stretch",
             hide_index=True,
         )
-        note_box("FAISS kezelés", "A FAISS nem külön szerver. Az `python scripts/infrastructure_cli.py verify` ellenőrzi a Python backendet és a perzisztens medical indexet; újraindexeléshez válaszd az Orvosi index újraépítés opciót.")
+        note_box(
+            "FAISS kezelés",
+            "A FAISS nem külön szerver. Az `python scripts/infrastructure_cli.py verify` ellenőrzi a Python backendet és a perzisztens medical indexet; újraindexeléshez válaszd az Orvosi index újraépítés opciót.",
+        )
 
     with cuda_tab:
-        section_intro("CUDA runtime profilok", "A CUDA Python binding, a CUDA-képes PyTorch és a FAISS GPU három külön réteg. Az embedding/reranker GPU-t a PyTorch biztosítja; a FAISS device külön konfiguráció.")
-        current_cuda_profile = resolve_profile_name(cuda_profiles, st.session_state.get("cuda_profile"), fallback="auto")
+        section_intro(
+            "CUDA runtime profilok",
+            "A CUDA Python binding, a CUDA-képes PyTorch és a FAISS GPU három külön réteg. Az embedding/reranker GPU-t a PyTorch biztosítja; a FAISS device külön konfiguráció.",
+        )
+        current_cuda_profile = resolve_profile_name(
+            cuda_profiles, st.session_state.get("cuda_profile"), fallback="auto"
+        )
         selected = st.selectbox(
             "CUDA profil",
             list(cuda_profiles),
@@ -265,7 +339,10 @@ def render() -> None:
                     {"Réteg": "nvidia-smi", "Állapot": "elérhető" if current.get("nvidia_smi") else "nincs"},
                     {"Réteg": "cuda-python", "Állapot": current.get("cuda_python") or "nincs"},
                     {"Réteg": "PyTorch", "Állapot": current.get("torch") or "nincs"},
-                    {"Réteg": "PyTorch CUDA runtime", "Állapot": current.get("torch_cuda_runtime") or "CPU build / nincs"},
+                    {
+                        "Réteg": "PyTorch CUDA runtime",
+                        "Állapot": current.get("torch_cuda_runtime") or "CPU build / nincs",
+                    },
                     {"Réteg": "torch.cuda.is_available()", "Állapot": _bool_label(current.get("torch_cuda_available"))},
                     {"Réteg": "GPU", "Állapot": current.get("gpu_name") or "nem látható"},
                     {"Réteg": "VRAM", "Állapot": f"{current.get('vram_gb')} GB" if current.get("vram_gb") else "—"},
@@ -276,9 +353,15 @@ def render() -> None:
         )
         if current.get("nvidia_smi_output"):
             st.code(str(current["nvidia_smi_output"]), language=None)
-        note_box("CUDA kezelés", f"A gyökérben csak a `python scripts/infrastructure_cli.py` diagnosztikát használd. Ott külön CUDA javítás/setup és teljes ellenőrzés is van. Aktív profil: {selected}.")
+        note_box(
+            "CUDA kezelés",
+            f"A gyökérben csak a `python scripts/infrastructure_cli.py` diagnosztikát használd. Ott külön CUDA javítás/setup és teljes ellenőrzés is van. Aktív profil: {selected}.",
+        )
     with env_tab:
-        section_intro("Environment és aktív korpusz", "A korábbi külön Rendszerállapot oldal tartalma ide került, hogy az infrastruktúra egyetlen helyen legyen diagnosztizálható.")
+        section_intro(
+            "Environment és aktív korpusz",
+            "A korábbi külön Rendszerállapot oldal tartalma ide került, hogy az infrastruktúra egyetlen helyen legyen diagnosztizálható.",
+        )
         paths = active_paths()
         total_mb = sum(path.stat().st_size for path in paths if path.exists()) / 1024**2
         kpi_cards(
@@ -287,7 +370,11 @@ def render() -> None:
                 ("PyTorch", _package_version("torch"), f"CUDA runtime: {cs.get('torch_cuda_runtime') or '—'}"),
                 ("FAISS", _package_version("faiss-cpu"), "Python vector backend."),
                 ("Streamlit", _package_version("streamlit"), "UI runtime."),
-                ("Sentence Transformers", _package_version("sentence-transformers"), "Embedding / Cross-Encoder stack."),
+                (
+                    "Sentence Transformers",
+                    _package_version("sentence-transformers"),
+                    "Embedding / Cross-Encoder stack.",
+                ),
                 ("Aktív dokumentum", str(len(paths)), f"Korpuszméret: {total_mb:.1f} MB"),
             ],
             columns=3,
@@ -310,9 +397,13 @@ def render() -> None:
         if paths:
             with st.expander("Aktív korpusz fájljai", expanded=False):
                 safe_dataframe(
-                    pd.DataFrame([{"Fájl": path.name, "Méret MB": round(path.stat().st_size / 1024**2, 3)} for path in paths]),
+                    pd.DataFrame(
+                        [{"Fájl": path.name, "Méret MB": round(path.stat().st_size / 1024**2, 3)} for path in paths]
+                    ),
                     width="stretch",
                     hide_index=True,
                 )
-        note_box("Egyszerűsített infrastruktúra", "Napi indítás: RUN.bat. Javítás/diagnosztika: `python scripts/infrastructure_cli.py`. A Streamlit System menüjében minden runtime-státusz ezen az egy Infrastructure oldalon található.")
-
+        note_box(
+            "Egyszerűsített infrastruktúra",
+            "Napi indítás: RUN.bat. Javítás/diagnosztika: `python scripts/infrastructure_cli.py`. A Streamlit System menüjében minden runtime-státusz ezen az egy Infrastructure oldalon található.",
+        )

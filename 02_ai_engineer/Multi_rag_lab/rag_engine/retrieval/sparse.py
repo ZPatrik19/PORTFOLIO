@@ -58,6 +58,15 @@ class BM25Retriever:
                 score += self.idf.get(term, 0.0) * numerator / denominator
             scores.append((score, i))
         ranked = sorted(scores, reverse=True)[:top_k]
-        return [RetrievedChunk(chunk_id=self.chunks[i].chunk_id, text=self.chunks[i].text,
-            source=str(self.chunks[i].metadata.get("source", "")), score=float(score), rank=rank,
-            metadata=self.chunks[i].metadata) for rank, (score, i) in enumerate(ranked, start=1) if score > 0]
+        return [
+            RetrievedChunk(
+                chunk_id=self.chunks[i].chunk_id,
+                text=self.chunks[i].text,
+                source=str(self.chunks[i].metadata.get("source", "")),
+                score=float(score),
+                rank=rank,
+                metadata=self.chunks[i].metadata,
+            )
+            for rank, (score, i) in enumerate(ranked, start=1)
+            if score > 0
+        ]

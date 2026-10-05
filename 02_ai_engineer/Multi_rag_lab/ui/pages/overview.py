@@ -77,9 +77,17 @@ def render() -> None:
     kpi_cards(
         [
             ("Aktív dokumentum", str(len(paths)), f"Orvosi korpusz: {len(medical_docs)} fájl"),
-            ("Indexelt chunk", f"{indexed_chunks:,}" if indexed_chunks is not None else "—", "Perzisztens medical index állapota."),
+            (
+                "Indexelt chunk",
+                f"{indexed_chunks:,}" if indexed_chunks is not None else "—",
+                "Perzisztens medical index állapota.",
+            ),
             ("Evaluation dataset", str(eval_count), "Forrásolt magyar orvosi kérdések."),
-            ("Experiment run", str(registry_summary.get("runs", 0)), f"Completed: {registry_summary.get('completed', 0)} · Failed: {registry_summary.get('failed', 0)}"),
+            (
+                "Experiment run",
+                str(registry_summary.get("runs", 0)),
+                f"Completed: {registry_summary.get('completed', 0)} · Failed: {registry_summary.get('failed', 0)}",
+            ),
         ],
         columns=4,
     )
@@ -120,7 +128,10 @@ def render() -> None:
         info_cards(
             [
                 ("Chunking", f"{snapshot['chunking']} · size={snapshot['chunk_size']} · overlap={snapshot['overlap']}"),
-                ("Beágyazás + FAISS", f"{snapshot['embedding']} · {snapshot['embedding_device']} / {snapshot['vector_device']}"),
+                (
+                    "Beágyazás + FAISS",
+                    f"{snapshot['embedding']} · {snapshot['embedding_device']} / {snapshot['vector_device']}",
+                ),
                 ("Visszakeresés", f"{snapshot['retrieval']} · {snapshot['fusion']} · Top-K={snapshot['top_k']}"),
                 ("RAG", f"{snapshot['rag']} · reranker={snapshot['reranker']} · context={snapshot['context_budget']}"),
             ],
@@ -144,13 +155,24 @@ def render() -> None:
             )
             safe_dataframe(frame, width="stretch", hide_index=True)
         else:
-            note_box("Még nincs experiment run", "Indíts egy retrieval, RAG vagy Full Pipeline benchmarkot az Evaluate területen; az eredmény automatikusan bekerül az Experiment Registry-be.")
+            note_box(
+                "Még nincs experiment run",
+                "Indíts egy retrieval, RAG vagy Full Pipeline benchmarkot az Evaluate területen; az eredmény automatikusan bekerül az Experiment Registry-be.",
+            )
 
-    section_intro("Munkafolyamat", "A projektet három fő feladat köré szerveztük; az infrastruktúra külön System nézetben marad.")
+    section_intro(
+        "Munkafolyamat", "A projektet három fő feladat köré szerveztük; az infrastruktúra külön System nézetben marad."
+    )
     info_cards(
         [
-            ("BUILD", "Dokumentumok → chunking → embedding → retrieval. Itt építed és diagnosztizálod az indexelési/retrieval réteget."),
-            ("FUTTATÁS", "RAG játszótér és RAG összehasonlítás. Egyedi kérdések, bizonyítékok, kontextus és lokális Qwen-generálás."),
+            (
+                "BUILD",
+                "Dokumentumok → chunking → embedding → retrieval. Itt építed és diagnosztizálod az indexelési/retrieval réteget.",
+            ),
+            (
+                "FUTTATÁS",
+                "RAG játszótér és RAG összehasonlítás. Egyedi kérdések, bizonyítékok, kontextus és lokális Qwen-generálás.",
+            ),
             ("KIÉRTÉKELÉS", "Teljesítmény, forrásolt kiértékelés, teljes pipeline benchmark és Experiment Registry."),
         ],
         columns=3,

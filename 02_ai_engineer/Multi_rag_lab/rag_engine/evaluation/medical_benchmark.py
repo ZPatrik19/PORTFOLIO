@@ -125,13 +125,19 @@ def _quantile(values: list[float], q: float) -> float:
 
 
 def _source_key(result) -> str:
-    return str(result.metadata.get("source_id") or result.metadata.get("title") or result.source or result.document_id if hasattr(result, "document_id") else "")
+    return str(
+        result.metadata.get("source_id") or result.metadata.get("title") or result.source or result.document_id
+        if hasattr(result, "document_id")
+        else ""
+    )
 
 
 def _result_diversity(results: list) -> float:
     if not results:
         return 0.0
-    sources = [str(item.metadata.get("source_id") or item.metadata.get("title") or item.source or "") for item in results]
+    sources = [
+        str(item.metadata.get("source_id") or item.metadata.get("title") or item.source or "") for item in results
+    ]
     return len({source for source in sources if source}) / len(results)
 
 
@@ -162,7 +168,9 @@ def _retrieve(
         retriever = HybridRetriever(bundle.dense, bundle.sparse, fusion="rrf", rrf_k=rrf_k, dense_weight=dense_weight)
         results = retriever.retrieve(query, top_k=requested_k, candidate_count=candidate_count)
     elif mode == "hybrid-weighted":
-        retriever = HybridRetriever(bundle.dense, bundle.sparse, fusion="weighted", rrf_k=rrf_k, dense_weight=dense_weight)
+        retriever = HybridRetriever(
+            bundle.dense, bundle.sparse, fusion="weighted", rrf_k=rrf_k, dense_weight=dense_weight
+        )
         results = retriever.retrieve(query, top_k=requested_k, candidate_count=candidate_count)
     else:
         raise ValueError(f"Ismeretlen retrieval mód: {mode}")
@@ -244,7 +252,16 @@ def run_retrieval_benchmark(
                     relevant = relevant_map[item.id]
                     relevant_counts.append(len(relevant))
                     started = time.perf_counter()
-                    results = _retrieve(bundle, retrieval_mode, item.query, top_k, candidate_count, reranker, rrf_k=rrf_k, dense_weight=dense_weight)
+                    results = _retrieve(
+                        bundle,
+                        retrieval_mode,
+                        item.query,
+                        top_k,
+                        candidate_count,
+                        reranker,
+                        rrf_k=rrf_k,
+                        dense_weight=dense_weight,
+                    )
                     latencies.append((time.perf_counter() - started) * 1000)
                     diversities.append(_result_diversity(results))
                     duplicates.append(_duplicate_ratio(results))

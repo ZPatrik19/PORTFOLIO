@@ -20,6 +20,7 @@ class DeviceResolution:
 def cuda_available() -> bool:
     try:
         import torch
+
         return bool(torch.cuda.is_available())
     except ImportError:
         return False

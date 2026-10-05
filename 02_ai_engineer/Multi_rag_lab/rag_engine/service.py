@@ -171,8 +171,15 @@ def compose_lab(
     )
     generator = GroundedGenerator(llm)
     return LabBundle(
-        resources.ingestion, resources.embedder, resources.vector_store, resources.dense, resources.sparse,
-        hybrid, llm, generator, dict(resources.build_trace)
+        resources.ingestion,
+        resources.embedder,
+        resources.vector_store,
+        resources.dense,
+        resources.sparse,
+        hybrid,
+        llm,
+        generator,
+        dict(resources.build_trace),
     )
 
 
@@ -220,6 +227,7 @@ def build_lab(
         ollama_temperature=ollama_temperature,
         ollama_keep_alive=ollama_keep_alive,
     )
+
 
 def create_rag_pipeline(
     bundle: LabBundle,
@@ -287,11 +295,7 @@ def create_rag_pipeline(
             **common,
         )
     if strategy == "parent-document":
-        parents = {
-            c.chunk_id: c
-            for c in bundle.ingestion.chunks
-            if c.metadata.get("role") == "parent"
-        }
+        parents = {c.chunk_id: c for c in bundle.ingestion.chunks if c.metadata.get("role") == "parent"}
         if not parents:
             raise ValueError("A Parent-Document RAG használatához Parent–Child chunking szükséges.")
         return ParentDocumentRAG(retriever=bundle.dense, parent_chunks=parents, **common)

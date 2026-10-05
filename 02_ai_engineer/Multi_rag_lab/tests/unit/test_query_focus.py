@@ -54,7 +54,9 @@ def test_lexical_reranker_uses_title_and_query_focus() -> None:
 def test_context_builder_prioritizes_named_article() -> None:
     chunks = [
         _chunk("wrong", "Vaginizmus", "Orvosi vizsgálat javasolt bizonyos panaszok esetén.", 1),
-        _chunk("right", "Magasvérnyomás-betegség", "Ismételten magas vérnyomás esetén orvosi kivizsgálás szükséges.", 2),
+        _chunk(
+            "right", "Magasvérnyomás-betegség", "Ismételten magas vérnyomás esetén orvosi kivizsgálás szükséges.", 2
+        ),
     ]
     context = ContextBuilder(max_tokens=500).build_for_query(QUERY, chunks, top_k=1)
     assert [item.chunk_id for item in context.included] == ["right"]

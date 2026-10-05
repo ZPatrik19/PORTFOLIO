@@ -42,10 +42,7 @@ def main() -> int:
 
     cuda = cuda_status()
     if cuda.get("torch_cuda_available"):
-        print(
-            f"[OK] PyTorch CUDA · GPU={cuda.get('gpu_name')} · "
-            f"CUDA runtime={cuda.get('torch_cuda_runtime')}"
-        )
+        print(f"[OK] PyTorch CUDA · GPU={cuda.get('gpu_name')} · CUDA runtime={cuda.get('torch_cuda_runtime')}")
     else:
         print("[INFO] PyTorch CUDA nem aktiv; CPU futas hasznalhato.")
 

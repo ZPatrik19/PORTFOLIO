@@ -21,9 +21,7 @@ def _expand_paths(items: list[Path]) -> list[Path]:
     for item in items:
         if item.is_dir():
             paths.extend(
-                path
-                for path in sorted(item.rglob("*"))
-                if path.is_file() and path.suffix.lower() in SUPPORTED
+                path for path in sorted(item.rglob("*")) if path.is_file() and path.suffix.lower() in SUPPORTED
             )
         elif item.is_file():
             paths.append(item)
@@ -33,7 +31,9 @@ def _expand_paths(items: list[Path]) -> list[Path]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Lokális dokumentumok szövegkinyerése, tisztítása és darabolása.")
-    parser.add_argument("paths", nargs="+", type=Path, help="Fájlok vagy könyvtárak; könyvtár esetén rekurzív bejárás történik.")
+    parser.add_argument(
+        "paths", nargs="+", type=Path, help="Fájlok vagy könyvtárak; könyvtár esetén rekurzív bejárás történik."
+    )
     parser.add_argument("--strategy", default="recursive")
     parser.add_argument("--chunk-size", type=int, default=700)
     parser.add_argument("--overlap", type=int, default=100)

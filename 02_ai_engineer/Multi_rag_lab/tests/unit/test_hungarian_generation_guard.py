@@ -64,10 +64,12 @@ def test_grounded_generator_accepts_substantive_hungarian_repair() -> None:
         "Ismételten 140/90 Hgmm feletti értékek esetén orvosi kivizsgálás szükséges [S3]. "
         "Mellkasi fájdalom vagy légszomj esetén mielőbbi orvosi ellátás indokolt [S3]."
     )
-    llm = SequenceOllama([
-        "Okay, let's tackle this problem. The user asks about hypertension.",
-        repaired,
-    ])
+    llm = SequenceOllama(
+        [
+            "Okay, let's tackle this problem. The user asks about hypertension.",
+            repaired,
+        ]
+    )
     generator = GroundedGenerator(llm)
     answer, citations = generator.generate(
         "Melyek a magasvérnyomás-betegség fő kockázatai, és mikor szükséges orvosi kivizsgálás?",
@@ -81,10 +83,12 @@ def test_grounded_generator_accepts_substantive_hungarian_repair() -> None:
 
 
 def test_repeated_bad_output_returns_structured_source_synthesis() -> None:
-    llm = SequenceOllama([
-        "Okay, let's tackle this problem. The user asks about hypertension.",
-        "The provided content says hypertension can cause complications and the user needs evaluation.",
-    ])
+    llm = SequenceOllama(
+        [
+            "Okay, let's tackle this problem. The user asks about hypertension.",
+            "The provided content says hypertension can cause complications and the user needs evaluation.",
+        ]
+    )
     generator = GroundedGenerator(llm)
     answer, citations = generator.generate(
         "Melyek a magasvérnyomás-betegség fő kockázatai, és mikor szükséges orvosi kivizsgálás?",
@@ -162,7 +166,9 @@ def test_detailed_generation_temporarily_increases_output_budget() -> None:
 
 def test_rich_context_rejects_overly_short_multi_part_answer() -> None:
     query = "Melyek a magasvérnyomás-betegség fő kockázatai, és mikor szükséges orvosi kivizsgálás?"
-    rich_context = _hypertension_context() + (" További releváns evidence a hipertónia kockázatairól és kivizsgálásáról." * 40)
+    rich_context = _hypertension_context() + (
+        " További releváns evidence a hipertónia kockázatairól és kivizsgálásáról." * 40
+    )
     short_answer = (
         "### Fő kockázatok\nA hipertónia szervkárosodást okozhat [S1].\n\n"
         "### Mikor indokolt orvosi kivizsgálás?\nIsmételten magas értékeknél orvoshoz kell fordulni [S3]."

@@ -104,9 +104,18 @@ def render() -> None:
     info_cards(
         [
             ("Recall@K", "A forrásolt bizonyíték-hez illeszkedő releváns chunkok mekkora részét hozza vissza a Top-K."),
-            ("Ranking metrikák", "MRR, MAP@K és nDCG@K együtt mutatják az első releváns találatot és a teljes Top-K rangsor minőségét."),
-            ("Diverzitás és zaj", "F1@K, source diversity, duplicate ratio és labeling coverage segít megmutatni, mennyire hasznos a retrieved halmaz."),
-            ("Generation quality", "Kulcstény-lefedettség, citation accuracy/coverage/source coverage, context utilization és redundancia proxy."),
+            (
+                "Ranking metrikák",
+                "MRR, MAP@K és nDCG@K együtt mutatják az első releváns találatot és a teljes Top-K rangsor minőségét.",
+            ),
+            (
+                "Diverzitás és zaj",
+                "F1@K, source diversity, duplicate ratio és labeling coverage segít megmutatni, mennyire hasznos a retrieved halmaz.",
+            ),
+            (
+                "Generation quality",
+                "Kulcstény-lefedettség, citation accuracy/coverage/source coverage, context utilization és redundancia proxy.",
+            ),
         ],
         columns=4,
     )
@@ -117,7 +126,11 @@ def render() -> None:
         [
             ("Evaluation kérdések", str(len(items)), "Alapértelmezett cél: 80, konfigurálható 50–100 között."),
             ("Forráscikkek", str(unique_sources), "A kérdések tényleges Egészségvonal-cikkekhez kötődnek."),
-            ("Visszakeresési metrikák", "10+ minőségi/teljesítmény metrika", "Recall, Precision, F1, Hit Rate, MRR, MAP, nDCG, rang, diverzitás és késleltetés."),
+            (
+                "Visszakeresési metrikák",
+                "10+ minőségi/teljesítmény metrika",
+                "Recall, Precision, F1, Hit Rate, MRR, MAP, nDCG, rang, diverzitás és késleltetés.",
+            ),
             ("RAG metrikák", "15+ E2E", "Citation, key facts, context, redundancy, TTFT, token/s és stage latency."),
         ],
         columns=4,
@@ -154,10 +167,14 @@ def render() -> None:
             )
         with c2:
             if items:
-                type_counts = pd.Series([QUESTION_TYPE_HU.get(item.question_type, item.question_type) for item in items]).value_counts()
+                type_counts = pd.Series(
+                    [QUESTION_TYPE_HU.get(item.question_type, item.question_type) for item in items]
+                ).value_counts()
                 st.bar_chart(type_counts)
             else:
-                st.info("Még nincs evaluation dataset. Előbb töltsd le a 100 cikkes orvosi korpuszt, majd építsd fel a datasetet.")
+                st.info(
+                    "Még nincs evaluation dataset. Előbb töltsd le a 100 cikkes orvosi korpuszt, majd építsd fel a datasetet."
+                )
 
         if items:
             safe_dataframe(_dataset_frame(items), width="stretch", hide_index=True)
@@ -173,16 +190,30 @@ def render() -> None:
         if not items:
             st.warning("A benchmarkhoz előbb építsd fel az evaluation datasetet az első tabon.")
         else:
-            q_count = st.slider("Benchmark kérdések", 5, len(items), min(20, len(items)), step=5, key="retrieval_eval_qcount")
+            q_count = st.slider(
+                "Benchmark kérdések", 5, len(items), min(20, len(items)), step=5, key="retrieval_eval_qcount"
+            )
             chunkings = st.multiselect(
                 "Chunking stratégiák",
                 ["fixed", "recursive", "sentence", "paragraph", "structure-aware", "parent-child", "semantic"],
                 default=["recursive", "sentence", "paragraph"],
             )
-            retrieval_modes = st.multiselect("Visszakeresési módok", ["dense", "bm25", "hybrid-rrf", "hybrid-weighted"], default=["dense", "bm25", "hybrid-rrf", "hybrid-weighted"])
-            rerankers = st.multiselect("Újrarangsoroló", ["none", "lexical", "cross-encoder"], default=["none", "lexical"])
-            st.caption("Cross-Encoder benchmark jelentősen lassabb lehet. Semantic chunking szintén embeddinget használ már a daraboláskor.")
-            if st.button("Visszakeresési benchmark futtatása", type="primary", disabled=not chunkings or not retrieval_modes or not rerankers):
+            retrieval_modes = st.multiselect(
+                "Visszakeresési módok",
+                ["dense", "bm25", "hybrid-rrf", "hybrid-weighted"],
+                default=["dense", "bm25", "hybrid-rrf", "hybrid-weighted"],
+            )
+            rerankers = st.multiselect(
+                "Újrarangsoroló", ["none", "lexical", "cross-encoder"], default=["none", "lexical"]
+            )
+            st.caption(
+                "Cross-Encoder benchmark jelentősen lassabb lehet. Semantic chunking szintén embeddinget használ már a daraboláskor."
+            )
+            if st.button(
+                "Visszakeresési benchmark futtatása",
+                type="primary",
+                disabled=not chunkings or not retrieval_modes or not rerankers,
+            ):
                 registry = ExperimentRegistry(REGISTRY_PATH)
                 run_id = None
                 started = time.perf_counter()
@@ -215,7 +246,9 @@ def render() -> None:
                         questions=q_count,
                         notes="Streamlit retrieval benchmark",
                     )
-                    with st.spinner("Visszakeresési benchmark fut: chunking → embedding → index → queryk → metrikák..."):
+                    with st.spinner(
+                        "Visszakeresési benchmark fut: chunking → embedding → index → queryk → metrikák..."
+                    ):
                         rows = run_retrieval_benchmark(
                             paths=paths,
                             items=items[:q_count],
@@ -241,8 +274,13 @@ def render() -> None:
                     payload = rows_to_dicts(rows)
                     st.session_state["medical_retrieval_eval"] = payload
                     st.session_state["last_experiment_run_id"] = run_id
-                    _save_json(RETRIEVAL_OUTPUT, {"run_id": run_id, "config_hash": config_hash, "questions": q_count, "results": payload})
-                    st.success(f"Benchmark elmentve az Experiment Registry-be. run_id: {run_id} · config: {config_hash[:12]}")
+                    _save_json(
+                        RETRIEVAL_OUTPUT,
+                        {"run_id": run_id, "config_hash": config_hash, "questions": q_count, "results": payload},
+                    )
+                    st.success(
+                        f"Benchmark elmentve az Experiment Registry-be. run_id: {run_id} · config: {config_hash[:12]}"
+                    )
                 except Exception as exc:
                     if run_id is not None:
                         registry.fail_run(run_id, exc, duration_ms=(time.perf_counter() - started) * 1000)
@@ -253,13 +291,33 @@ def render() -> None:
                 display = build_retrieval_display_frame(retrieval_results)
                 summary = retrieval_summary(display)
                 with st.expander("Nyers retrieval benchmark eredmények", expanded=False):
-                    safe_dataframe(display.sort_values(["Összesített pontszám", "nDCG@K"], ascending=False), width="stretch", hide_index=True)
+                    safe_dataframe(
+                        display.sort_values(["Összesített pontszám", "nDCG@K"], ascending=False),
+                        width="stretch",
+                        hide_index=True,
+                    )
                 kpi_cards(
                     [
-                        ("Legjobb visszakeresési konfiguráció", summary["best_configuration"], "Súlyozott összesített minőségi pontszám alapján."),
-                        ("Legjobb összesített pontszám", f"{summary['best_overall_score']:.3f}", "Recall, MRR, nDCG, F1, forrásdiverzitás és címkézési lefedettség kombinációja."),
-                        ("Legjobb hatékonysági pontszám", f"{summary['best_efficiency_score']:.3f}", "Minőség + késleltetés egyensúlyozott mutató."),
-                        ("Leggyorsabb konfiguráció", f"{summary['fastest_latency_ms']:.1f} ms", "Az átlagos késleltetés minimuma az aktuális benchmarkon."),
+                        (
+                            "Legjobb visszakeresési konfiguráció",
+                            summary["best_configuration"],
+                            "Súlyozott összesített minőségi pontszám alapján.",
+                        ),
+                        (
+                            "Legjobb összesített pontszám",
+                            f"{summary['best_overall_score']:.3f}",
+                            "Recall, MRR, nDCG, F1, forrásdiverzitás és címkézési lefedettség kombinációja.",
+                        ),
+                        (
+                            "Legjobb hatékonysági pontszám",
+                            f"{summary['best_efficiency_score']:.3f}",
+                            "Minőség + késleltetés egyensúlyozott mutató.",
+                        ),
+                        (
+                            "Leggyorsabb konfiguráció",
+                            f"{summary['fastest_latency_ms']:.1f} ms",
+                            "Az átlagos késleltetés minimuma az aktuális benchmarkon.",
+                        ),
                     ],
                     columns=4,
                 )
@@ -296,7 +354,9 @@ def render() -> None:
                     )
                 with c4:
                     metric_bar_chart(
-                        display.groupby("retriever", as_index=False)[["Összesített pontszám", "nDCG@K", "MRR"]].mean().sort_values("Összesített pontszám", ascending=False),
+                        display.groupby("retriever", as_index=False)[["Összesített pontszám", "nDCG@K", "MRR"]]
+                        .mean()
+                        .sort_values("Összesített pontszám", ascending=False),
                         x="retriever",
                         y="Összesített pontszám",
                         color="retriever",
@@ -324,16 +384,22 @@ def render() -> None:
         if not items:
             st.warning("A benchmarkhoz előbb építsd fel az evaluation datasetet.")
         else:
-            q_count = st.slider("RAG benchmark kérdések", 5, len(items), min(10, len(items)), step=5, key="rag_eval_qcount")
+            q_count = st.slider(
+                "RAG benchmark kérdések", 5, len(items), min(10, len(items)), step=5, key="rag_eval_qcount"
+            )
             strategies = st.multiselect(
                 "RAG stratégiák",
                 list(RAG_STRATEGIES),
                 default=["baseline", "hybrid", "reranked", "compression", "corrective"],
                 format_func=lambda x: RAG_STRATEGIES[x]["name"],
             )
-            st.caption(f"Aktív LLM szolgáltató: **{st.session_state.get('llm_provider', 'dummy')}**. Ollama esetén valódi lokális generálás történik.")
+            st.caption(
+                f"Aktív LLM szolgáltató: **{st.session_state.get('llm_provider', 'dummy')}**. Ollama esetén valódi lokális generálás történik."
+            )
             _, eval_reranker_status = build_selected_reranker("reranked")
-            st.caption(f"Az újrarangsorolt RAG stratégiák ezt használják: **{reranker_status_text(eval_reranker_status)}**.")
+            st.caption(
+                f"Az újrarangsorolt RAG stratégiák ezt használják: **{reranker_status_text(eval_reranker_status)}**."
+            )
             if st.button("Teljes RAG benchmark futtatása", type="primary", disabled=not strategies):
                 registry = ExperimentRegistry(REGISTRY_PATH)
                 run_id = None
@@ -403,8 +469,13 @@ def render() -> None:
                     payload = rows_to_dicts(rows)
                     st.session_state["medical_rag_eval"] = payload
                     st.session_state["last_experiment_run_id"] = run_id
-                    _save_json(RAG_OUTPUT, {"run_id": run_id, "config_hash": config_hash, "questions": q_count, "results": payload})
-                    st.success(f"RAG benchmark elmentve az Experiment Registry-be. run_id: {run_id} · config: {config_hash[:12]}")
+                    _save_json(
+                        RAG_OUTPUT,
+                        {"run_id": run_id, "config_hash": config_hash, "questions": q_count, "results": payload},
+                    )
+                    st.success(
+                        f"RAG benchmark elmentve az Experiment Registry-be. run_id: {run_id} · config: {config_hash[:12]}"
+                    )
                 except Exception as exc:
                     if run_id is not None:
                         registry.fail_run(run_id, exc, duration_ms=(time.perf_counter() - started) * 1000)
@@ -415,13 +486,33 @@ def render() -> None:
                 frame = build_rag_display_frame(rag_results)
                 summary = rag_summary(frame)
                 with st.expander("Nyers RAG benchmark eredmények", expanded=False):
-                    safe_dataframe(frame.sort_values(["Összesített pontszám", "Kulcstény-lefedettség"], ascending=False), width="stretch", hide_index=True)
+                    safe_dataframe(
+                        frame.sort_values(["Összesített pontszám", "Kulcstény-lefedettség"], ascending=False),
+                        width="stretch",
+                        hide_index=True,
+                    )
                 kpi_cards(
                     [
-                        ("Legjobb RAG stratégia", summary["best_strategy"], "Hivatkozási pontosság, kulcstény-lefedettség és kontextus-kihasználtság alapján."),
-                        ("Legjobb összesített pontszám", f"{summary['best_overall_score']:.3f}", "Súlyozott végpont a fő minőségi mutatókból."),
-                        ("Legjobb hatékonysági pontszám", f"{summary['best_efficiency_score']:.3f}", "Minőség és teljes késleltetés egyensúlya."),
-                        ("Legjobb TTFT", f"{summary['best_ttft_ms']:.0f} ms", "Az első tokenig mért minimum a futott stratégiák között."),
+                        (
+                            "Legjobb RAG stratégia",
+                            summary["best_strategy"],
+                            "Hivatkozási pontosság, kulcstény-lefedettség és kontextus-kihasználtság alapján.",
+                        ),
+                        (
+                            "Legjobb összesített pontszám",
+                            f"{summary['best_overall_score']:.3f}",
+                            "Súlyozott végpont a fő minőségi mutatókból.",
+                        ),
+                        (
+                            "Legjobb hatékonysági pontszám",
+                            f"{summary['best_efficiency_score']:.3f}",
+                            "Minőség és teljes késleltetés egyensúlya.",
+                        ),
+                        (
+                            "Legjobb TTFT",
+                            f"{summary['best_ttft_ms']:.0f} ms",
+                            "Az első tokenig mért minimum a futott stratégiák között.",
+                        ),
                     ],
                     columns=4,
                 )
@@ -432,7 +523,14 @@ def render() -> None:
                         x="Átlagos teljes idő ms",
                         y="Összesített pontszám",
                         color="Stratégia",
-                        hover=["Hivatkozási pontosság", "Hivatkozási lefedettség", "TTFT ms", "Token/s", "P95 teljes idő ms", "Kulcstény-lefedettség"],
+                        hover=[
+                            "Hivatkozási pontosság",
+                            "Hivatkozási lefedettség",
+                            "TTFT ms",
+                            "Token/s",
+                            "P95 teljes idő ms",
+                            "Kulcstény-lefedettség",
+                        ],
                         size="Átlagos kontextustoken",
                         key="medical_rag_quality_latency",
                         title="RAG minőség–késleltetés egyensúly",
@@ -451,14 +549,22 @@ def render() -> None:
                     radar_metrics_chart(
                         frame.sort_values(["Összesített pontszám", "Kulcstény-lefedettség"], ascending=False),
                         label_col="Stratégia",
-                        metrics=["Hivatkozási pontosság", "Hivatkozási lefedettség", "Forráslefedettség", "Kulcstény-lefedettség", "Kontextus-kihasználtság"],
+                        metrics=[
+                            "Hivatkozási pontosság",
+                            "Hivatkozási lefedettség",
+                            "Forráslefedettség",
+                            "Kulcstény-lefedettség",
+                            "Kontextus-kihasználtság",
+                        ],
                         key="medical_rag_radar",
                         title="RAG quality profil · top stratégiák",
                         max_series=6,
                     )
                 with c4:
                     metric_bar_chart(
-                        frame[["Stratégia", "Token/s", "TTFT ms", "Átlagos teljes idő ms"]].sort_values("Token/s", ascending=False),
+                        frame[["Stratégia", "Token/s", "TTFT ms", "Átlagos teljes idő ms"]].sort_values(
+                            "Token/s", ascending=False
+                        ),
                         x="Stratégia",
                         y="Token/s",
                         color="Stratégia",
@@ -490,10 +596,18 @@ def render() -> None:
             "Manuális retrieval címkézés",
             "A source-grounded dataset mellett megmarad a kézi ellenőrzés is, mert a retrieval relevance végső validációjához emberi review továbbra is értékes.",
         )
-        preset = st.selectbox("Kiértékelési kérdés", HUNGARIAN_QUERY_PRESETS, format_func=lambda x: f"{x.label} · {x.topic}")
+        preset = st.selectbox(
+            "Kiértékelési kérdés", HUNGARIAN_QUERY_PRESETS, format_func=lambda x: f"{x.label} · {x.topic}"
+        )
         query = st.text_area("Lekérdezés", value=preset.query, height=85, key=f"eval_query_{preset.label}")
         k = st.slider("K", 1, 20, int(st.session_state.get("top_k", 5)), key="eval_k")
-        pool_size = st.slider("Címkézési jelöltkészlet mérete", k, 60, max(k, int(st.session_state.get("candidate_count", 20))), key="eval_pool_size")
+        pool_size = st.slider(
+            "Címkézési jelöltkészlet mérete",
+            k,
+            60,
+            max(k, int(st.session_state.get("candidate_count", 20))),
+            key="eval_pool_size",
+        )
 
         if st.button("Jelöltek lekérése manuális címkézéshez"):
             try:
@@ -522,8 +636,11 @@ def render() -> None:
                 for item in candidates
             ]
             edited = safe_data_editor(
-                pd.DataFrame(rows), width="stretch", hide_index=True,
-                disabled=["Rang", "Szövegrész ID", "Forrás", "Oldal", "Pontszám", "Részlet"], key="eval_label_editor",
+                pd.DataFrame(rows),
+                width="stretch",
+                hide_index=True,
+                disabled=["Rang", "Szövegrész ID", "Forrás", "Oldal", "Pontszám", "Részlet"],
+                key="eval_label_editor",
             )
             labels = set(edited.loc[edited["Releváns"], "Szövegrész ID"].tolist())
             metrics = evaluate_retrieval([x.chunk_id for x in candidates], labels, k)
@@ -541,10 +658,14 @@ def render() -> None:
 
         st.divider()
         st.markdown("**Egyedi válaszgenerálási proxyk**")
-        expected = st.text_input("Elvárt kulcsszavak vesszővel", ",".join(TOPIC_KEYWORDS.get(preset.topic, ["információ", "forrás"])))
+        expected = st.text_input(
+            "Elvárt kulcsszavak vesszővel", ",".join(TOPIC_KEYWORDS.get(preset.topic, ["információ", "forrás"]))
+        )
         if st.button("RAG válasz és proxyk futtatása"):
             try:
-                lab = get_lab(strategy="parent-child" if st.session_state.get("rag_strategy") == "parent-document" else None)
+                lab = get_lab(
+                    strategy="parent-child" if st.session_state.get("rag_strategy") == "parent-document" else None
+                )
                 pipeline = create_rag_pipeline(
                     lab,
                     st.session_state.get("rag_strategy", "hybrid"),
@@ -560,7 +681,9 @@ def render() -> None:
                 st.markdown(result.answer)
                 cols = st.columns(3)
                 cols[0].metric("Completeness proxy", f"{answer_completeness(result.answer, keywords):.3f}")
-                cols[1].metric("Citation proxy", f"{citation_accuracy(result.answer, len(result.retrieved_chunks)):.3f}")
+                cols[1].metric(
+                    "Citation proxy", f"{citation_accuracy(result.answer, len(result.retrieved_chunks)):.3f}"
+                )
                 cols[2].metric("Context-utilization proxy", f"{context_utilization(result.answer, context):.3f}")
             except Exception as exc:
                 st.error(f"A generálási ellenőrzés sikertelen: {exc}")

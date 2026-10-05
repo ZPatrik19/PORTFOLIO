@@ -40,7 +40,7 @@ class OllamaProvider:
     def _duration_ms(value: Any) -> float:
         try:
             return float(value or 0.0) / 1_000_000.0
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             return 0.0
 
     def _stream_once(

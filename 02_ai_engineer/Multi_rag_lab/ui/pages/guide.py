@@ -6,7 +6,6 @@ from ui.components.education import info_cards, kpi_cards, note_box, page_intro,
 from ui.components.runtime_status import render_runtime_badges, runtime_snapshot
 
 
-
 def render() -> None:
     snapshot = runtime_snapshot()
     page_intro(
@@ -17,37 +16,75 @@ def render() -> None:
 
     kpi_cards(
         [
-            ("Aktív chunking", str(snapshot["chunking"]), f"Chunk size: {snapshot['chunk_size']} · overlap: {snapshot['overlap']}"),
-            ("Visszakeresési mód", str(snapshot["retrieval"]), f"Top-K: {snapshot['top_k']} · rangfúzió: {snapshot['fusion']}"),
+            (
+                "Aktív chunking",
+                str(snapshot["chunking"]),
+                f"Chunk size: {snapshot['chunk_size']} · overlap: {snapshot['overlap']}",
+            ),
+            (
+                "Visszakeresési mód",
+                str(snapshot["retrieval"]),
+                f"Top-K: {snapshot['top_k']} · rangfúzió: {snapshot['fusion']}",
+            ),
             ("Kontextus + prompt", str(snapshot["context_profile"]), str(snapshot["prompt_profile"])),
-            ("Futtatási mód", f"LLM: {snapshot['llm']}", f"Embedding: {snapshot['embedding_device']} · FAISS: {snapshot['vector_device']}"),
+            (
+                "Futtatási mód",
+                f"LLM: {snapshot['llm']}",
+                f"Embedding: {snapshot['embedding_device']} · FAISS: {snapshot['vector_device']}",
+            ),
         ],
         columns=4,
     )
 
     col1, col2 = st.columns([1.15, 0.85])
     with col1:
-        section_intro("Mit csinál egy-egy réteg?", "A rendszer négy nagy zónára bontható: adat, indexelés, retrieval, generálás és mérés.")
+        section_intro(
+            "Mit csinál egy-egy réteg?",
+            "A rendszer négy nagy zónára bontható: adat, indexelés, retrieval, generálás és mérés.",
+        )
         info_cards(
             [
-                ("1–3. Adatfeldolgozás", "Letöltés vagy feltöltés után parsing, Unicode- és whitespace-normalizálás, header/footer kezelés, tisztítás, deduplikáció és provenance építés történik."),
-                ("4. Darabolás (chunking)", "A hosszú dokumentum kereshető egységekre bomlik. Fix, tokenes, rekurzív, mondat-, bekezdés-, szemantikus, struktúraérzékeny és Parent–Child módszert is össze tudsz vetni."),
-                ("5–6. Beágyazás (embedding) + FAISS", "A szövegrészekből numerikus vektorok lesznek. Ezeket indexeli a FAISS vagy fallback exact-search backend, hogy a dense retrieval gyors és reprodukálható legyen."),
-                ("7. Visszakeresés (retrieval)", "Dense módban szemantikus, BM25-ben lexikális, hybridben kombinált keresés fut. Az RRF score rangfúziós érték, nem relevanciavalószínűség."),
-                ("8–9. Rerank + Kontextus", "A jelöltlista újrarendeződik, majd a context builder deduplikál, forrásdiverzitást kezel és betartja a tokenkeretet."),
-                ("10–11. LLM + mérés", "A grounded LLM kizárólag a kapott bizonyíték-ekből válaszol [S1], [S2] jelölésekkel. A quality és performance mérések külön rétegben történnek."),
+                (
+                    "1–3. Adatfeldolgozás",
+                    "Letöltés vagy feltöltés után parsing, Unicode- és whitespace-normalizálás, header/footer kezelés, tisztítás, deduplikáció és provenance építés történik.",
+                ),
+                (
+                    "4. Darabolás (chunking)",
+                    "A hosszú dokumentum kereshető egységekre bomlik. Fix, tokenes, rekurzív, mondat-, bekezdés-, szemantikus, struktúraérzékeny és Parent–Child módszert is össze tudsz vetni.",
+                ),
+                (
+                    "5–6. Beágyazás (embedding) + FAISS",
+                    "A szövegrészekből numerikus vektorok lesznek. Ezeket indexeli a FAISS vagy fallback exact-search backend, hogy a dense retrieval gyors és reprodukálható legyen.",
+                ),
+                (
+                    "7. Visszakeresés (retrieval)",
+                    "Dense módban szemantikus, BM25-ben lexikális, hybridben kombinált keresés fut. Az RRF score rangfúziós érték, nem relevanciavalószínűség.",
+                ),
+                (
+                    "8–9. Rerank + Kontextus",
+                    "A jelöltlista újrarendeződik, majd a context builder deduplikál, forrásdiverzitást kezel és betartja a tokenkeretet.",
+                ),
+                (
+                    "10–11. LLM + mérés",
+                    "A grounded LLM kizárólag a kapott bizonyíték-ekből válaszol [S1], [S2] jelölésekkel. A quality és performance mérések külön rétegben történnek.",
+                ),
             ],
             columns=2,
         )
     with col2:
-        section_intro("CPU, CUDA, FAISS és LLM kapcsolata", "A kért és a tényleges runtime-réteget külön kezeld: ettől lesz diagnosztizálható a rendszer.")
+        section_intro(
+            "CPU, CUDA, FAISS és LLM kapcsolata",
+            "A kért és a tényleges runtime-réteget külön kezeld: ettől lesz diagnosztizálható a rendszer.",
+        )
         render_runtime_badges()
         note_box(
             "Fontos megjegyzés",
             "Ha CUDA-t kérsz, de a környezetben a PyTorch vagy az embedding provider nem lát támogatott GPU-t, a rendszer kontrolláltan CPU fallbackre vált. Ez védőmechanizmus, nem UI-hiba.",
         )
 
-    section_intro("Javasolt munkamenet", "Gyakorlati sorrend, amellyel a labor végigjárható és a változtatások hatása mérhető.")
+    section_intro(
+        "Javasolt munkamenet", "Gyakorlati sorrend, amellyel a labor végigjárható és a változtatások hatása mérhető."
+    )
     for number, text in enumerate(
         [
             "Töltsd le a magyar mintakorpuszt a Dokumentumok oldalon, és ellenőrizd a parsing/cleaning statisztikákat.",

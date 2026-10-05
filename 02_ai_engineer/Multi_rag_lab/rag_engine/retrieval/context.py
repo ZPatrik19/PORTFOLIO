@@ -24,10 +24,7 @@ class ContextBuilder:
         title = chunk.metadata.get("title", "")
         page = chunk.metadata.get("page", "")
         section = chunk.metadata.get("section", "")
-        return (
-            f"[S{source_index}]\nCím: {title}\nForrás: {source}\n"
-            f"Oldal: {page}\nSzakasz: {section}\nTartalom:\n"
-        )
+        return f"[S{source_index}]\nCím: {title}\nForrás: {source}\nOldal: {page}\nSzakasz: {section}\nTartalom:\n"
 
     def _fit_highest_ranked(self, header: str, text: str, remaining_tokens: int) -> str | None:
         """Fit evidence by sentence boundaries rather than blind character truncation."""
@@ -69,6 +66,7 @@ class ContextBuilder:
             included.append(chunk)
             used += tokens
         return ContextResult(text="\n\n".join(blocks), tokens=used, included=included)
+
     def build_for_query(self, query: str, chunks: list[RetrievedChunk], *, top_k: int | None = None) -> ContextResult:
         """Build context after a conservative query-focus pass.
 
@@ -79,4 +77,3 @@ class ContextBuilder:
         """
         focused = rank_chunks_for_query(query, chunks, top_k=top_k or len(chunks))
         return self.build(focused)
-

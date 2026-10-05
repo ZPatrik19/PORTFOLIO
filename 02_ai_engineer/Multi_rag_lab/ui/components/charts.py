@@ -25,7 +25,6 @@ PLOTLY_LAYOUT = dict(
 )
 
 
-
 def _apply_layout(fig: go.Figure, *, title: str | None = None, height: int = 340) -> go.Figure:
     # Keep Plotly Express / caller-provided titles unless this helper explicitly receives one.
     # Do not pass `title` twice: PLOTLY_LAYOUT contains only title styling, not title content.
@@ -72,7 +71,6 @@ def chunk_length_chart(chunks, *, key: str) -> None:
     st.plotly_chart(fig, width="stretch", key=key)
 
 
-
 def chunk_sequence_chart(chunks, *, key: str) -> None:
     frame = pd.DataFrame(
         {
@@ -95,7 +93,6 @@ def chunk_sequence_chart(chunks, *, key: str) -> None:
     fig.update_traces(line=dict(width=2.6, color="#7d57c1"), marker=dict(size=7, color="#3979d3"))
     _apply_layout(fig, height=320)
     st.plotly_chart(fig, width="stretch", key=key)
-
 
 
 def chunk_boundary_chart(chunks, *, selected_index: int | None = None, key: str) -> None:
@@ -133,7 +130,6 @@ def chunk_boundary_chart(chunks, *, selected_index: int | None = None, key: str)
     st.plotly_chart(fig, width="stretch", key=key)
 
 
-
 def strategy_comparison_chart(records: list[dict], *, key: str) -> None:
     if not records:
         return
@@ -152,7 +148,6 @@ def strategy_comparison_chart(records: list[dict], *, key: str) -> None:
     st.plotly_chart(fig, width="stretch", key=key)
 
 
-
 def latency_bar(records: list[dict], *, key: str, title: str) -> None:
     if not records:
         return
@@ -169,7 +164,6 @@ def latency_bar(records: list[dict], *, key: str, title: str) -> None:
     fig.update_layout(xaxis_title="Komponens", yaxis_title="ms")
     _apply_layout(fig, height=380)
     st.plotly_chart(fig, width="stretch", key=key)
-
 
 
 def retrieval_scores_chart(results, *, key: str, title: str = "Top-K pontszámok") -> None:
@@ -195,7 +189,6 @@ def retrieval_scores_chart(results, *, key: str, title: str = "Top-K pontszámok
     fig.update_layout(coloraxis_showscale=False)
     _apply_layout(fig, height=340)
     st.plotly_chart(fig, width="stretch", key=key)
-
 
 
 def pipeline_trace_chart(trace: dict[str, float | str], *, key: str) -> None:
@@ -227,8 +220,9 @@ def pipeline_trace_chart(trace: dict[str, float | str], *, key: str) -> None:
     st.plotly_chart(fig, width="stretch", key=key)
 
 
-
-def context_profile_chart(profile_rows: list[dict] | list[object], *, key: str, title: str = "Kontextusprofil és forráseloszlás") -> None:
+def context_profile_chart(
+    profile_rows: list[dict] | list[object], *, key: str, title: str = "Kontextusprofil és forráseloszlás"
+) -> None:
     if not profile_rows:
         return
 
@@ -236,7 +230,9 @@ def context_profile_chart(profile_rows: list[dict] | list[object], *, key: str, 
     # Accept both pre-aggregated dict rows and retrieved chunk objects.
     if isinstance(first, dict):
         frame = pd.DataFrame(profile_rows)
-        y_columns = [column for column in ["Kontextus token", "Források", "Forrásdiverzitás"] if column in frame.columns]
+        y_columns = [
+            column for column in ["Kontextus token", "Források", "Forrásdiverzitás"] if column in frame.columns
+        ]
         if not y_columns or "Profil" not in frame.columns:
             return
         fig = px.bar(
@@ -280,7 +276,6 @@ def context_profile_chart(profile_rows: list[dict] | list[object], *, key: str, 
         fig.update_traces(textposition="outside", cliponaxis=False)
     _apply_layout(fig, height=360)
     st.plotly_chart(fig, width="stretch", key=key)
-
 
 
 def evaluation_heatmap(frame: pd.DataFrame, *, key: str, title: str) -> None:
@@ -492,7 +487,9 @@ def percentile_latency_chart(
         value_name=value_label,
     )
     if len(frame) >= 6:
-        fig = px.bar(long, x=value_label, y=category, color="Percentilis", barmode="group", title=title, orientation="h")
+        fig = px.bar(
+            long, x=value_label, y=category, color="Percentilis", barmode="group", title=title, orientation="h"
+        )
         fig.update_yaxes(automargin=True, title=None)
     else:
         fig = px.bar(long, x=category, y=value_label, color="Percentilis", barmode="group", title=title)
@@ -524,9 +521,12 @@ def retrieval_rank_flow_chart(
     bm25_map = rank_map(bm25_results)
     final_map = rank_map(final_results)
     selected = [str(item.chunk_id) for item in final_results[: min(8, len(final_results))]]
-    missing_rank = max(
-        [*dense_map.values(), *bm25_map.values(), *final_map.values(), 1],
-    ) + 2
+    missing_rank = (
+        max(
+            [*dense_map.values(), *bm25_map.values(), *final_map.values(), 1],
+        )
+        + 2
+    )
 
     fig = go.Figure()
     stages = ["Dense", "BM25", "Végső"]
@@ -542,9 +542,7 @@ def retrieval_rank_flow_chart(
                 y=ranks,
                 mode="lines+markers",
                 name=chunk_id,
-                hovertemplate=(
-                    f"<b>{chunk_id}</b><br>Stage: %{{x}}<br>Rank: %{{y}}<extra></extra>"
-                ),
+                hovertemplate=(f"<b>{chunk_id}</b><br>Stage: %{{x}}<br>Rank: %{{y}}<extra></extra>"),
                 line=dict(width=2.2),
                 marker=dict(size=8),
             )

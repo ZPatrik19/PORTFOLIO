@@ -13,9 +13,37 @@ from rag_engine.retrieval.query_focus import (
 
 
 STOPWORDS = {
-    "a", "az", "egy", "és", "vagy", "hogy", "ha", "mikor", "mi", "mik", "mely", "melyek",
-    "fő", "főbb", "is", "de", "nem", "van", "vannak", "lehet", "kell", "szükséges", "ennek",
-    "annak", "betegség", "betegseg", "betegségnek", "illetve", "során", "alapján", "kapcsán",
+    "a",
+    "az",
+    "egy",
+    "és",
+    "vagy",
+    "hogy",
+    "ha",
+    "mikor",
+    "mi",
+    "mik",
+    "mely",
+    "melyek",
+    "fő",
+    "főbb",
+    "is",
+    "de",
+    "nem",
+    "van",
+    "vannak",
+    "lehet",
+    "kell",
+    "szükséges",
+    "ennek",
+    "annak",
+    "betegség",
+    "betegseg",
+    "betegségnek",
+    "illetve",
+    "során",
+    "alapján",
+    "kapcsán",
 }
 
 QUERY_EXPANSIONS = {
@@ -32,13 +60,33 @@ QUERY_EXPANSIONS = {
 FALLBACK_INTENT_STEMS = {
     **INTENT_STEMS,
     QueryIntent.RISK: (
-        "kockaz", "riziko", "veszely", "karos", "kart", "szovod", "sulyos",
-        "lappang", "keringesi", "sokaig semmifele tunete", "stroke", "infarkt",
-        "elegtelenseg", "aortareped",
+        "kockaz",
+        "riziko",
+        "veszely",
+        "karos",
+        "kart",
+        "szovod",
+        "sulyos",
+        "lappang",
+        "keringesi",
+        "sokaig semmifele tunete",
+        "stroke",
+        "infarkt",
+        "elegtelenseg",
+        "aortareped",
     ),
     QueryIntent.MEDICAL_EVALUATION: (
-        "orvos", "kivizsg", "ellatas", "surgos", "mento", "forduljon", "haziorvos",
-        "szakorvos", "112", "180 120", "meghaladja",
+        "orvos",
+        "kivizsg",
+        "ellatas",
+        "surgos",
+        "mento",
+        "forduljon",
+        "haziorvos",
+        "szakorvos",
+        "112",
+        "180 120",
+        "meghaladja",
     ),
 }
 
@@ -207,7 +255,9 @@ def _score_sentence(query: str, block: EvidenceBlock, sentence: str, intent: Que
     intent_boost = 2.2 if intent_hits else 0.0
     section_overlap = len(query_tokens & _tokens(block.section)) * 0.35
     completeness = 0.25 if sentence.endswith((".", "!", "?")) else 0.0
-    return overlap + title_boost + intent_boost + _intent_action_bonus(sentence, intent) + section_overlap + completeness
+    return (
+        overlap + title_boost + intent_boost + _intent_action_bonus(sentence, intent) + section_overlap + completeness
+    )
 
 
 def _select_sentences(

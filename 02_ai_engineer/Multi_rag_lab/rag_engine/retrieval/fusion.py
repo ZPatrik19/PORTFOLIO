@@ -5,7 +5,9 @@ from collections import defaultdict
 from rag_engine.models import RetrievedChunk
 
 
-def reciprocal_rank_fusion(result_sets: list[list[RetrievedChunk]], *, k: int = 60, top_k: int = 5) -> list[RetrievedChunk]:
+def reciprocal_rank_fusion(
+    result_sets: list[list[RetrievedChunk]], *, k: int = 60, top_k: int = 5
+) -> list[RetrievedChunk]:
     scores: dict[str, float] = defaultdict(float)
     chunks: dict[str, RetrievedChunk] = {}
     for results in result_sets:
@@ -13,10 +15,14 @@ def reciprocal_rank_fusion(result_sets: list[list[RetrievedChunk]], *, k: int = 
             scores[item.chunk_id] += 1.0 / (k + rank)
             chunks[item.chunk_id] = item
     ordered = sorted(scores, key=scores.get, reverse=True)[:top_k]
-    return [chunks[cid].model_copy(update={"score": scores[cid], "rank": rank}) for rank, cid in enumerate(ordered, start=1)]
+    return [
+        chunks[cid].model_copy(update={"score": scores[cid], "rank": rank}) for rank, cid in enumerate(ordered, start=1)
+    ]
 
 
-def weighted_fusion(dense: list[RetrievedChunk], sparse: list[RetrievedChunk], *, dense_weight: float = 0.5, top_k: int = 5) -> list[RetrievedChunk]:
+def weighted_fusion(
+    dense: list[RetrievedChunk], sparse: list[RetrievedChunk], *, dense_weight: float = 0.5, top_k: int = 5
+) -> list[RetrievedChunk]:
     scores: dict[str, float] = defaultdict(float)
     chunks: dict[str, RetrievedChunk] = {}
     for weight, results in ((dense_weight, dense), (1 - dense_weight, sparse)):
@@ -29,4 +35,6 @@ def weighted_fusion(dense: list[RetrievedChunk], sparse: list[RetrievedChunk], *
             scores[r.chunk_id] += weight * ((r.score - lo) / span)
             chunks[r.chunk_id] = r
     ordered = sorted(scores, key=scores.get, reverse=True)[:top_k]
-    return [chunks[cid].model_copy(update={"score": scores[cid], "rank": rank}) for rank, cid in enumerate(ordered, start=1)]
+    return [
+        chunks[cid].model_copy(update={"score": scores[cid], "rank": rank}) for rank, cid in enumerate(ordered, start=1)
+    ]

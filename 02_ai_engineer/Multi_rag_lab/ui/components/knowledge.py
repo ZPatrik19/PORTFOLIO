@@ -30,7 +30,7 @@ def render_topic_cards(entries: list[ReferenceEntry]) -> None:
 <div class="rag-reference-topic">
   <div class="rag-reference-topic-count">{count} tétel</div>
   <div class="rag-reference-topic-title">{html.escape(category)}</div>
-  <div class="rag-reference-topic-text">{html.escape(CATEGORY_DESCRIPTIONS.get(category, ''))}</div>
+  <div class="rag-reference-topic-text">{html.escape(CATEGORY_DESCRIPTIONS.get(category, ""))}</div>
 </div>
 """,
                 unsafe_allow_html=True,

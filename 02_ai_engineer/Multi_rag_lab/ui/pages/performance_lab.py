@@ -39,10 +39,22 @@ def render() -> None:
     )
     info_cards(
         [
-            ("Komponensprofil", "A folyamat minden fontos szakasza külön mérhető, így megkülönböztethető a visszakeresés, az újrarangsorolás és az LLM valódi szűk keresztmetszete."),
-            ("CPU / CUDA", "A beágyazás és Cross-Encoder tényleges device-a bekerül az eredménybe; a FAISS CPU backend ettől függetlenül működik."),
-            ("Késleltetés + áteresztőképesség", "Átlag, medián, P95, teljes idő és áteresztőképesség együtt kerül kiértékelésre."),
-            ("Reprodukálhatóság", "Minden benchmark bekerül az Experiment Registry-be konfigurációval és hardver-metadata mellett."),
+            (
+                "Komponensprofil",
+                "A folyamat minden fontos szakasza külön mérhető, így megkülönböztethető a visszakeresés, az újrarangsorolás és az LLM valódi szűk keresztmetszete.",
+            ),
+            (
+                "CPU / CUDA",
+                "A beágyazás és Cross-Encoder tényleges device-a bekerül az eredménybe; a FAISS CPU backend ettől függetlenül működik.",
+            ),
+            (
+                "Késleltetés + áteresztőképesség",
+                "Átlag, medián, P95, teljes idő és áteresztőképesség együtt kerül kiértékelésre.",
+            ),
+            (
+                "Reprodukálhatóság",
+                "Minden benchmark bekerül az Experiment Registry-be konfigurációval és hardver-metadata mellett.",
+            ),
         ],
         columns=4,
     )
@@ -58,17 +70,25 @@ def render() -> None:
             do_retrieval = st.checkbox("Dense + BM25 + Hibrid visszakeresés", value=True)
         with c2:
             do_reranking = st.checkbox("Újrarangsorolás", value=True)
-            do_llm = st.checkbox("LLM-generálás", value=False, help="Ollama esetén valódi lokális generálás, ezért lassabb lehet.")
+            do_llm = st.checkbox(
+                "LLM-generálás", value=False, help="Ollama esetén valódi lokális generálás, ezért lassabb lehet."
+            )
         with c3:
             do_e2e = st.checkbox("Teljes RAG folyamat", value=False)
-            cross_encoder_extra = st.checkbox("Cross-Encoder külön mérés", value=st.session_state.get("reranker_mode") == "cross-encoder")
+            cross_encoder_extra = st.checkbox(
+                "Cross-Encoder külön mérés", value=st.session_state.get("reranker_mode") == "cross-encoder"
+            )
 
     global_reranker, reranker_status = build_selected_reranker("reranked", allow_inactive=True)
     cuda_ok = cuda_available()
     st.caption(f"Aktív újrarangsoroló: **{reranker_status_text(reranker_status)}** · {reranker_status.reason}")
-    st.caption(f"Benchmark maximum: **{max_items} chunk** · PyTorch CUDA: **{'elérhető' if cuda_ok else 'nem elérhető'}**")
+    st.caption(
+        f"Benchmark maximum: **{max_items} chunk** · PyTorch CUDA: **{'elérhető' if cuda_ok else 'nem elérhető'}**"
+    )
     if cuda_ok and reranker_status.applied == "lexical":
-        st.caption("A lexikális újrarangsorolás CPU-algoritmus. CUDA-s rerankinghoz válaszd a Cross-Encoder újrarangsorolót.")
+        st.caption(
+            "A lexikális újrarangsorolás CPU-algoritmus. CUDA-s rerankinghoz válaszd a Cross-Encoder újrarangsorolót."
+        )
 
     if st.button("Teljesítménybenchmark futtatása", type="primary"):
         registry = ExperimentRegistry(ROOT / "artifacts" / "experiments" / "experiments.sqlite3")
@@ -84,7 +104,17 @@ def render() -> None:
 
             settings = load_settings()
             mode = st.session_state.get("embedding_mode")
-            model_name = "hashing" if hashing else (settings.multilingual_embedding_model if mode == "multilingual" else settings.e5_embedding_model if mode == "e5-small" else settings.embedding_model)
+            model_name = (
+                "hashing"
+                if hashing
+                else (
+                    settings.multilingual_embedding_model
+                    if mode == "multilingual"
+                    else settings.e5_embedding_model
+                    if mode == "e5-small"
+                    else settings.embedding_model
+                )
+            )
             config = {
                 "benchmark_type": "performance",
                 "workload": workload,
@@ -95,7 +125,13 @@ def render() -> None:
                 "retrieval_mode": st.session_state.get("retrieval_mode", "hybrid"),
                 "reranker": reranker_status.applied,
                 "reranker_device": reranker_status.device,
-                "components": {"embedding": do_embedding, "retrieval": do_retrieval, "reranking": do_reranking, "llm": do_llm, "e2e": do_e2e},
+                "components": {
+                    "embedding": do_embedding,
+                    "retrieval": do_retrieval,
+                    "reranking": do_reranking,
+                    "llm": do_llm,
+                    "e2e": do_e2e,
+                },
                 "repeat_queries": repeat_queries,
                 "top_k": int(st.session_state.get("top_k", 5)),
                 "candidate_count": int(st.session_state.get("candidate_count", 20)),
@@ -104,12 +140,21 @@ def render() -> None:
                 "vector_backend": str(getattr(lab.vector_store, "backend_name", "unknown")),
                 "llm_provider": st.session_state.get("llm_provider", "dummy"),
             }
-            run_id, config_hash = registry.create_run(benchmark_type="performance", config=config, questions=repeat_queries, notes="Streamlit teljes komponensű teljesítménybenchmark")
+            run_id, config_hash = registry.create_run(
+                benchmark_type="performance",
+                config=config,
+                questions=repeat_queries,
+                notes="Streamlit teljes komponensű teljesítménybenchmark",
+            )
             records: list[dict] = []
 
             if do_embedding:
                 for device in devices:
-                    factory = (lambda _device: HashingEmbeddingProvider()) if hashing else (lambda d, mn=model_name: SentenceTransformerEmbeddingProvider(mn, device=d))
+                    factory = (
+                        (lambda _device: HashingEmbeddingProvider())
+                        if hashing
+                        else (lambda d, mn=model_name: SentenceTransformerEmbeddingProvider(mn, device=d))
+                    )
                     records.append(benchmark_embedding(factory, texts, device).to_dict())
 
             base_queries = [item.query for item in HUNGARIAN_QUERY_PRESETS]
@@ -128,21 +173,31 @@ def render() -> None:
                     actual_device = str(getattr(retrieval_lab.embedder, "device", device))
                     records.append(
                         _tag_component(
-                            benchmark_retrieval(retrieval_lab.dense, queries, device=actual_device, top_k=config["top_k"]).to_dict(),
+                            benchmark_retrieval(
+                                retrieval_lab.dense, queries, device=actual_device, top_k=config["top_k"]
+                            ).to_dict(),
                             "retrieval-dense",
                         )
                     )
                     records.append(
                         _tag_component(
-                            benchmark_retrieval(retrieval_lab.hybrid, queries, device=actual_device, top_k=config["top_k"]).to_dict(),
+                            benchmark_retrieval(
+                                retrieval_lab.hybrid, queries, device=actual_device, top_k=config["top_k"]
+                            ).to_dict(),
                             "retrieval-hybrid",
                         )
                     )
 
-            candidates = lab.hybrid.retrieve(queries[0], top_k=min(20, len(lab.ingestion.chunks)), candidate_count=min(20, len(lab.ingestion.chunks)))
+            candidates = lab.hybrid.retrieve(
+                queries[0], top_k=min(20, len(lab.ingestion.chunks)), candidate_count=min(20, len(lab.ingestion.chunks))
+            )
             if do_reranking:
                 lexical = LexicalReranker()
-                records.append(_tag_component(benchmark_reranking(lexical, queries[0], candidates, repeats=5).to_dict(), "reranking-lexical"))
+                records.append(
+                    _tag_component(
+                        benchmark_reranking(lexical, queries[0], candidates, repeats=5).to_dict(), "reranking-lexical"
+                    )
+                )
                 if cross_encoder_extra:
                     for device in devices:
                         try:
@@ -158,7 +213,13 @@ def render() -> None:
 
             if do_llm:
                 prompts = [f"Válaszolj egy rövid mondatban magyarul: {q}" for q in queries[: min(3, len(queries))]]
-                records.append(benchmark_llm(lab.llm, prompts, device="Ollama runtime" if st.session_state.get("llm_provider") == "ollama" else "dummy").to_dict())
+                records.append(
+                    benchmark_llm(
+                        lab.llm,
+                        prompts,
+                        device="Ollama runtime" if st.session_state.get("llm_provider") == "ollama" else "dummy",
+                    ).to_dict()
+                )
 
             if do_e2e:
                 reranker = global_reranker or LexicalReranker()
@@ -200,7 +261,10 @@ def render() -> None:
             if run_id is not None:
                 registry.fail_run(run_id, exc, duration_ms=(time.perf_counter() - started) * 1000)
             st.error(f"A teljesítménybenchmark sikertelen: {exc}")
-            note_box("Hibakeresés", "A részletes traceback helyett a felület a kiváltó hibát mutatja. Ellenőrizd az Infrastructure oldalon a CUDA, FAISS és Ollama állapotát, majd futtasd újra a kisebb profilt.")
+            note_box(
+                "Hibakeresés",
+                "A részletes traceback helyett a felület a kiváltó hibát mutatja. Ellenőrizd az Infrastructure oldalon a CUDA, FAISS és Ollama állapotát, majd futtasd újra a kisebb profilt.",
+            )
 
     render_performance_dashboard(
         st.session_state.get("performance_records", []),

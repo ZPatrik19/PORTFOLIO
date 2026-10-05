@@ -391,7 +391,8 @@ class ExperimentRegistry:
                     values={
                         "component": row.get("component"),
                         "variant": row.get("variant"),
-                        "requested_embedding_device": row.get("requested_embedding_device") or row.get("requested_device"),
+                        "requested_embedding_device": row.get("requested_embedding_device")
+                        or row.get("requested_device"),
                         "requested_vector_device": row.get("requested_vector_device"),
                         "requested_reranker_device": row.get("requested_reranker_device"),
                         "chunking": row.get("chunking"),
@@ -515,7 +516,7 @@ class ExperimentRegistry:
         update_cols = [column for column in values if column != "variant_key"]
         update_sql = ",".join(f"{column}=excluded.{column}" for column in update_cols)
         query = f"""
-            INSERT INTO results({','.join(columns)}) VALUES ({placeholders})
+            INSERT INTO results({",".join(columns)}) VALUES ({placeholders})
             ON CONFLICT(run_id, result_type, variant_key) DO UPDATE SET {update_sql}
             """  # nosec B608 -- identifiers are validated against the live SQLite schema.
         connection.execute(

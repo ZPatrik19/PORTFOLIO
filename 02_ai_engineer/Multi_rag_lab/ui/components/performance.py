@@ -3,7 +3,14 @@ from __future__ import annotations
 import pandas as pd
 import streamlit as st
 
-from ui.charts.performance import device_speedup_chart, llm_telemetry_chart, performance_latency_chart, performance_throughput_chart, performance_total_time_chart, resource_usage_chart
+from ui.charts.performance import (
+    device_speedup_chart,
+    llm_telemetry_chart,
+    performance_latency_chart,
+    performance_throughput_chart,
+    performance_total_time_chart,
+    resource_usage_chart,
+)
 from ui.components.education import empty_state, kpi_cards, note_box
 from ui.components.exports import render_dataframe_exports
 from ui.components.tables import safe_dataframe
@@ -43,25 +50,61 @@ def _frame(records: list[dict]) -> pd.DataFrame:
 def render_performance_dashboard(records: list[dict], metadata: dict[str, object]) -> None:
     frame = _frame(records)
     if frame.empty:
-        empty_state("Még nincs teljesítménymérés", "Futtasd a benchmarkot a komponensek és a teljes RAG folyamat sebességének összehasonlításához.")
+        empty_state(
+            "Még nincs teljesítménymérés",
+            "Futtasd a benchmarkot a komponensek és a teljes RAG folyamat sebességének összehasonlításához.",
+        )
         return
 
     fastest = frame.loc[frame["mean_ms"].fillna(frame["total_ms"]).idxmin()]
     max_throughput = frame.loc[frame["throughput_per_sec"].idxmax()]
     kpi_cards(
         [
-            ("Mért komponensek", str(frame["Komponens"].nunique()), "Beágyazás, visszakeresés, újrarangsorolás, LLM és teljes RAG folyamat is mérhető."),
-            ("Legkisebb átlagidő", f"{float(fastest.get('mean_ms') or fastest['total_ms']):.1f} ms", str(fastest["Komponens"])),
-            ("Legnagyobb áteresztőképesség", f"{float(max_throughput['throughput_per_sec']):.1f}/s", str(max_throughput["Komponens"])),
+            (
+                "Mért komponensek",
+                str(frame["Komponens"].nunique()),
+                "Beágyazás, visszakeresés, újrarangsorolás, LLM és teljes RAG folyamat is mérhető.",
+            ),
+            (
+                "Legkisebb átlagidő",
+                f"{float(fastest.get('mean_ms') or fastest['total_ms']):.1f} ms",
+                str(fastest["Komponens"]),
+            ),
+            (
+                "Legnagyobb áteresztőképesség",
+                f"{float(max_throughput['throughput_per_sec']):.1f}/s",
+                str(max_throughput["Komponens"]),
+            ),
             ("Mérési sorok", str(len(frame)), "Minden sor ténylegesen futtatott komponensmérés."),
         ],
         columns=4,
     )
 
-    tabs = st.tabs(["Áttekintés", "Beágyazás", "Visszakeresés", "Újrarangsorolás", "LLM + teljes folyamat", "CPU / CUDA", "Erőforrások"])
+    tabs = st.tabs(
+        [
+            "Áttekintés",
+            "Beágyazás",
+            "Visszakeresés",
+            "Újrarangsorolás",
+            "LLM + teljes folyamat",
+            "CPU / CUDA",
+            "Erőforrások",
+        ]
+    )
     with tabs[0]:
-        summary = frame[["Komponens", "Eszköz", "total_ms", "mean_ms", "median_ms", "p95_ms", "throughput_per_sec", "workload_size"]].copy()
-        summary.columns = ["Komponens", "Eszköz", "Összes ms", "Átlag ms", "Medián ms", "P95 ms", "Áteresztőképesség/s", "Terhelés"]
+        summary = frame[
+            ["Komponens", "Eszköz", "total_ms", "mean_ms", "median_ms", "p95_ms", "throughput_per_sec", "workload_size"]
+        ].copy()
+        summary.columns = [
+            "Komponens",
+            "Eszköz",
+            "Összes ms",
+            "Átlag ms",
+            "Medián ms",
+            "P95 ms",
+            "Áteresztőképesség/s",
+            "Terhelés",
+        ]
         c1, c2 = st.columns(2)
         with c1:
             performance_total_time_chart(summary, key="perf_overview_total")
@@ -70,7 +113,10 @@ def render_performance_dashboard(records: list[dict], metadata: dict[str, object
         with st.expander("Nyers teljesítményeredmények", expanded=False):
             safe_dataframe(summary, width="stretch", hide_index=True)
         render_dataframe_exports(frame, stem="teljesitmenybenchmark", key_prefix="performance_export")
-        note_box("Értelmezés", "A komponensek terhelése eltérő lehet, ezért a teljes idő mellett az átlagos késleltetést, P95-öt és az áteresztőképességet együtt érdemes figyelni.")
+        note_box(
+            "Értelmezés",
+            "A komponensek terhelése eltérő lehet, ezért a teljes idő mellett az átlagos késleltetést, P95-öt és az áteresztőképességet együtt érdemes figyelni.",
+        )
 
     groups = {
         "Beágyazás": frame[frame["component"] == "embedding"],
@@ -82,10 +128,24 @@ def render_performance_dashboard(records: list[dict], metadata: dict[str, object
         with tab:
             data = groups[name]
             if data.empty:
-                empty_state(f"Nincs {name.lower()} mérés", "A jelenlegi benchmark konfiguráció ezt a komponenst nem futtatta.")
+                empty_state(
+                    f"Nincs {name.lower()} mérés", "A jelenlegi benchmark konfiguráció ezt a komponenst nem futtatta."
+                )
                 continue
             safe_dataframe(
-                data[["Komponens", "Eszköz", "total_ms", "mean_ms", "median_ms", "p95_ms", "throughput_per_sec", "workload_size", "cold_start_ms"]],
+                data[
+                    [
+                        "Komponens",
+                        "Eszköz",
+                        "total_ms",
+                        "mean_ms",
+                        "median_ms",
+                        "p95_ms",
+                        "throughput_per_sec",
+                        "workload_size",
+                        "cold_start_ms",
+                    ]
+                ],
                 width="stretch",
                 hide_index=True,
             )

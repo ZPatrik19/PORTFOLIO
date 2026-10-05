@@ -32,7 +32,6 @@ def _load_document(path_text: str, mtime_ns: int):
     return clean_documents(docs)
 
 
-
 def _chunk_stats(chunks, elapsed_ms: float) -> dict[str, float | int]:
     lengths = [len(chunk.text) for chunk in chunks]
     return {
@@ -47,7 +46,6 @@ def _chunk_stats(chunks, elapsed_ms: float) -> dict[str, float | int]:
     }
 
 
-
 def _make_chunker(strategy: str, docs, size: int, overlap: int, threshold: float, semantic_device: str):
     embedder = None
     if strategy == "semantic":
@@ -60,7 +58,6 @@ def _make_chunker(strategy: str, docs, size: int, overlap: int, threshold: float
         szemantikus_küszöb=threshold,
     )
     return create_chunker(config, embedder=embedder), embedder
-
 
 
 def render() -> None:
@@ -151,33 +148,50 @@ def render() -> None:
             key=f"chunk_strip_{strategy}_{size}_{overlap}_{part_count}",
             title=f"Dokumentumszalag · {details['name']}",
         )
-        st.caption("A szalag a chunkok relatív sorrendjét és méretét szemlélteti. Nem állít pontos karakter-offsetet olyan stratégiáknál, amelyek nem tárolnak explicit forráspozíciót.")
+        st.caption(
+            "A szalag a chunkok relatív sorrendjét és méretét szemlélteti. Nem állít pontos karakter-offsetet olyan stratégiáknál, amelyek nem tárolnak explicit forráspozíciót."
+        )
 
     with tabs[1]:
         selected_idx = 0
         if chunks:
-            selected_idx = st.select_slider(
-                "Kiemelt szövegrész",
-                options=list(range(1, len(chunks) + 1)),
-                value=1,
-                help="A diagramon a kiválasztott szövegrész kiemelve jelenik meg.",
-            ) - 1
-        chunk_boundary_chart(chunks, selected_index=selected_idx, key=f"chunk_boundary_{strategy}_{size}_{overlap}_{part_count}_{selected_idx}")
-        st.caption("A kiemelt oszlop a kiválasztott szövegrész. A diagram egyszerre mutatja a szövegrészek sorrendjét és méretét, így könnyebb észrevenni a túl kicsi, túl nagy vagy szabálytalan határokat.")
+            selected_idx = (
+                st.select_slider(
+                    "Kiemelt szövegrész",
+                    options=list(range(1, len(chunks) + 1)),
+                    value=1,
+                    help="A diagramon a kiválasztott szövegrész kiemelve jelenik meg.",
+                )
+                - 1
+            )
+        chunk_boundary_chart(
+            chunks,
+            selected_index=selected_idx,
+            key=f"chunk_boundary_{strategy}_{size}_{overlap}_{part_count}_{selected_idx}",
+        )
+        st.caption(
+            "A kiemelt oszlop a kiválasztott szövegrész. A diagram egyszerre mutatja a szövegrészek sorrendjét és méretét, így könnyebb észrevenni a túl kicsi, túl nagy vagy szabálytalan határokat."
+        )
 
         preview_count = min(len(chunks), 9)
         for start in range(0, preview_count, 3):
             cols = st.columns(3)
-            for display_idx, (col, chunk) in enumerate(zip(cols, chunks[start : start + 3], strict=False), start=start + 1):
+            for display_idx, (col, chunk) in enumerate(
+                zip(cols, chunks[start : start + 3], strict=False), start=start + 1
+            ):
                 meta = chunk.metadata
                 text = chunk.text.replace("<", "&lt;").replace(">", "&gt;")
                 short = text[:420] + ("…" if len(text) > 420 else "")
-                highlight = "border:2px solid #3979d3; background: rgba(57,121,211,.06);" if display_idx - 1 == selected_idx else ""
+                highlight = (
+                    "border:2px solid #3979d3; background: rgba(57,121,211,.06);"
+                    if display_idx - 1 == selected_idx
+                    else ""
+                )
                 col.markdown(
                     f"""
 <div class="rag-card" style="min-height:260px; {highlight}">
 <h4>Szövegrész {display_idx}</h4>
-<div class="rag-small">{len(chunk.text)} karakter · oldal: {meta.get('page', '—')} · szekció: {meta.get('section', '—')}</div>
+<div class="rag-small">{len(chunk.text)} karakter · oldal: {meta.get("page", "—")} · szekció: {meta.get("section", "—")}</div>
 <hr/>
 <p>{short}</p>
 </div>
@@ -199,8 +213,8 @@ def render() -> None:
                 [
                     ("Kiválasztott szövegrész", f"#{selected_idx + 1}"),
                     ("Karakterek", str(len(selected.text))),
-                    ("Oldal", str(selected.metadata.get('page', '—'))),
-                    ("Szekció", str(selected.metadata.get('section', '—'))),
+                    ("Oldal", str(selected.metadata.get("page", "—"))),
+                    ("Szekció", str(selected.metadata.get("section", "—"))),
                 ],
                 columns=4,
             )
@@ -238,7 +252,9 @@ def render() -> None:
             safe_dataframe(pd.DataFrame(records), width="stretch", hide_index=True)
             valid_records = [record for record in records if "Hiba" not in record]
             strategy_comparison_chart(valid_records, key=f"chunk_compare_{part_count}_{size}_{overlap}")
-            st.info("A kisebb késleltetés nem jelent automatikusan jobb visszakeresési minőséget. A darabolást ugyanazon lekérdezés- és címkekészlettel érdemes Recall@K/MRR alapján is összevetni.")
+            st.info(
+                "A kisebb késleltetés nem jelent automatikusan jobb visszakeresési minőséget. A darabolást ugyanazon lekérdezés- és címkekészlettel érdemes Recall@K/MRR alapján is összevetni."
+            )
 
     with st.expander("Tisztítási háttérinformáció"):
         st.json(cleaning.__dict__)

@@ -20,7 +20,10 @@ def main() -> int:
     parser.add_argument("--workload", type=int, default=500)
     parser.add_argument("--hashing", action="store_true", help="Use dependency-light hashing baseline")
     args = parser.parse_args()
-    texts = [f"RAG benchmark document chunk {i} about retrieval, embeddings and grounded generation." for i in range(args.workload)]
+    texts = [
+        f"RAG benchmark document chunk {i} about retrieval, embeddings and grounded generation."
+        for i in range(args.workload)
+    ]
     settings = load_settings()
     devices = ["cpu"] if args.hashing else ["cpu"] + (["cuda"] if cuda_available() else [])
     records = []

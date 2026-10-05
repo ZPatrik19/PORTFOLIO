@@ -50,7 +50,12 @@ def render() -> None:
             "Válassz egy pipeline-területet. A definíciók nem alfabetikus listában, hanem az AI Engineering workflow logikája szerint vannak rendezve.",
         )
         render_topic_cards(entries)
-        category = st.selectbox("Megnyitott témakör", CATEGORY_ORDER, index=CATEGORY_ORDER.index("Retrieval metrikák"), key="reference_topic")
+        category = st.selectbox(
+            "Megnyitott témakör",
+            CATEGORY_ORDER,
+            index=CATEGORY_ORDER.index("Retrieval metrikák"),
+            key="reference_topic",
+        )
         st.caption(CATEGORY_DESCRIPTIONS[category])
         render_entry_grid(_category_entries(entries, category), expanded_first=True)
 
@@ -58,7 +63,9 @@ def render() -> None:
         section_intro("Kereshető fogalomtár", "Keress névre, magyarázatra, projektoldalra vagy kapcsolódó kifejezésre.")
         c1, c2, c3 = st.columns([1.4, 1, 1])
         with c1:
-            query = st.text_input("Keresés", placeholder="pl. MRR, CUDA, grounded prompt, overlap, latency...", key="reference_search")
+            query = st.text_input(
+                "Keresés", placeholder="pl. MRR, CUDA, grounded prompt, overlap, latency...", key="reference_search"
+            )
         with c2:
             categories = st.multiselect("Témakör", CATEGORY_ORDER, key="reference_categories")
         kinds = sorted({item.kind for item in entries})
@@ -81,7 +88,9 @@ def render() -> None:
             "A retrieval-, RAG-, teljesítmény- és erőforrás-metrikák együtt. A nyíl az általánosan kedvező irányt jelzi; a kontextusfüggő metrikákat külön jelöljük.",
         )
         metric_entries = [item for item in entries if item.kind in {"Metrika", "Összetett metrika"}]
-        metric_categories = [category for category in CATEGORY_ORDER if any(item.category == category for item in metric_entries)]
+        metric_categories = [
+            category for category in CATEGORY_ORDER if any(item.category == category for item in metric_entries)
+        ]
         selected_metric_category = st.selectbox("Metrikacsoport", metric_categories, key="metric_reference_category")
         render_entry_grid(_category_entries(metric_entries, selected_metric_category), expanded_first=True)
         note_box(

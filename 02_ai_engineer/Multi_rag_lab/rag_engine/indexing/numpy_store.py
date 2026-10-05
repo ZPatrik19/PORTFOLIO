@@ -38,23 +38,30 @@ class NumpyVectorStore:
             query = query / norm
         scores = self.vectors @ query
         indices = np.argsort(-scores)[:top_k]
-        return [RetrievedChunk(
-            chunk_id=self.chunks[i].chunk_id,
-            text=self.chunks[i].text,
-            source=str(self.chunks[i].metadata.get("source", "")),
-            score=float(scores[i]),
-            rank=rank,
-            metadata=self.chunks[i].metadata,
-        ) for rank, i in enumerate(indices, start=1)]
+        return [
+            RetrievedChunk(
+                chunk_id=self.chunks[i].chunk_id,
+                text=self.chunks[i].text,
+                source=str(self.chunks[i].metadata.get("source", "")),
+                score=float(scores[i]),
+                rank=rank,
+                metadata=self.chunks[i].metadata,
+            )
+            for rank, i in enumerate(indices, start=1)
+        ]
 
     def save(self, path: Path) -> None:
         path.mkdir(parents=True, exist_ok=True)
         np.save(path / "vectors.npy", self.vectors)
-        (path / "metadata.json").write_text(json.dumps([c.model_dump() for c in self.chunks], ensure_ascii=False), encoding="utf-8")
+        (path / "metadata.json").write_text(
+            json.dumps([c.model_dump() for c in self.chunks], ensure_ascii=False), encoding="utf-8"
+        )
 
     @classmethod
     def load(cls, path: Path) -> "NumpyVectorStore":
         store = cls()
         store.vectors = np.load(path / "vectors.npy")
-        store.chunks = [Chunk.model_validate(x) for x in json.loads((path / "metadata.json").read_text(encoding="utf-8"))]
+        store.chunks = [
+            Chunk.model_validate(x) for x in json.loads((path / "metadata.json").read_text(encoding="utf-8"))
+        ]
         return store

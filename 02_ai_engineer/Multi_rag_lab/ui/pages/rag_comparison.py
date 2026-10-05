@@ -38,8 +38,14 @@ def render() -> None:
     metrics_reference("rag")
     info_cards(
         [
-            ("Több RAG stratégia", "Dense, BM25, hibrid, újrarangsorolt, HyDE, Multi-Query, Query-Rewrite, Multi-Hop, Parent-Document, compression és corrective variánsok."),
-            ("Hibatűrő összehasonlítás", "Egyetlen hibás stratégia nem állítja le a teljes összehasonlítást; a kimaradt futások külön jelennek meg."),
+            (
+                "Több RAG stratégia",
+                "Dense, BM25, hibrid, újrarangsorolt, HyDE, Multi-Query, Query-Rewrite, Multi-Hop, Parent-Document, compression és corrective variánsok.",
+            ),
+            (
+                "Hibatűrő összehasonlítás",
+                "Egyetlen hibás stratégia nem állítja le a teljes összehasonlítást; a kimaradt futások külön jelennek meg.",
+            ),
             ("LLM telemetria", "Ollama streaming esetén TTFT, kimeneti token és token/s is mérhető."),
             ("Többdimenziós értékelés", "A minőséget, válaszidőt és bizonyítékhasználatot együtt érdemes értelmezni."),
         ],
@@ -52,7 +58,9 @@ def render() -> None:
         format_func=lambda item: f"{item.label} · {item.topic}",
         key="rag_compare_preset",
     )
-    query = st.text_area("Összehasonlító kérdés", value=preset.query, height=90, key=f"rag_compare_query_{preset.label}")
+    query = st.text_area(
+        "Összehasonlító kérdés", value=preset.query, height=90, key=f"rag_compare_query_{preset.label}"
+    )
     strategies = st.multiselect(
         "Összehasonlítandó stratégiák",
         list(RAG_STRATEGIES),
@@ -63,13 +71,19 @@ def render() -> None:
     with st.expander("Mit csinálnak a kiválasztott stratégiák?", expanded=False):
         for key in strategies:
             meta = RAG_STRATEGIES[key]
-            st.markdown(f"**{rag_strategy_label(key, meta['name'])}** — {meta['summary']}  \n`{meta['flow']}`  \n*Ajánlott:* {meta['when']}")
+            st.markdown(
+                f"**{rag_strategy_label(key, meta['name'])}** — {meta['summary']}  \n`{meta['flow']}`  \n*Ajánlott:* {meta['when']}"
+            )
 
     _, preview_reranker = build_selected_reranker("reranked")
-    st.caption(f"Globális újrarangsoroló-beállítás: **{reranker_status_text(preview_reranker)}**. Csak az explicit rerankingot tartalmazó stratégiák alkalmazzák.")
+    st.caption(
+        f"Globális újrarangsoroló-beállítás: **{reranker_status_text(preview_reranker)}**. Csak az explicit rerankingot tartalmazó stratégiák alkalmazzák."
+    )
 
     if st.session_state.get("llm_provider") == "ollama":
-        st.info("Ollama módban a HyDE, több lekérdezéses, átíró, többlépéses és korrekciós stratégiák több LLM-hívást használhatnak, ezért lényegesen lassabbak lehetnek.")
+        st.info(
+            "Ollama módban a HyDE, több lekérdezéses, átíró, többlépéses és korrekciós stratégiák több LLM-hívást használhatnak, ezért lényegesen lassabbak lehetnek."
+        )
 
     if st.button("Összehasonlítás futtatása", type="primary", disabled=not strategies):
         rows: list[dict[str, object]] = []
@@ -102,7 +116,13 @@ def render() -> None:
                 result = pipeline.answer(query)
                 context = result.context_text or "\n".join(chunk.text for chunk in result.retrieved_chunks)
                 source_count = len(result.retrieved_chunks)
-                source_diversity = len({str(c.metadata.get("title") or c.source or "") for c in result.retrieved_chunks if c.metadata.get("title") or c.source}) / max(1, source_count)
+                source_diversity = len(
+                    {
+                        str(c.metadata.get("title") or c.source or "")
+                        for c in result.retrieved_chunks
+                        if c.metadata.get("title") or c.source
+                    }
+                ) / max(1, source_count)
                 rows.append(
                     {
                         "Stratégia": strategy_name,
@@ -120,7 +140,9 @@ def render() -> None:
                         LABELS["source_diversity"]: round(source_diversity, 3),
                         LABELS["citation_accuracy"]: round(citation_accuracy(result.answer, source_count), 3),
                         LABELS["citation_coverage"]: round(citation_coverage(result.answer), 3),
-                        LABELS["citation_source_coverage"]: round(citation_source_coverage(result.answer, source_count), 3),
+                        LABELS["citation_source_coverage"]: round(
+                            citation_source_coverage(result.answer, source_count), 3
+                        ),
                         LABELS["context_utilization"]: round(context_utilization(result.answer, context), 3),
                         "Redundancia proxy": round(answer_redundancy_proxy(result.answer), 3),
                         "Választoken becslés": answer_token_estimate(result.answer),
@@ -159,13 +181,25 @@ def render() -> None:
         [
             ("Legnagyobb összpontszám", str(best["Stratégia"]), f"Pontszám: {float(best[score_col]):.3f}"),
             ("Legkisebb válaszidő", str(fastest["Stratégia"]), f"{float(fastest['Teljes ms']):.0f} ms"),
-            ("Legjobb hivatkozási pontosság", f"{frame[LABELS['citation_accuracy']].max():.2f}", "Érvényes [Sx] hivatkozások aránya."),
-            ("Legnagyobb generálási sebesség", f"{frame['Token/s'].max():.1f} token/s", "Lokális generálási áteresztőképesség."),
+            (
+                "Legjobb hivatkozási pontosság",
+                f"{frame[LABELS['citation_accuracy']].max():.2f}",
+                "Érvényes [Sx] hivatkozások aránya.",
+            ),
+            (
+                "Legnagyobb generálási sebesség",
+                f"{frame['Token/s'].max():.1f} token/s",
+                "Lokális generálási áteresztőképesség.",
+            ),
         ],
         columns=4,
     )
     with st.expander("Nyers összehasonlítási eredmények", expanded=False):
-        safe_dataframe(frame.sort_values([score_col, LABELS["citation_accuracy"]], ascending=False), width="stretch", hide_index=True)
+        safe_dataframe(
+            frame.sort_values([score_col, LABELS["citation_accuracy"]], ascending=False),
+            width="stretch",
+            hide_index=True,
+        )
     render_dataframe_exports(frame, stem="rag_osszehasonlitas", key_prefix="rag_compare_export")
 
     c1, c2 = st.columns(2)
@@ -175,7 +209,14 @@ def render() -> None:
             x="Teljes ms",
             y=score_col,
             color="Stratégia",
-            hover=[LABELS["citation_accuracy"], LABELS["citation_coverage"], "TTFT ms", "Token/s", "Kontextus token", "Újrarangsoroló"],
+            hover=[
+                LABELS["citation_accuracy"],
+                LABELS["citation_coverage"],
+                "TTFT ms",
+                "Token/s",
+                "Kontextus token",
+                "Újrarangsoroló",
+            ],
             size="Bizonyíték",
             key="rag_compare_quality_latency",
             title="Minőség–késleltetés egyensúly",
@@ -195,7 +236,13 @@ def render() -> None:
         radar_metrics_chart(
             frame.sort_values([score_col, LABELS["citation_accuracy"]], ascending=False),
             label_col="Stratégia",
-            metrics=[LABELS["citation_accuracy"], LABELS["citation_coverage"], LABELS["citation_source_coverage"], LABELS["context_utilization"], LABELS["source_diversity"]],
+            metrics=[
+                LABELS["citation_accuracy"],
+                LABELS["citation_coverage"],
+                LABELS["citation_source_coverage"],
+                LABELS["context_utilization"],
+                LABELS["source_diversity"],
+            ],
             key="rag_compare_radar",
             title="RAG stratégiák minőségi profilja",
             max_series=5,

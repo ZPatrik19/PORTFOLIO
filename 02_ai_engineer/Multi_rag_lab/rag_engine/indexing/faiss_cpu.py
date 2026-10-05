@@ -52,8 +52,16 @@ class FaissCPUVectorStore:
             if idx < 0:
                 continue
             chunk = self.chunks[int(idx)]
-            results.append(RetrievedChunk(chunk_id=chunk.chunk_id, text=chunk.text,
-                source=str(chunk.metadata.get("source", "")), score=float(score), rank=rank, metadata=chunk.metadata))
+            results.append(
+                RetrievedChunk(
+                    chunk_id=chunk.chunk_id,
+                    text=chunk.text,
+                    source=str(chunk.metadata.get("source", "")),
+                    score=float(score),
+                    rank=rank,
+                    metadata=chunk.metadata,
+                )
+            )
         return results
 
     @staticmethod
@@ -104,7 +112,6 @@ class FaissCPUVectorStore:
         store.index = cls._read_index_portable(faiss, path / "index.faiss")
         store.dimension = store.index.d
         store.chunks = [
-            Chunk.model_validate(x)
-            for x in json.loads((path / "metadata.json").read_text(encoding="utf-8"))
+            Chunk.model_validate(x) for x in json.loads((path / "metadata.json").read_text(encoding="utf-8"))
         ]
         return store

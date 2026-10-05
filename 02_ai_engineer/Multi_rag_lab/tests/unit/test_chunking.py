@@ -9,7 +9,8 @@ from rag_engine.models import Document
 def sample_doc():
     return Document(
         document_id="d1",
-        text=("Retrieval augmented generation uses external evidence. " * 30) + ("Semantic boundaries can improve chunk quality. " * 20),
+        text=("Retrieval augmented generation uses external evidence. " * 30)
+        + ("Semantic boundaries can improve chunk quality. " * 20),
         metadata={"source": "sample"},
     )
 

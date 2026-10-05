@@ -30,11 +30,15 @@ def main() -> int:
     parser.add_argument("--dataset", type=Path, default=ROOT / "artifacts" / "evaluations" / "medical_rag_eval.jsonl")
     parser.add_argument("--manifest", type=Path, default=ROOT / "data" / "raw" / "hungarian_medical" / "manifest.json")
     parser.add_argument("--raw-dir", type=Path, default=ROOT / "data" / "raw" / "hungarian_medical")
-    parser.add_argument("--questions", type=int, default=20, help="Benchmarkhoz használt első N kérdés; 0 = minden kérdés.")
+    parser.add_argument(
+        "--questions", type=int, default=20, help="Benchmarkhoz használt első N kérdés; 0 = minden kérdés."
+    )
     parser.add_argument("--chunking", default="fixed,recursive,sentence,paragraph,structure-aware")
     parser.add_argument("--retrievers", default="dense,bm25,hybrid-rrf,hybrid-weighted")
     parser.add_argument("--rerankers", default="none,lexical")
-    parser.add_argument("--rag-strategies", default="baseline,lexical,hybrid,reranked,dense-reranked,compression,corrective")
+    parser.add_argument(
+        "--rag-strategies", default="baseline,lexical,hybrid,reranked,dense-reranked,compression,corrective"
+    )
     parser.add_argument("--chunk-size", type=int, default=700)
     parser.add_argument("--overlap", type=int, default=100)
     parser.add_argument("--top-k", type=int, default=5)
@@ -53,7 +57,9 @@ def main() -> int:
     parser.add_argument("--hashing", action="store_true", help="Gyors offline benchmark hashing embeddinggel.")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts" / "evaluations" / "medical_benchmark.json")
     parser.add_argument("--registry", type=Path, default=ROOT / "artifacts" / "experiments" / "experiments.sqlite3")
-    parser.add_argument("--no-registry", action="store_true", help="Ne mentse a futást az SQLite Experiment Registry-be.")
+    parser.add_argument(
+        "--no-registry", action="store_true", help="Ne mentse a futást az SQLite Experiment Registry-be."
+    )
     parser.add_argument("--notes", default="", help="Opcionális megjegyzés a benchmark futáshoz.")
     args = parser.parse_args()
 

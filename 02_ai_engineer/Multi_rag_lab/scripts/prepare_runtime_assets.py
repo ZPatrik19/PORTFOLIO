@@ -94,10 +94,16 @@ def _verify_model_loading(items: dict[str, dict[str, str]]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="A RAG runtime Hugging Face modelljeinek robusztus előtöltése és ellenőrzése.")
+    parser = argparse.ArgumentParser(
+        description="A RAG runtime Hugging Face modelljeinek robusztus előtöltése és ellenőrzése."
+    )
     parser.add_argument("--retries", type=int, default=5)
-    parser.add_argument("--verify", action="store_true", help="A letöltés után CPU-n ténylegesen töltsd is be a modelleket.")
-    parser.add_argument("--verify-only", action="store_true", help="Csak a már cache-elt modelleket ellenőrizd, hálózat nélkül.")
+    parser.add_argument(
+        "--verify", action="store_true", help="A letöltés után CPU-n ténylegesen töltsd is be a modelleket."
+    )
+    parser.add_argument(
+        "--verify-only", action="store_true", help="Csak a már cache-elt modelleket ellenőrizd, hálózat nélkül."
+    )
     args = parser.parse_args()
 
     load_dotenv(ROOT / ".env", override=False)
@@ -106,7 +112,9 @@ def main() -> int:
     settings = load_settings()
     model_ids = runtime_model_ids(settings)
     if not os.getenv("HF_TOKEN"):
-        print("[INFO] HF_TOKEN nincs beállítva. A modellek publikusak, ezért a letöltés működik, de kisebb Hub rate limit mellett.")
+        print(
+            "[INFO] HF_TOKEN nincs beállítva. A modellek publikusak, ezért a letöltés működik, de kisebb Hub rate limit mellett."
+        )
         print("       Opcionális: add meg a HF_TOKEN értékét a .env fájlban.")
 
     items: dict[str, dict[str, str]] = {}

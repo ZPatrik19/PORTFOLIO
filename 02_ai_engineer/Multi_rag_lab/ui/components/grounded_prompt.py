@@ -9,7 +9,10 @@ def render_grounded_prompt(result, *, key_prefix: str = "grounded") -> None:
     parts = dict(getattr(result, "grounded_prompt_parts", {}) or {})
     final_prompt = str(getattr(result, "grounded_prompt", "") or "")
     if not final_prompt:
-        note_box("Prompt nem érhető el", "A futás nem tárolta a ténylegesen elküldött grounded promptot. Futtasd újra a választ az új pipeline-verzióval.")
+        note_box(
+            "Prompt nem érhető el",
+            "A futás nem tárolta a ténylegesen elküldött grounded promptot. Futtasd újra a választ az új pipeline-verzióval.",
+        )
         return
 
     note_box(

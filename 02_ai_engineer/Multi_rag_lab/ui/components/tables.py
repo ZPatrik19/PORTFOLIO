@@ -18,7 +18,7 @@ def _stringify(value: Any) -> Any:
     try:
         if pd.isna(value):
             return pd.NA
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         pass
     if isinstance(value, (dict, list, tuple, set)):
         try:
@@ -50,7 +50,7 @@ def arrow_safe_frame(data: Any) -> pd.DataFrame:
             try:
                 if pd.isna(value):
                     continue
-            except (TypeError, ValueError):
+            except TypeError, ValueError:
                 pass
             cleaned.append(value)
 

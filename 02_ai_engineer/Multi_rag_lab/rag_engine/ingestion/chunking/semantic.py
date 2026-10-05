@@ -35,7 +35,18 @@ class SemanticChunker:
             for index, group in enumerate(groups):
                 text = " ".join(group)
                 chunk_id = f"{doc.document_id}:semantic:{index}"
-                output.append(Chunk(chunk_id=chunk_id, document_id=doc.document_id, text=text,
-                    metadata=chunk_metadata(doc.metadata, document_id=doc.document_id, chunk_id=chunk_id,
-                                            strategy=self.name, chunk_size=self.max_chars)))
+                output.append(
+                    Chunk(
+                        chunk_id=chunk_id,
+                        document_id=doc.document_id,
+                        text=text,
+                        metadata=chunk_metadata(
+                            doc.metadata,
+                            document_id=doc.document_id,
+                            chunk_id=chunk_id,
+                            strategy=self.name,
+                            chunk_size=self.max_chars,
+                        ),
+                    )
+                )
         return output

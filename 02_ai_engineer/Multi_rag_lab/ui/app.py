@@ -94,7 +94,9 @@ if st.session_state.get("nav_group") != active_group_from_slug:
     st.session_state["nav_group"] = active_group_from_slug
 
 st.sidebar.markdown("## Multi-RAG Lab")
-st.sidebar.caption("Építés → Futtatás → Kiértékelés. A részletes runtime-beállítások külön, lenyitható blokkban maradnak.")
+st.sidebar.caption(
+    "Építés → Futtatás → Kiértékelés. A részletes runtime-beállítások külön, lenyitható blokkban maradnak."
+)
 
 selected_group = st.sidebar.selectbox(
     "Terület",

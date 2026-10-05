@@ -38,7 +38,7 @@ def _load_state() -> dict[str, Any]:
     try:
         payload = json.loads(STATE_PATH.read_text(encoding="utf-8"))
         return payload if isinstance(payload, dict) else {}
-    except (OSError, json.JSONDecodeError):
+    except OSError, json.JSONDecodeError:
         return {}
 
 

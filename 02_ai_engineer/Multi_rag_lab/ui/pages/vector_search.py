@@ -14,14 +14,12 @@ from ui.components.reranker import build_selected_reranker, reranker_status_text
 from ui.components.tables import safe_dataframe
 
 
-
 def _retrieve(lab, mode: str, query: str, top_k: int, candidate_count: int):
     if mode == "dense":
         return lab.dense.retrieve(query, top_k)
     if mode == "bm25":
         return lab.sparse.retrieve(query, top_k)
     return lab.hybrid.retrieve(query, top_k=top_k, candidate_count=candidate_count)
-
 
 
 def render() -> None:
@@ -34,16 +32,34 @@ def render() -> None:
 
     mode = st.session_state.get("retrieval_mode", "hybrid")
     mode_cards = {
-        "dense": ("Dense visszakeresés", "A query embeddinget hasonlítja a chunk embeddingekhez. Jó szemantikus egyezésre, de pontos ritka kulcsszavakat néha elvéthet."),
-        "bm25": ("BM25", "Lexikális term-frequency alapú rangsorolás. Erős konkrét kifejezéseknél, neveknél, rövidítéseknél és jogi terminusoknál."),
-        "hybrid": ("Hibrid visszakeresés", "Dense + BM25 eredményeket egyesít. RRF esetén a végső score rangfúziós érték; nem probability és nem cosine similarity."),
+        "dense": (
+            "Dense visszakeresés",
+            "A query embeddinget hasonlítja a chunk embeddingekhez. Jó szemantikus egyezésre, de pontos ritka kulcsszavakat néha elvéthet.",
+        ),
+        "bm25": (
+            "BM25",
+            "Lexikális term-frequency alapú rangsorolás. Erős konkrét kifejezéseknél, neveknél, rövidítéseknél és jogi terminusoknál.",
+        ),
+        "hybrid": (
+            "Hibrid visszakeresés",
+            "Dense + BM25 eredményeket egyesít. RRF esetén a végső score rangfúziós érték; nem probability és nem cosine similarity.",
+        ),
     }
     info_cards(
         [
             mode_cards[mode],
-            ("Top-K", "A végső találati lista mérete. Túl kicsi K ronthatja a recallt, túl nagy K zajt és nagyobb kontextust okozhat."),
-            ("Jelöltek száma", "Hibrid/újrarangsorolt folyamatban ennyi jelöltet kérünk az első retrieval körből, mielőtt szűkítünk."),
-            ("Mit nézz?", "Ne csak a pontszámot: olvasd el a szövegrészt, ellenőrizd a forrást/oldalt, a rangsort és azt, hogy a releváns bizonyíték bekerült-e."),
+            (
+                "Top-K",
+                "A végső találati lista mérete. Túl kicsi K ronthatja a recallt, túl nagy K zajt és nagyobb kontextust okozhat.",
+            ),
+            (
+                "Jelöltek száma",
+                "Hibrid/újrarangsorolt folyamatban ennyi jelöltet kérünk az első retrieval körből, mielőtt szűkítünk.",
+            ),
+            (
+                "Mit nézz?",
+                "Ne csak a pontszámot: olvasd el a szövegrészt, ellenőrizd a forrást/oldalt, a rangsort és azt, hogy a releváns bizonyíték bekerült-e.",
+            ),
         ],
         columns=4,
     )
@@ -125,20 +141,32 @@ def render() -> None:
     c4.metric("Átlagpontszám", f"{statistics.fmean(scores):.4f}")
     c5.metric("Top1–Top2 gap", f"{score_gap:.4f}")
 
-    tabs = st.tabs(["Áttekintés", "Retrieval Inspector", "Újrarangsorolás", "Találati lista", "Bizonyítékok", "Diagnosztika"])
+    tabs = st.tabs(
+        ["Áttekintés", "Retrieval Inspector", "Újrarangsorolás", "Találati lista", "Bizonyítékok", "Diagnosztika"]
+    )
 
     with tabs[0]:
         retrieval_scores_chart(results, key=f"retrieval_scores_{display_mode}_{len(results)}")
         if display_mode == "dense":
-            note_box("Pontszám értelmezése", "Dense módban a projekt normalizált vektorokat és skalárszorzat keresést használ; a pontszám koszinusz-hasonlóságként értelmezhető.")
+            note_box(
+                "Pontszám értelmezése",
+                "Dense módban a projekt normalizált vektorokat és skalárszorzat keresést használ; a pontszám koszinusz-hasonlóságként értelmezhető.",
+            )
         elif display_mode == "bm25":
-            note_box("Pontszám értelmezése", "A BM25 score lexikális rangsorolási érték. Nem probability és nem cosine similarity.")
+            note_box(
+                "Pontszám értelmezése",
+                "A BM25 score lexikális rangsorolási érték. Nem probability és nem cosine similarity.",
+            )
         else:
             fusion = runtime.get("fusion", "rrf")
             note_box(
                 "Pontszám értelmezése",
                 "Hybrid módban a végső score rangfúzió eredménye. "
-                + ("RRF esetén rangpozíciókból képzett érték, ezért ne relevanciavalószínűségként értelmezd." if fusion == "rrf" else "Weighted fusion esetén normalizált dense/BM25 komponensek kombinációja."),
+                + (
+                    "RRF esetén rangpozíciókból képzett érték, ezért ne relevanciavalószínűségként értelmezd."
+                    if fusion == "rrf"
+                    else "Weighted fusion esetén normalizált dense/BM25 komponensek kombinációja."
+                ),
             )
 
     with tabs[1]:
@@ -198,10 +226,15 @@ def render() -> None:
         rerank_ms = float(st.session_state.get("last_vector_reranking_ms", 0.0))
         st.caption(f"Aktív újrarangsoroló: **{rerank_status}** · futási idő: **{rerank_ms:.1f} ms**")
         if reranked:
-            retrieval_scores_chart(reranked, key=f"reranked_scores_{display_mode}_{len(reranked)}", title="Újrarangsorolt Top-K pontszámok")
+            retrieval_scores_chart(
+                reranked, key=f"reranked_scores_{display_mode}_{len(reranked)}", title="Újrarangsorolt Top-K pontszámok"
+            )
             evidence_cards(reranked, columns=2)
         else:
-            empty_state("Nincs újrarangsorolt lista", "A globális újrarangsoroló ki van kapcsolva vagy a jelenlegi futás nem készített reranked eredményt.")
+            empty_state(
+                "Nincs újrarangsorolt lista",
+                "A globális újrarangsoroló ki van kapcsolva vagy a jelenlegi futás nem készített reranked eredményt.",
+            )
 
     with tabs[3]:
         table = pd.DataFrame(
@@ -236,10 +269,15 @@ def render() -> None:
         info_cards(
             [
                 ("Aktív lekérdezésminta témája", preset.topic),
-                ("Ajánlott ellenőrzés", "Nézd meg, hogy a releváns bizonyíték már a Top-K-ban megjelenik-e, mielőtt az LLM-hez mennél."),
+                (
+                    "Ajánlott ellenőrzés",
+                    "Nézd meg, hogy a releváns bizonyíték már a Top-K-ban megjelenik-e, mielőtt az LLM-hez mennél.",
+                ),
                 ("Forrásdiverzitás", f"{len(sources)} külön forrás a Top-{len(results)} listában"),
                 ("Pontszámrés", f"Top1–Top2 gap = {score_gap:.4f}; alacsony gap közel azonos relevanciát jelezhet."),
             ],
             columns=2,
         )
-    st.caption("Recall@K, Precision@K, MRR és nDCG csak relevancia-címkével értelmezhető. Ezeket a Kiértékelés oldalon tudod korrektül mérni; pusztán a retrieval score-ból nem következnek.")
+    st.caption(
+        "Recall@K, Precision@K, MRR és nDCG csak relevancia-címkével értelmezhető. Ezeket a Kiértékelés oldalon tudod korrektül mérni; pusztán a retrieval score-ból nem következnek."
+    )

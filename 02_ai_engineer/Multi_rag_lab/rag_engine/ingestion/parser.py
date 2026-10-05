@@ -18,7 +18,6 @@ def _document_id(path: Path, suffix: str = "") -> str:
     return hashlib.sha256(raw).hexdigest()[:20]
 
 
-
 def _base_metadata(path: Path) -> dict[str, object]:
     metadata: dict[str, object] = {"source": str(path), "title": path.name}
     sidecar = path.with_suffix(path.suffix + ".source.json")
@@ -28,10 +27,19 @@ def _base_metadata(path: Path) -> dict[str, object]:
             metadata["local_path"] = str(path)
             metadata["source"] = source_info.get("url", str(path))
             metadata["sha256"] = source_info.get("sha256")
-            for key in ("source_id", "title", "category", "organization", "language", "format", "source_page", "description"):
+            for key in (
+                "source_id",
+                "title",
+                "category",
+                "organization",
+                "language",
+                "format",
+                "source_page",
+                "description",
+            ):
                 if source_info.get(key) not in (None, ""):
                     metadata[key] = source_info[key]
-        except (OSError, json.JSONDecodeError):
+        except OSError, json.JSONDecodeError:
             pass
     return metadata
 
@@ -74,11 +82,13 @@ def parse_file(path: Path) -> list[Document]:
             docs = []
             for index, page in enumerate(reader.pages, start=1):
                 text = page.extract_text() or ""
-                docs.append(Document(
-                    document_id=_document_id(path, str(index)),
-                    text=text,
-                    metadata={**_base_metadata(path), "page": index},
-                ))
+                docs.append(
+                    Document(
+                        document_id=_document_id(path, str(index)),
+                        text=text,
+                        metadata={**_base_metadata(path), "page": index},
+                    )
+                )
             return docs
         except Exception as exc:
             raise ParseError(f"Could not parse PDF {path}: {exc}") from exc

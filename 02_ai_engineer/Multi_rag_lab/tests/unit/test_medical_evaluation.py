@@ -80,7 +80,12 @@ def test_resolve_relevant_chunks_uses_source_and_evidence_overlap() -> None:
         expected_key_facts=["A gyakori tünet a fejfájás és a szédülés."],
     )
     chunks = [
-        Chunk(chunk_id="a1", document_id="a", text="A fejfájás és szédülés gyakori tünet lehet.", metadata={"source_id": "source-a"}),
+        Chunk(
+            chunk_id="a1",
+            document_id="a",
+            text="A fejfájás és szédülés gyakori tünet lehet.",
+            metadata={"source_id": "source-a"},
+        ),
         Chunk(chunk_id="a2", document_id="a", text="Más témáról szóló szöveg.", metadata={"source_id": "source-a"}),
         Chunk(chunk_id="b1", document_id="b", text="Fejfájás és szédülés.", metadata={"source_id": "source-b"}),
     ]

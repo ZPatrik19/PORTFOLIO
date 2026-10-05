@@ -23,7 +23,8 @@ def test_bm25_retrieves_lexical_match():
 def test_hybrid_and_rrf_return_unique_results():
     chunks = corpus()
     embedder = HashingEmbeddingProvider()
-    store = NumpyVectorStore(); store.add(embedder.embed_documents([c.text for c in chunks]), chunks)
+    store = NumpyVectorStore()
+    store.add(embedder.embed_documents([c.text for c in chunks]), chunks)
     dense = DenseRetriever(embedder, store)
     sparse = BM25Retriever(chunks)
     hybrid = HybridRetriever(dense, sparse)
