@@ -1,0 +1,193 @@
+name: "Multi-RAG Lab · NVIDIA CUDA / FAISS GPU Validation"
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_faiss_gpu:
+        description: "Require a real FAISS GPU backend"
+        required: true
+        default: true
+        type: boolean
+      run_benchmark:
+        description: "Run CPU/CUDA benchmark suite"
+        required: true
+        default: true
+        type: boolean
+      run_ollama_smoke:
+        description: "Run Ollama GPU/offload smoke"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_DIR: "02_ai_engineer/multi_rag_lab"
+  PYTHON_VERSION: "3.14"
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+  TOKENIZERS_PARALLELISM: "false"
+
+jobs:
+  gpu-validation:
+    name: "NVIDIA GPU · CUDA · Embedding · Reranker · FAISS"
+    runs-on: [self-hosted, linux, x64, gpu, nvidia]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: NVIDIA inventory
+        run: |
+          nvidia-smi
+          nvidia-smi --query-gpu=name,driver_version,memory.total,memory.free,utilization.gpu --format=csv
+
+      - name: Install project
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pytest
+          python -m pip check
+
+      - name: Require CUDA-enabled PyTorch
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python - <<'PY'
+          import torch
+          print("Torch:", torch.__version__)
+          print("CUDA runtime:", torch.version.cuda)
+          print("CUDA available:", torch.cuda.is_available())
+          if not torch.cuda.is_available():
+              raise SystemExit("CUDA unavailable in PyTorch")
+          for i in range(torch.cuda.device_count()):
+              p=torch.cuda.get_device_properties(i)
+              print(i, p.name, f"{p.total_memory/1024**3:.2f} GiB")
+          PY
+
+      - name: CUDA compute smoke
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python - <<'PY'
+          import time, torch
+          a=torch.randn((2048,2048),device="cuda")
+          b=torch.randn((2048,2048),device="cuda")
+          for _ in range(3): _=a@b
+          torch.cuda.synchronize(); t=time.perf_counter()
+          for _ in range(10): c=a@b
+          torch.cuda.synchronize()
+          assert c.is_cuda and torch.isfinite(c).all()
+          print("CUDA smoke seconds:", round(time.perf_counter()-t,3))
+          print("Peak MiB:", round(torch.cuda.max_memory_allocated()/1024**2,1))
+          PY
+
+      - name: Prepare runtime model assets
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          if [[ -f scripts/prepare_runtime_assets.py ]]; then
+            python scripts/prepare_runtime_assets.py
+          fi
+
+      - name: Project CUDA/GPU tests
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          pytest tests -ra -k "cuda or gpu" || {
+            code=$?
+            if [[ "$code" -eq 5 ]]; then echo "No GPU-named tests collected"; else exit "$code"; fi
+          }
+
+      - name: Acceleration verification
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          if [[ -f scripts/verify_acceleration.py ]]; then python scripts/verify_acceleration.py; fi
+
+      - name: Project FAISS GPU check
+        if: ${{ inputs.run_faiss_gpu }}
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          test -f scripts/check_faiss_gpu.py
+          python scripts/check_faiss_gpu.py
+
+      - name: Raw FAISS GPU smoke
+        if: ${{ inputs.run_faiss_gpu }}
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          python - <<'PY'
+          import faiss, numpy as np
+          for name in ("StandardGpuResources","index_cpu_to_gpu","index_gpu_to_cpu"):
+              assert hasattr(faiss,name), f"Missing FAISS GPU API: {name}"
+          if hasattr(faiss,"get_num_gpus"):
+              assert faiss.get_num_gpus() >= 1
+          rng=np.random.default_rng(42)
+          xb=rng.normal(size=(4096,128)).astype("float32")
+          xq=xb[:32].copy()
+          faiss.normalize_L2(xb); faiss.normalize_L2(xq)
+          cpu=faiss.IndexFlatIP(128)
+          res=faiss.StandardGpuResources()
+          gpu=faiss.index_cpu_to_gpu(res,0,cpu)
+          gpu.add(xb)
+          scores,ids=gpu.search(xq,10)
+          assert (ids[:,0]==np.arange(32)).all()
+          cpu2=faiss.index_gpu_to_cpu(gpu)
+          scores2,ids2=cpu2.search(xq,10)
+          np.testing.assert_array_equal(ids,ids2)
+          np.testing.assert_allclose(scores,scores2,rtol=1e-5,atol=1e-5)
+          print("FAISS GPU smoke OK")
+          PY
+
+      - name: CPU vs CUDA benchmark
+        if: ${{ inputs.run_benchmark }}
+        shell: bash
+        run: |
+          cd "${PROJECT_DIR}"
+          if [[ -f scripts/benchmark_devices.py ]]; then
+            python scripts/benchmark_devices.py --workload 500
+          fi
+
+      - name: Ollama smoke
+        if: ${{ inputs.run_ollama_smoke }}
+        shell: bash
+        run: |
+          command -v ollama
+          ollama ps
+          curl --fail --silent http://127.0.0.1:11434/api/tags
+
+      - name: Diagnostics on failure
+        if: failure()
+        shell: bash
+        run: |
+          nvidia-smi || true
+          cd "${PROJECT_DIR}"
+          python - <<'PY' || true
+          try:
+              import torch
+              print("Torch",torch.__version__,"CUDA",torch.version.cuda,"available",torch.cuda.is_available())
+          except Exception as exc: print("Torch diagnostic:",exc)
+          try:
+              import faiss
+              print("FAISS",getattr(faiss,"__version__","unknown"),"GPU API",hasattr(faiss,"StandardGpuResources"))
+              if hasattr(faiss,"get_num_gpus"): print("FAISS GPUs",faiss.get_num_gpus())
+          except Exception as exc: print("FAISS diagnostic:",exc)
+          PY
+
+      - name: Upload GPU artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: multi-rag-gpu-validation
+          path: |
+            ${{ env.PROJECT_DIR }}/artifacts/
+            ${{ env.PROJECT_DIR }}/reports/
+          if-no-files-found: ignore
+          retention-days: 14
