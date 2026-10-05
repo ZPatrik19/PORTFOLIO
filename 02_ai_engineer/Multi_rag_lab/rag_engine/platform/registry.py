@@ -6,7 +6,7 @@ import sqlite3
 from dataclasses import asdict, is_dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 from uuid import uuid4
 
 
@@ -32,7 +32,7 @@ def _as_dict(row: object) -> dict[str, Any]:
     if isinstance(row, dict):
         return dict(row)
     if is_dataclass(row) and not isinstance(row, type):
-        return asdict(row)
+        return asdict(cast(Any, row))
     raise TypeError(f"Nem támogatott benchmark sor típus: {type(row)!r}")
 
 
