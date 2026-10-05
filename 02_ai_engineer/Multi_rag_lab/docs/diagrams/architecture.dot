@@ -1,0 +1,174 @@
+digraph MULTI_RAG_ENGINEERING_DETAILED {
+    graph [
+        rankdir=TB,
+        splines=ortho,
+        overlap=false,
+        newrank=true,
+        compound=true,
+        pad=0.30,
+        nodesep=0.32,
+        ranksep=0.58,
+        bgcolor="#F8FAFC",
+        fontname="Arial",
+        labelloc="t",
+        label=<<FONT POINT-SIZE="22" COLOR="#0F172A"><B>MULTI-RAG ENGINEERING LAB</B></FONT><BR/><FONT POINT-SIZE="11" COLOR="#64748B">Detailed 3-tier engineering architecture · ingestion → retrieval/RAG → evaluation &amp; operations</FONT>>
+    ];
+
+    node [
+        shape=box,
+        style="rounded,filled",
+        fontname="Arial",
+        fontsize=9.5,
+        fontcolor="#0F172A",
+        color="#CBD5E1",
+        fillcolor="#FFFFFF",
+        penwidth=1.15,
+        margin="0.16,0.11"
+    ];
+
+    edge [
+        color="#94A3B8",
+        penwidth=1.25,
+        arrowsize=0.70,
+        fontname="Arial",
+        fontsize=8.5,
+        fontcolor="#64748B"
+    ];
+
+    // =========================================================
+    // TIER 1 — DATA / INGESTION / INDEXING
+    // =========================================================
+    subgraph cluster_tier1 {
+        label=<<FONT POINT-SIZE="15" COLOR="#1E3A8A"><B>1 · DATA, INGESTION &amp; INDEXING</B></FONT><BR/><FONT POINT-SIZE="9" COLOR="#64748B">Offline knowledge-base build pipeline</FONT>>;
+        color="#93C5FD";
+        bgcolor="#EFF6FF";
+        style="rounded,filled";
+        penwidth=1.6;
+        margin=18;
+
+        sources [label=<<B>Dokumentumforrások</B><BR/><FONT POINT-SIZE="9">HTML · PDF · DOCX · TXT · Markdown<BR/>web letöltés · lokális fájlok</FONT>>, fillcolor="#DBEAFE", color="#60A5FA"];
+
+        ingestion [label=<<B>Ingestion + Provenance</B><BR/><FONT POINT-SIZE="9">HTTP download · SHA-256<BR/>source URL · title · category · language<BR/>idempotens forrás-metaadatok</FONT>>, fillcolor="#E0F2FE", color="#7DD3FC"];
+
+        parsing [label=<<B>Parsing / Loading</B><BR/><FONT POINT-SIZE="9">BeautifulSoup HTML<BR/>pypdf · python-docx · text/markdown<BR/>H1–H3 megőrzés · page metadata</FONT>>, fillcolor="#F0F9FF", color="#BAE6FD"];
+
+        cleaning [label=<<B>Data Cleaning</B><BR/><FONT POINT-SIZE="9">Unicode NFKC · whitespace<BR/>header/footer zajszűrés · dedupe<BR/>safe HTML-tag removal<BR/><B>&lt;120 / &gt;30 értékek megőrzése</B></FONT>>, fillcolor="#ECFEFF", color="#67E8F9"];
+
+        chunking [label=<<B>Chunking Engine · 8 stratégia</B><BR/><FONT POINT-SIZE="9">fixed-char · fixed-token · recursive<BR/>sentence · paragraph · semantic<BR/>structure-aware · parent-child</FONT>>, fillcolor="#E0F2FE", color="#38BDF8"];
+
+        chunk_cfg [label=<<B>Chunk paraméterek</B><BR/><FONT POINT-SIZE="8.5">chunk_size · overlap<BR/>semantic_threshold<BR/>parent/child mapping · section metadata</FONT>>, fillcolor="#F8FAFC", color="#CBD5E1", fontcolor="#475569"];
+
+        embeddings [label=<<B>Embedding Layer</B><BR/><FONT POINT-SIZE="9">Multilingual MiniLM · E5 Small<BR/>English ST · hashing fallback<BR/>query/passage prefix · normalization<BR/>auto / CPU / CUDA</FONT>>, fillcolor="#ECFDF5", color="#6EE7B7"];
+
+        vector [label=<<B>Vector Index</B><BR/><FONT POINT-SIZE="9">FAISS CPU · FAISS CUDA<BR/>IndexFlatIP + L2 normalization<BR/>NumPy exact-search fallback<BR/>save / load metadata + index</FONT>>, fillcolor="#FEF3C7", color="#FBBF24"];
+
+        index_artifacts [label=<<B>Persistált tudásbázis</B><BR/><FONT POINT-SIZE="8.5">index.faiss<BR/>metadata.json<BR/>configuration.json<BR/>chunk → source provenance</FONT>>, fillcolor="#FFFBEB", color="#FDE68A"];
+
+        { rank=same; sources; ingestion; parsing; cleaning; }
+        { rank=same; chunking; embeddings; vector; index_artifacts; }
+
+        sources -> ingestion -> parsing -> cleaning -> chunking -> embeddings -> vector -> index_artifacts [color="#2563EB", penwidth=1.65];
+        chunk_cfg -> chunking [style=dashed, color="#94A3B8"];
+    }
+
+    // =========================================================
+    // TIER 2 — ONLINE RAG / QUERY / GENERATION
+    // =========================================================
+    subgraph cluster_tier2 {
+        label=<<FONT POINT-SIZE="15" COLOR="#5B21B6"><B>2 · ONLINE QUERY, RETRIEVAL &amp; GROUNDED GENERATION</B></FONT><BR/><FONT POINT-SIZE="9" COLOR="#64748B">Runtime path used by the Streamlit playground and benchmarks</FONT>>;
+        color="#C4B5FD";
+        bgcolor="#F5F3FF";
+        style="rounded,filled";
+        penwidth=1.6;
+        margin=18;
+
+        query [label=<<B>Felhasználói kérdés</B><BR/><FONT POINT-SIZE="9">HU natural-language query<BR/>query intent + title focus</FONT>>, fillcolor="#EDE9FE", color="#A78BFA"];
+
+        query_ops [label=<<B>Query Processing</B><BR/><FONT POINT-SIZE="9">normalize · rewrite · expansion<BR/>Multi-Query · HyDE<BR/>decomposition / 2nd-hop query</FONT>>, fillcolor="#F3E8FF", color="#C084FC"];
+
+        rag_matrix [label=<<B>RAG stratégia · 12 mód</B><BR/><FONT POINT-SIZE="8.5">Baseline · Lexical · Hybrid<BR/>Reranked · Dense+Reranked · HyDE<BR/>Multi-Query · Query-Rewrite · Multi-Hop<BR/>Parent-Document · Compression · Corrective</FONT>>, fillcolor="#FAE8FF", color="#D946EF"];
+
+        retrieval [label=<<B>Retrieval Layer</B><BR/><FONT POINT-SIZE="9">Dense embedding search<BR/>BM25 sparse search<BR/>Hybrid = Dense + BM25<BR/>Top-K + candidate pool</FONT>>, fillcolor="#FCE7F3", color="#F472B6"];
+
+        fusion [label=<<B>Rank Fusion</B><BR/><FONT POINT-SIZE="9">RRF (rrf_k)<BR/>Weighted fusion (dense_weight)<BR/>score normalization + dedupe</FONT>>, fillcolor="#FDF2F8", color="#F9A8D4"];
+
+        candidates [label=<<B>Candidate Pool</B><BR/><FONT POINT-SIZE="9">candidate_count = 20 alapérték<BR/>query-focus title/section boost<BR/>topical evidence prioritization</FONT>>, fillcolor="#FFF1F2", color="#FDA4AF"];
+
+        rerank [label=<<B>Reranking</B><BR/><FONT POINT-SIZE="9">none · lexical query-focus<BR/>Cross-Encoder MiniLM<BR/>auto / CPU / CUDA<BR/>CUDA OOM retry → CPU fallback</FONT>>, fillcolor="#EEF2FF", color="#818CF8"];
+
+        context [label=<<B>Context Engineering</B><BR/><FONT POINT-SIZE="9">query-focused ordering · dedupe<BR/>sentence-boundary fitting<BR/>Top-K evidence · token budget<BR/>[S1]… source blocks</FONT>>, fillcolor="#E0E7FF", color="#A5B4FC"];
+
+        context_profiles [label=<<B>4 Context profil</B><BR/><FONT POINT-SIZE="8.5">compact 900 · precise 1200<BR/>balanced 1800 · broad 2600<BR/>UI-ban 256–8192 token állítható</FONT>>, fillcolor="#F8FAFC", color="#CBD5E1", fontcolor="#475569"];
+
+        generation [label=<<B>Grounded Generation</B><BR/><FONT POINT-SIZE="9">Dummy / Ollama Qwen<BR/>system + user chat roles<BR/>think=false · streaming telemetry<BR/><B>részletes: 3–5 mondat / szakasz</B></FONT>>, fillcolor="#FEE2E2", color="#F87171"];
+
+        prompt_profiles [label=<<B>4 Prompt profil</B><BR/><FONT POINT-SIZE="8.5">professional · teaching<BR/>audit · concise<BR/>grounded citation policy</FONT>>, fillcolor="#F8FAFC", color="#CBD5E1", fontcolor="#475569"];
+
+        quality [label=<<B>Quality Guard + Repair</B><BR/><FONT POINT-SIZE="9">HU/meta-language guard<BR/>multi-intent coverage guard<BR/>rich-context minimum detail check<BR/>repair budget ≥512 output token</FONT>>, fillcolor="#FFF7ED", color="#FB923C"];
+
+        fallback [label=<<B>Safety Fallback</B><BR/><FONT POINT-SIZE="9">intent-aware evidence selection<BR/>topic/title filtering<BR/>max 10 source sentences<BR/>multi-sentence section synthesis</FONT>>, fillcolor="#FFEDD5", color="#FDBA74"];
+
+        citations [label=<<B>Citations + Final Answer</B><BR/><FONT POINT-SIZE="9">[S1] [S2] … evidence binding<BR/>valid source references<BR/>grounded Hungarian answer</FONT>>, fillcolor="#DCFCE7", color="#4ADE80"];
+
+        { rank=same; query; query_ops; rag_matrix; retrieval; }
+        { rank=same; fusion; candidates; rerank; context; }
+        { rank=same; generation; quality; fallback; citations; }
+
+        query -> query_ops -> retrieval [color="#7C3AED", penwidth=1.65];
+        rag_matrix -> retrieval [style=dashed, color="#A855F7"];
+        retrieval -> fusion -> candidates -> rerank -> context [color="#7C3AED", penwidth=1.65];
+        context_profiles -> context [style=dashed, color="#94A3B8"];
+        context -> generation [color="#7C3AED", penwidth=1.65];
+        prompt_profiles -> generation [style=dashed, color="#94A3B8"];
+        generation -> quality [color="#EA580C", penwidth=1.45, label="validate"];
+        quality -> citations [color="#16A34A", penwidth=1.55, label="valid"];
+        quality -> fallback [style=dashed, color="#F97316", label="invalid / repair failed"];
+        fallback -> citations [color="#F97316", penwidth=1.35];
+    }
+
+    // =========================================================
+    // TIER 3 — EVALUATION / PERFORMANCE / OPERATIONS
+    // =========================================================
+    subgraph cluster_tier3 {
+        label=<<FONT POINT-SIZE="15" COLOR="#92400E"><B>3 · EVALUATION, PERFORMANCE &amp; OPERATIONS</B></FONT><BR/><FONT POINT-SIZE="9" COLOR="#64748B">Measurement, experimentation, observability and UI</FONT>>;
+        color="#FCD34D";
+        bgcolor="#FFFBEB";
+        style="rounded,filled";
+        penwidth=1.6;
+        margin=18;
+
+        retrieval_metrics [label=<<B>Retrieval Evaluation</B><BR/><FONT POINT-SIZE="8.5">Recall@K · Precision@K · F1@K<BR/>Hit Rate · MRR · MAP@K · nDCG@K<BR/>First Relevant Rank<BR/>Source Diversity · Duplicate Ratio</FONT>>, fillcolor="#FEF3C7", color="#F59E0B"];
+
+        generation_metrics [label=<<B>Generation Evaluation</B><BR/><FONT POINT-SIZE="8.5">Key-Fact Coverage<BR/>Citation Accuracy / Coverage<BR/>Citation Source Coverage<BR/>Context Utilization · Redundancy<BR/>multi-part answer coverage</FONT>>, fillcolor="#FEF9C3", color="#EAB308"];
+
+        performance [label=<<B>Performance Lab</B><BR/><FONT POINT-SIZE="8.5">mean · median · P50/P95/P99<BR/>QPS / throughput · total latency<BR/>TTFT · token/s · output/context token<BR/>cold start · RAM · peak VRAM</FONT>>, fillcolor="#FFEDD5", color="#FB923C"];
+
+        device_bench [label=<<B>CPU / CUDA Benchmark</B><BR/><FONT POINT-SIZE="8.5">embedding · FAISS · reranking<BR/>same-workload speedup<BR/>GPU availability / parity checks<BR/>OOM + fallback visibility</FONT>>, fillcolor="#ECFDF5", color="#34D399"];
+
+        matrix [label=<<B>Experiment Matrix</B><BR/><FONT POINT-SIZE="8.5">chunking × embedding device<BR/>vector device × RAG strategy<BR/>reranker × device × LLM profile<BR/>reproducible comparison runs</FONT>>, fillcolor="#F0FDF4", color="#86EFAC"];
+
+        observability [label=<<B>Observability / Registry</B><BR/><FONT POINT-SIZE="8.5">experiment JSON/SQLite<BR/>runtime metadata · logs<BR/>requested vs actual device<BR/>exportable benchmark records</FONT>>, fillcolor="#F8FAFC", color="#CBD5E1"];
+
+        ui [label=<<B>Streamlit Engineering UI</B><BR/><FONT POINT-SIZE="8.5">RAG Playground · Chunking Lab<BR/>Vector Search · Evaluation<BR/>Performance · Pipeline Matrix<BR/>Runtime / System Status</FONT>>, fillcolor="#E0F2FE", color="#38BDF8"];
+
+        perf_fix [label=<<B>V31/V32 stabilitás</B><BR/><FONT POINT-SIZE="8.5">Plotly/Narwhals duplicate-column fix<BR/>egyedi chart schema + widget keys<BR/>biztonságos cleaning + hosszabb generation</FONT>>, fillcolor="#F8FAFC", color="#94A3B8", fontcolor="#475569"];
+
+        { rank=same; retrieval_metrics; generation_metrics; performance; device_bench; }
+        { rank=same; matrix; observability; ui; perf_fix; }
+
+        retrieval_metrics -> matrix [style=dashed, color="#D97706"];
+        generation_metrics -> matrix [style=dashed, color="#D97706"];
+        performance -> matrix [style=dashed, color="#D97706"];
+        device_bench -> matrix [style=dashed, color="#16A34A"];
+        matrix -> observability -> ui [color="#64748B", penwidth=1.25];
+        perf_fix -> ui [style=dashed, color="#64748B"];
+    }
+
+    // Major tier links
+    index_artifacts -> retrieval [ltail=cluster_tier1, lhead=cluster_tier2, color="#2563EB", penwidth=2.0, label="indexed knowledge"];
+    citations -> retrieval_metrics [ltail=cluster_tier2, lhead=cluster_tier3, color="#16A34A", penwidth=2.0, label="measure"];
+    citations -> generation_metrics [color="#16A34A", penwidth=1.45];
+    retrieval -> retrieval_metrics [style=dashed, color="#A855F7"];
+    rerank -> performance [style=dashed, color="#6366F1"];
+    generation -> performance [style=dashed, color="#EF4444"];
+}

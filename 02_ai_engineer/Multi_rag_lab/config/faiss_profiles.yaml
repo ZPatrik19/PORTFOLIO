@@ -1,0 +1,28 @@
+profiles:
+  cpu:
+    display_name: FAISS CPU · Stable baseline
+    description: Natív Windows/Linux CPU profil. Ha a FAISS csomag nem érhető el, engedélyezett a NumPy exact-search fallback.
+    vector_device: cpu
+    fallback_to_numpy: true
+    strict_device: false
+    output_dir: artifacts/indexes/faiss-cpu
+  cuda_preferred:
+    display_name: FAISS GPU · CUDA preferred
+    description: CUDA-s FAISS profilt kér; ha a GPU build nem elérhető, CPU/NumPy fallback engedélyezett. Hivatalos FAISS GPU bináris Linux/WSL környezetben támogatott.
+    vector_device: cuda
+    fallback_to_numpy: true
+    strict_device: false
+    gpu_id: 0
+    use_float16: false
+    temp_memory_mb: 256
+    output_dir: artifacts/indexes/faiss-gpu
+  cuda_strict:
+    display_name: FAISS GPU · CUDA strict
+    description: Csak valódi FAISS GPU backenddel fut; fallback nincs. Benchmark és runtime-validáció céljára használható.
+    vector_device: cuda
+    fallback_to_numpy: false
+    strict_device: true
+    gpu_id: 0
+    use_float16: false
+    temp_memory_mb: 256
+    output_dir: artifacts/indexes/faiss-gpu-strict

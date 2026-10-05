@@ -1,0 +1,157 @@
+sources:
+- id: medical-be61bb562feda6
+  title: Magasvérnyomás-betegség
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: m__magasvernyomas.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/m/magasvernyomas.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-f3d58a462a45ba
+  title: Stroke
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: s-sz__stroke.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/s-sz/stroke.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-c8316fdacf868f
+  title: 1-es típusú cukorbetegség
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: 1-9__1-es-tipusu-cukorbetegseg.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/1-9/1-es-tipusu-cukorbetegseg.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-9d0aafafb762a0
+  title: 2-es típusú cukorbetegség
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: 1-9__2-es-tipusu-cukorbetegseg.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/1-9/2-es-tipusu-cukorbetegseg.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-aac68b9215f5fd
+  title: Asztma
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: a-a__asztma.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/asztma.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-4e893c6ef02e4c
+  title: Migrén
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: m__migren.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/m/migren.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-14a9c9a7f54383
+  title: Anafilaxia
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: a-a__anafilaxia.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/a-a/anafilaxia.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-30bc1651c8233a
+  title: Epilepszia
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: e-e__epilepszia.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/e-e/epilepszia.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-939105699548da
+  title: Csontritkulás (Osteoporosis)
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: c-cs__csontritkulas-osteoporosis.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/c-cs/csontritkulas-osteoporosis.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-4f69dd9f22feee
+  title: Vesekő
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: v-w__veseko.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/v-w/veseko.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-70e9d83345092b
+  title: Vas és vashiány
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: v-w__vas-es-vashiany.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/v-w/vas-es-vashiany.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.
+- id: medical-5b5a8745d6b6bd
+  title: Krónikus obstruktív tüdőbetegség (COPD)
+  category: Orvosi / egészségügyi ismeretterjesztés
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  language: hu
+  format: html
+  pages_estimate: 1
+  default: true
+  filename: k__kronikus-obstruktiv-tudobetegseg-copd.html
+  url: https://egeszsegvonal.gov.hu/egeszseg-a-z/k/kronikus-obstruktiv-tudobetegseg-copd.html
+  source_page: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  description: Nyilvánosan elérhető magyar egészségügyi ismeretterjesztő cikk.

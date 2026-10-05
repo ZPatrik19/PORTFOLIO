@@ -1,0 +1,37 @@
+corpus:
+  id: hungarian_medical
+  display_name: Egészségvonal magyar orvosi korpusz
+  language: hu
+  organization: Egészségvonal / Nemzeti Népegészségügyi és Gyógyszerészeti Központ
+    (NNGYK)
+  target_documents: 100
+  directory_url: https://egeszsegvonal.gov.hu/egeszseg-a-z.html
+  allowed_host: egeszsegvonal.gov.hu
+  article_path_prefix: /egeszseg-a-z/
+  output_dir: data/raw/hungarian_medical
+  manifest_path: data/raw/hungarian_medical/manifest.json
+  processed_chunks: data/processed/hungarian_medical/chunks.json
+  vectorstore_dir: artifacts/indexes/hungarian_medical
+  state_path: artifacts/indexes/hungarian_medical/index_state.json
+  indexing:
+    chunking_strategy: recursive
+    chunk_size: 500
+    chunk_overlap: 100
+    embedding_model: intfloat/multilingual-e5-small
+  evaluation:
+    dataset_path: artifacts/evaluations/medical_dataset.json
+    top_k: 5
+  license_note: A források az eredeti szolgáltató feltételei szerint használhatók;
+    a projekt csak oktatási és mérnöki demonstráció.
+  disclaimer: A rendszer nem helyettesít orvosi vizsgálatot vagy diagnózist.
+  priority_title_contains:
+  - magasvérnyomás
+  - cukorbetegség
+  - stroke
+  - asztma
+  - migrén
+  - szívinfarktus
+  exclude_title_contains:
+  - oldaltérkép
+  - kapcsolat
+  - impresszum

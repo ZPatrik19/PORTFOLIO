@@ -1,12 +1,41 @@
-.cache/
+# Python
 .venv/
 __pycache__/
+*.py[cod]
+*.egg-info/
 .pytest_cache/
 .ruff_cache/
-.mypy_cache/
-*.pyc
-*.pyo
-.env
+.coverage
+coverage.xml
+htmlcov/
 dist/
 build/
-*.egg-info/
+
+# Local configuration / runtime
+.env
+.cache/
+logs/
+
+# Downloaded and generated data
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/README.md
+
+# Reproducible runtime artifacts
+artifacts/indexes/*
+artifacts/evaluations/*
+artifacts/experiments/*
+artifacts/models/*
+!artifacts/indexes/.gitkeep
+!artifacts/evaluations/.gitkeep
+!artifacts/experiments/.gitkeep
+!artifacts/README.md
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.github/

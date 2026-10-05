@@ -1,0 +1,3 @@
+"""Multi-RAG Engineering Lab core package."""
+
+__version__ = "0.43.0"

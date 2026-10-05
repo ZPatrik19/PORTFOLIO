@@ -1,0 +1,33 @@
+profiles:
+  auto:
+    display_name: Auto · GPU ha elérhető
+    description: Automatikusan használ CUDA-t az embeddinghez és rerankerhez, miközben a vector backend stabil CPU baseline marad.
+    execution_device: auto
+    embedding_device: auto
+    reranker_device: auto
+    vector_device: cpu
+    allow_cpu_fallback: true
+  cpu:
+    display_name: CPU only
+    description: Teljesen CPU-s, reprodukálható baseline és CI profil.
+    execution_device: cpu
+    embedding_device: cpu
+    reranker_device: cpu
+    vector_device: cpu
+    allow_cpu_fallback: true
+  cuda_preferred:
+    display_name: CUDA preferred
+    description: Embedding, Cross-Encoder és vector backend CUDA-t kér; támogatott helyen CPU fallback engedélyezett.
+    execution_device: cuda
+    embedding_device: cuda
+    reranker_device: cuda
+    vector_device: cuda
+    allow_cpu_fallback: true
+  cuda_strict:
+    display_name: CUDA strict
+    description: Minden gyorsítható komponensnél CUDA szükséges. Benchmark-validációhoz használható; fallback nincs.
+    execution_device: cuda
+    embedding_device: cuda
+    reranker_device: cuda
+    vector_device: cuda
+    allow_cpu_fallback: false

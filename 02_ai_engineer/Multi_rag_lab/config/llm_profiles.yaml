@@ -1,0 +1,40 @@
+profiles:
+  low_memory:
+    display_name: Qwen3 4B · Low memory
+    description: Kis VRAM/RAM igényű profil 2048 tokenes kontextussal. GTX 1650 osztályú GPU-n vagy CPU fallback mellett jó kiindulópont.
+    base_model: qwen3:4b
+    alias: rag-qwen-low-memory
+    context_length: 2048
+    num_parallel: 1
+    max_loaded_models: 1
+    flash_attention: true
+    kv_cache_type: q8_0
+    keep_alive: 15m
+    num_predict: 384
+    temperature: 0.15
+  balanced:
+    display_name: Qwen3 4B · Balanced
+    description: Alapértelmezett helyi RAG profil, mérsékelt memóriaigénnyel és 3072 tokenes Ollama kontextussal.
+    base_model: qwen3:4b
+    alias: rag-qwen-balanced
+    context_length: 3072
+    num_parallel: 1
+    max_loaded_models: 1
+    flash_attention: true
+    kv_cache_type: q8_0
+    keep_alive: 15m
+    num_predict: 512
+    temperature: 0.15
+  extended_context:
+    display_name: Qwen3 4B · Extended context
+    description: Nagyobb 4096 tokenes kontextust használó profil. Több RAM/VRAM-ot és hosszabb válaszidőt igényelhet.
+    base_model: qwen3:4b
+    alias: rag-qwen-extended
+    context_length: 4096
+    num_parallel: 1
+    max_loaded_models: 1
+    flash_attention: true
+    kv_cache_type: q8_0
+    keep_alive: 10m
+    num_predict: 640
+    temperature: 0.15

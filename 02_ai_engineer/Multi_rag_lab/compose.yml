@@ -1,0 +1,23 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        PREBUILD_RAG_ASSETS: "1"
+    ports:
+      - "8501:8501"
+    environment:
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      VECTOR_DEVICE: cpu
+      HF_HUB_OFFLINE: "1"
+    volumes:
+      - rag_data:/app/data
+      - rag_artifacts:/app/artifacts
+      - rag_cache:/app/.cache
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  rag_data:
+  rag_artifacts:
+  rag_cache:

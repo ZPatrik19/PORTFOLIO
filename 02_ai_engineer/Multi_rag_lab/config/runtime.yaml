@@ -1,0 +1,7 @@
+runtime:
+  execution_device: auto
+  embedding_device: auto
+  reranker_device: auto
+  vector_device: cpu
+  allow_cpu_fallback: true
+  max_oom_retries: 2
