@@ -33,9 +33,12 @@ def _relative_or_absolute(path: Path) -> str:
 def _download_one(repo_id: str, *, retries: int, verify: bool) -> Path:
     # Hugging Face reads most environment variables at import time.
     configure_hf_environment()
-    from huggingface_hub import snapshot_download
+    from huggingface_hub import HfApi, snapshot_download
 
     token = os.getenv("HF_TOKEN") or None
+    revision = os.getenv("HF_MODEL_REVISION") or HfApi(token=token).model_info(repo_id).sha
+    if not revision:
+        raise RuntimeError(f"Nem sikerült feloldani a Hugging Face modell revisionjét: {repo_id}")
     last_error: Exception | None = None
     for attempt in range(1, retries + 1):
         try:
@@ -43,6 +46,7 @@ def _download_one(repo_id: str, *, retries: int, verify: bool) -> Path:
             snapshot = Path(
                 snapshot_download(
                     repo_id=repo_id,
+                    revision=revision,
                     cache_dir=str(HF_HUB_CACHE),
                     token=token,
                     max_workers=1,
@@ -53,6 +57,7 @@ def _download_one(repo_id: str, *, retries: int, verify: bool) -> Path:
             verified = Path(
                 snapshot_download(
                     repo_id=repo_id,
+                    revision=revision,
                     cache_dir=str(HF_HUB_CACHE),
                     local_files_only=True,
                     max_workers=1,
