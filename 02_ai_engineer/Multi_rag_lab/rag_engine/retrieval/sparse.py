@@ -37,7 +37,7 @@ class BM25Retriever:
         self.lengths = [len(x) for x in self.tokens]
         self.avgdl = sum(self.lengths) / max(1, len(self.lengths))
         self.term_freqs = [Counter(x) for x in self.tokens]
-        df = Counter()
+        df: Counter[str] = Counter()
         for tokens in self.tokens:
             df.update(set(tokens))
         n = len(chunks)
