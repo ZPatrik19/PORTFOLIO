@@ -31,7 +31,7 @@ def file_sha256(path: Path) -> str | None:
 def _as_dict(row: object) -> dict[str, Any]:
     if isinstance(row, dict):
         return dict(row)
-    if is_dataclass(row):
+    if is_dataclass(row) and not isinstance(row, type):
         return asdict(row)
     raise TypeError(f"Nem támogatott benchmark sor típus: {type(row)!r}")
 
