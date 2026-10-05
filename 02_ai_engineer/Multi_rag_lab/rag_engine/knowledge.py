@@ -1089,7 +1089,7 @@ _BASE_ENTRIES: list[ReferenceEntry] = [
 
 def _strategy_entries() -> list[ReferenceEntry]:
     entries: list[ReferenceEntry] = []
-    for key, meta in CHUNKING_STRATEGIES.items():
+    for key, chunking_meta in CHUNKING_STRATEGIES.items():
         entries.append(
             ReferenceEntry(
                 key=f"chunking_{key}",
